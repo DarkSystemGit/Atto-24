@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"darksystem"
+	],
+	"copyright": "Copyright © 2024, darksystem",
+	"description": "Universal Assembly Language Interpreter",
+	"license": "GPL-3.0-or-later",
+	"name": "uasm"
+}

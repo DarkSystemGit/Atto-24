@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/uasm
+uasm.so
+uasm.dylib
+uasm.dll
+uasm.a
+uasm.lib
+uasm-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
