@@ -161,7 +161,7 @@ void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
     for (int i = 0; i < count; i++) {
         for (int j = 0; j < 9; j++) {
             if (paramList[i] == (real.max - j)) {
-                if(j!=5)paramList[i] = acessRegister(machine, paramList[i]);
+                if(j!=5)paramList[i] = acessRegister(machine, j);
             }
         }
     }
