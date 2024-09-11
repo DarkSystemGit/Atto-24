@@ -111,37 +111,10 @@ int xor(ref Machine machine, real[] params) {
 
 int cp(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 1);
-    switch (cast(int)params[1]) {
-        default:
-            break;
-        case (real.max - 9):
-           machine.registers.a=cast(int)params[1];
-            break;
-        case (real.max - 8):
-            machine.registers.b=cast(int)params[1];
-            break;
-        case (real.max - 7):
-            machine.registers.c=cast(int)params[1];
-            break;
-        case (real.max - 6):
-            machine.registers.d=*params[1];
-            break;
-       
-        case (real.max - 4):
-            machine.registers.f=cast(float)params[1];
-            break;
-        case (real.max - 3):
-           machine.registers.g=cast(float)params[1];
-            break;
-        case (real.max - 2):
-            machine.registers.h=cast(double)params[1];
-            break;
-        case (real.max - 1):
-           machine.registers.i=params[1];
-            break;
-        case real.max:
-            machine.registers.j=params[1];
-            break;
+    for (int j = 0; j < 9; j++) {
+            if (params[1] == (real.max - j)) {
+                if(j!=5)acessRegister(machine, j)=params[1];
+            }
         }
     return 0;
 }
@@ -169,6 +142,7 @@ void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
 real acessRegister(ref Machine machine, real id) {
     switch (cast(int)id) {
         default:
+        return 0;
         break;
         case (9):
         return cast(real)machine.registers.a;
