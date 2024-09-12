@@ -373,5 +373,8 @@ real[] compile(string[] source) {
     return prgm;
 }
 Machine parseString(string source) {
+
+    writeln("Tokens:")
+    writeln(source.replace(','," ").replace(";"," ").split(" "));
     return parse(compile(source.replace(','," ").replace(";"," ").split(" ")));
 }
