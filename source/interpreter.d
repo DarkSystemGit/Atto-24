@@ -1,14 +1,15 @@
 import std;
-
+import commands;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
     Registers registers;
     Flags flags;
     int ip;
+    int raddr;
     int sp;
-    int bp;
-    int[] stack = new int[0];
+    real[] bp;
+    real[] stack = new real[0];
 }
 
 struct Registers {
@@ -32,97 +33,7 @@ struct Flags {
     bool parity;
 }
 
-int add(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(params[0] + params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int sub(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(params[0] - params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int mul(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(params[0] * params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int div(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.f = cast(float)(params[0] / params[1]);
-    handleFlags(machine, machine.registers.f);
-    return 2;
-}
-
-int addf(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.f = cast(float)params[0] + cast(float)params[1];
-    handleFlags(machine, machine.registers.f);
-    return 2;
-}
-
-int subf(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.f = cast(float)params[0] - cast(float)params[1];
-    handleFlags(machine, machine.registers.f);
-    return 2;
-}
-
-int mulf(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.f = cast(float)params[0] * cast(float)params[1];
-    handleFlags(machine, machine.registers.f);
-    return 2;
-}
-
-int and(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] & cast(int)params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int not(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 1);
-    machine.registers.a = cast(int)(~cast(int)params[0]);
-    handleFlags(machine, machine.registers.a);
-    return 1;
-}
-
-int or(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] | cast(int)params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int xor(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] ^ cast(int)params[1]);
-    handleFlags(machine, machine.registers.a);
-    return 2;
-}
-
-int cp(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 1);
-    for (int j = 0; j < 9; j++) {
-            if (params[1] == (real.max - j)) {
-                if(j!=5)setRegister(machine, j,params[1]);
-            }
-        }
-    return 0;
-}
-int jmp(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 1);
-    machine.ip = (cast(int)params[0])-1;
-    return 0;
-}
+    
 int function(ref Machine machine, real[] params)[26] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params) {
     writeln("opcode:");
@@ -131,7 +42,7 @@ void handleOpcode(ref Machine machine, real opcode, real[] params) {
 }
 
 void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count||paramList.length; i++) {
         for (int j = 0; j < 9; j++) {
             if (paramList[i] == (real.max - j)) {
                 if(j!=5)paramList[i] = acessRegister(machine, j);
@@ -219,9 +130,25 @@ void handleFlags(ref Machine machine, real res) {
 
 }
 Machine parse(real[] prgm) {
+    commands[0] = &nop;
     commands[1] = &add;
     commands[2] = &sub;
     commands[3] = &mul;
+    commands[4]=&addf;
+    commands[5]=&subf;
+    commands[6]=&mulf;
+    commands[7]=&and;
+    commands[8]=&not;
+    commands[9]=&or;
+    commands[10]=&xor;
+    commands[11]=&cp;
+    commands[12]=&jmp;
+    commands[13]=&jz;
+    commands[14]=&jnz;
+    commands[15]=&cmp;
+    commands[16]=&nop;
+    commands[17]=&read;
+    commands[18]=&write;
 
     Machine machine = Machine();
     machine.memory_size = cast(real)prgm.length;
@@ -269,7 +196,7 @@ real[] compile(string[] source) {
             case "%G":
                 res = real.max - 3;
                 break;
-            case "%H":
+            case "%H":  
                 res = real.max - 2;
                 break;
             case "%I":
@@ -374,7 +301,9 @@ real[] compile(string[] source) {
 }
 Machine parseString(string source) {
 
-    writeln("Tokens:")
+    writeln("Tokens:");
     writeln(source.replace(','," ").replace(";"," ").split(" "));
+    writeln("Bytecode:");
+    writeln(compile(source.replace(','," ").replace(";"," ").split(" ")));
     return parse(compile(source.replace(','," ").replace(";"," ").split(" ")));
 }
