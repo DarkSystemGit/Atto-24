@@ -1,5 +1,5 @@
 import std;
-import commands;
+import instructions;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -8,7 +8,8 @@ struct Machine {
     int ip;
     int raddr;
     int sp;
-    real[] bp;
+    int p;
+    real bp;
     real[] stack = new real[0];
 }
 
@@ -45,12 +46,12 @@ void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
     for (int i = 0; i < count||paramList.length; i++) {
         for (int j = 0; j < 9; j++) {
             if (paramList[i] == (real.max - j)) {
-                if(j!=5)paramList[i] = acessRegister(machine, j);
+                if(j!=5)paramList[i] = getRegister(machine, j);
             }
         }
     }
 }
-real acessRegister(ref Machine machine, real id) {
+real getRegister(ref Machine machine, real id) {
     switch (cast(int)id) {
         default:
         return 0;
@@ -149,7 +150,13 @@ Machine parse(real[] prgm) {
     commands[16]=&nop;
     commands[17]=&read;
     commands[18]=&write;
-
+    commands[19]=&push;
+    commands[20]=&pop;
+    commands[21]=&mov;
+    commands[22]=&call;
+    commands[23]=&ret;
+    commands[24]=&inc;
+    commands[25]=&dec;
     Machine machine = Machine();
     machine.memory_size = cast(real)prgm.length;
     machine.memory = new real[cast(ulong)machine.memory_size];
@@ -281,10 +288,10 @@ real[] compile(string[] source) {
                 res = 25;
                 break;
             case "incf":
-                res = 26;
+                res = 24;
                 break;
             case "decf":
-                res = 27;
+                res = 25;
                 break;
             
             default:

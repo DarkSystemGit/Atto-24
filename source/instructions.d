@@ -84,71 +84,88 @@ int cp(ref Machine machine, real[] params) {
                 if(j!=5)setRegister(machine, j,params[1]);
             }
         }
-    return 0;
+
+    return 2;
 }
 int jmp(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 1);
     machine.ip = (cast(int)params[0])-1;
-    return 0;
+    return 1;
 }
 int jz(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 1);
     if (machine.flags.zero) {
         machine.ip = (cast(int)params[0])-1;
     }
-    return 0;
+    return 1;
 }
 int jnz(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 1);
     if (!machine.flags.zero) {
         machine.ip = (cast(int)params[0])-1;
     }
-    return 0;}
+    return 1;}
 int read(ref Machine machine, real[] params) {
      handleRegisters(machine, params, 1);
-     setRegister(machine, params[1]-real.max, machine.memory[params[0]]);
-     return 0;
+     setRegister(machine, params[1]-real.max, machine.memory[cast(ulong)params[0]]);
+     return 2;
 }
 int write(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 3);
+    handleRegisters(machine, params, 2);
     
-        machine.memory[params[1]] = params[0];
-        return 0;
+        machine.memory[cast(ulong)params[1]] = params[0];
+        return 2;
     
 }
 int push(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 1);
     machine.stack.length = machine.stack.length + 1;
     machine.stack[machine.stack.length-1] = params[0];
-    return 0;
+    return 1;
 }
 int pop(ref Machine machine, real[] params) {
 
-    if(machine.stack.length!=machine.bp){setRegister(machine, params[1]-real.max, machine.stack[machine.stack.length-1]);machine.stack=machine.stack.remove(machine.stack.length-1)}else{
+    if(machine.stack.length!=machine.bp){setRegister(machine, params[1]-real.max, machine.stack[machine.stack.length-1]);machine.stack=machine.stack.remove(machine.stack.length-1);}else{
         setRegister(machine, params[1]-real.max, 0);
     }
+    return 2;
 }
 int mov(ref Machine machine, real[] params) {
-    cp(machine,params)
+    cp(machine,params);
     setRegister(machine, params[0]-real.max, 0);
-    return 0;
+    return 2;
 }
 int call(ref Machine machine, real[] params) {
-    handleRegisters(machine, params, 0);
-    for (int j = params.length; j>1; j--) {
-         machine.stack.length = machine.stack.length + 1;
-    machine.stack[machine.stack.length-1] = params[j]
-    }
-    machine.p=params.length-1;
+    handleRegisters(machine, params, 2);
+    
+    machine.p=cast(int)params[1];
     machine.raddr=machine.ip;
     machine.ip = (cast(int)params[0])-1;
-    return 0;
+    return 2;
 }
 int ret(ref Machine machine, real[] params) {
-    for (int j = params.length; j<machine.p; j++) {
-        machine.stack=machine.stack.remove(machine.stack.length-1)
+    for (int j = cast(int)params.length; j<machine.p; j++) {
+        machine.stack=machine.stack.remove(machine.stack.length-1);
     }
     machine.ip = machine.raddr-1;
     return 0;
+}
+int inc(ref Machine machine, real[] params){
+    real reg=params[0]-real.max;
+    setRegister(machine,reg,getRegister(machine,reg)+1);
+    handleFlags(machine, getRegister(machine,reg));
+    return 1;
+} 
+int dec(ref Machine machine, real[] params){
+    real reg=params[0]-real.max;
+    setRegister(machine,reg,getRegister(machine,reg)-1);
+    handleFlags(machine, getRegister(machine,reg));
+    return 1;
+
+}
+int cmp(ref Machine machine, real[] params){
+    handleRegisters(machine, params, 2);
+    handleFlags(machine,cast(int)(params[0] - params[1]));
+    return 1;
 }
 int nop(ref Machine m,real[]params){return 0;}
