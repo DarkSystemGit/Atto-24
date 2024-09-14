@@ -78,10 +78,11 @@ int xor(ref Machine machine, real[] params) {
 }
 
 int cp(ref Machine machine, real[] params) {
+   
     handleRegisters(machine, params, 1);
     for (int j = 0; j < 9; j++) {
-            if (params[1] == (real.max - j)) {
-                if(j!=5)setRegister(machine, j,params[1]);
+            if (params[1] == (cast(real)4294967296 - j)) {
+                if(j!=5)setRegister(machine, j,params[0]);
             }
         }
 
@@ -107,7 +108,7 @@ int jnz(ref Machine machine, real[] params) {
     return 1;}
 int read(ref Machine machine, real[] params) {
      handleRegisters(machine, params, 1);
-     setRegister(machine, params[1]-real.max, machine.memory[cast(ulong)params[0]]);
+     setRegister(machine, (cast(real)4294967296)-params[1], machine.memory[cast(ulong)params[0]]);
      return 2;
 }
 int write(ref Machine machine, real[] params) {
@@ -125,14 +126,16 @@ int push(ref Machine machine, real[] params) {
 }
 int pop(ref Machine machine, real[] params) {
 
-    if(machine.stack.length!=machine.bp){setRegister(machine, params[1]-real.max, machine.stack[machine.stack.length-1]);machine.stack=machine.stack.remove(machine.stack.length-1);}else{
-        setRegister(machine, params[1]-real.max, 0);
+    if(machine.stack.length!=machine.bp){setRegister(machine, (cast(real)4294967296)-params[1], machine.stack[machine.stack.length-1]);machine.stack=machine.stack.remove(machine.stack.length-1);}else{
+        setRegister(machine, (cast(real)4294967296)-params[1], 0);
     }
     return 2;
 }
 int mov(ref Machine machine, real[] params) {
+    real clear=(cast(real)4294967296)-params[0];
     cp(machine,params);
-    setRegister(machine, params[0]-real.max, 0);
+    
+    setRegister(machine, clear, 0);
     return 2;
 }
 int call(ref Machine machine, real[] params) {
@@ -151,13 +154,14 @@ int ret(ref Machine machine, real[] params) {
     return 0;
 }
 int inc(ref Machine machine, real[] params){
-    real reg=params[0]-real.max;
+    real reg=cast(real)4294967296-params[0];
     setRegister(machine,reg,getRegister(machine,reg)+1);
     handleFlags(machine, getRegister(machine,reg));
     return 1;
 } 
 int dec(ref Machine machine, real[] params){
-    real reg=params[0]-real.max;
+    real reg=cast(real)4294967296-params[0];
+    
     setRegister(machine,reg,getRegister(machine,reg)-1);
     handleFlags(machine, getRegister(machine,reg));
     return 1;

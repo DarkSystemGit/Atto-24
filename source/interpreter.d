@@ -21,7 +21,7 @@ struct Registers {
     string e;
     float f;
     float g;
-    double h;
+    real h;
     real i;
     real j;
 }
@@ -39,17 +39,24 @@ int function(ref Machine machine, real[] params)[26] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params) {
     writeln("opcode:");
     writeln(opcode);
-    machine.ip += commands[cast(ulong)opcode](machine, params) + 1;
+    int pcount=commands[cast(ulong)opcode](machine, params) + 1;
+    machine.ip += pcount;
+    writeln("modified params: ", machine.memory[machine.ip-pcount + 1 .. $]);
 }
 
 void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
-    for (int i = 0; i < count||paramList.length; i++) {
-        for (int j = 0; j < 9; j++) {
-            if (paramList[i] == (real.max - j)) {
+    int c=count;
+    if(count==0)c=cast(int)paramList.length-1;
+  
+    for (int i = 0; i < c; i++) {
+          
+        for (int j = 0; j <= 9; j++) {
+            if (paramList[i] == (cast(real)4294967296 - j)) {
                 if(j!=5)paramList[i] = getRegister(machine, j);
             }
         }
     }
+     
 }
 real getRegister(ref Machine machine, real id) {
     switch (cast(int)id) {
@@ -110,7 +117,7 @@ void setRegister(ref Machine machine, real id, real value) {
         machine.registers.g = cast(float)value;
         break;
         case (2):
-        machine.registers.h = cast(double)value;
+        machine.registers.h = cast(real)value;
         break;
         case (1):
         machine.registers.i = value;
@@ -164,6 +171,7 @@ Machine parse(real[] prgm) {
 
     while (machine.ip < machine.memory_size) {
         real[] params = machine.memory[machine.ip + 1 .. $];
+        writeln("params: ",params);
         handleOpcode(machine, machine.memory[machine.ip], params);
         writeln("state:");
         writeln(machine.registers);
@@ -183,34 +191,34 @@ real[] compile(string[] source) {
         } else {
             switch (line) {
             case "%A":
-                res = real.max - 9;
+                res = cast(real)4294967296 - 9;
                 break;
             case "%B":
-                res = real.max - 8;
+                res = cast(real)4294967296 - 8;
                 break;
             case "%C":
-                res = real.max - 7;
+                res = cast(real)4294967296 - 7;
                 break;
             case "%D":
-                res = real.max - 6;
+                res = cast(real)4294967296 - 6;
                 break;
             case "%E":
-                res = real.max - 5;
+                res = cast(real)4294967296 - 5;
                 break;
             case "%F":
-                res = real.max - 4;
+                res = cast(real)4294967296 - 4;
                 break;
             case "%G":
-                res = real.max - 3;
+                res = cast(real)4294967296 - 3;
                 break;
             case "%H":  
-                res = real.max - 2;
+                res = cast(real)4294967296 - 2;
                 break;
             case "%I":
-                res = real.max - 1;
+                res = cast(real)4294967296 - 1;
                 break;
             case "%J":
-                res = real.max;
+                res = cast(real)4294967296;
                 break;
             case "add":
                 res = 1;
