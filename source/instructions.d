@@ -82,7 +82,7 @@ int cp(ref Machine machine, real[] params) {
 
     handleRegisters(machine, params, 1);
    
-    for (int j = 0; j < 9; j++) {
+    for (int j = 0; j < 10; j++) {
         writeln(j,",",params[0],",",params[1]);
         if (params[1] == (cast(real)4294967296 - j)) {
             writeln("found ",j);
