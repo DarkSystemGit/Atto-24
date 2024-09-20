@@ -111,6 +111,7 @@ int jz(ref Machine machine, real[] params) {
 }
 
 int jnz(ref Machine machine, real[] params) {
+    writeln(!machine.flags.zero);
     handleRegisters(machine, params, 1);
     if (!machine.flags.zero) {
         machine.ip = (cast(int)params[0]) - 1;
@@ -197,7 +198,7 @@ int dec(ref Machine machine, real[] params) {
 int cmp(ref Machine machine, real[] params) {
     handleRegisters(machine, params, 2);
     handleFlags(machine, cast(int)(params[0] - params[1]));
-    return 1;
+    return 2;
 }
 
 int nop(ref Machine m, real[] params) {

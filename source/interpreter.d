@@ -156,11 +156,11 @@ void setRegister(ref Machine machine, real id, real value) {
 }
 
 void handleFlags(ref Machine machine, real res) {
-    Flags flags = machine.flags;
+    
     if (res == 0)
-        flags.zero = true;
+        machine.flags.zero = true;
     if (res < 0)
-        flags.negative = true;
+        machine.flags.negative = true;
 
 }
 
@@ -178,8 +178,8 @@ Machine execBytecode(real[] prgm) {
     commands[10] = &xor;
     commands[11] = &cp;
     commands[12] = &jmp;
-    commands[13] = &jz;
-    commands[14] = &jnz;
+    commands[13] = &jnz;
+    commands[14] = &jz;
     commands[15] = &cmp;
     commands[16] = &nop;
     commands[17] = &read;
@@ -208,6 +208,7 @@ real[] compile(string src) {
     bool eof = false;
     real[] prgm = new real[0];
     for (int i = 0; i < source.length; i++) {
+        bool e=true;
         string line = source[i];
         real res = 0;
         if (line.indexOf("0x") != -1) {
@@ -327,14 +328,17 @@ real[] compile(string src) {
             case "decf":
                 res = 25;
                 break;
+            case "":
+                e=false;
+                break;
 
             default:
                 break;
             }
         }
 
-        prgm.length++;
-        prgm[prgm.length - 1] = res;
+        if(e){prgm.length++;
+        prgm[prgm.length - 1] = res;}
 
     }
     writeln("Bytecode:");
@@ -344,8 +348,8 @@ real[] compile(string src) {
 
 string[] parseString(string source) {
     writeln("Tokens:");
-    writeln(source.replace(',', " ").replace(";", " ").strip().replace("\n"," ").split(" "));
-    return source.replace(',', " ").replace(";", " ").strip().replace("\n"," ").split(" ");
+    writeln(source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" "));
+    return source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" ");
 }
 
 Machine runPrgm(string name,string source) {
