@@ -1,7 +1,9 @@
 add 1,2;
 sub 5,3;
-dec %A;
 mov %A,%B;
-mov 5,%A;
+mov 6,%A;
+dec %A;
 cmp %A,4;
-jnz 5;
+jnz 11;
+sys 0,%A;
+sys 0,%B;

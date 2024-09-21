@@ -1,3 +1,3 @@
 #!/bin/fish
 dub
-./uasm ./test/prgm.asm
+./uasm ./test/prgm.asm true

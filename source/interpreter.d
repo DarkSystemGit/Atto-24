@@ -1,88 +1,172 @@
 import std;
 import instructions;
+import data;
 
-struct Machine {
-    real memory_size = 0;
-    real[] memory = new real[0];
-    Registers registers;
-    Flags flags;
-    int ip;
-    int raddr;
-    int sp;
-    int p;
-    real bp;
-    real[] stack = new real[0];
-    void print() {
-        Machine machine = this;
-        writeln("Machine:");
-        writeln("   Registers:");
-        writeln("   A: ", machine.registers.a);
-        writeln("   B: ", machine.registers.b);
-        writeln("   C: ", machine.registers.c);
-        writeln("   D: ", machine.registers.d);
-        writeln("   E: ", machine.registers.e);
-        writeln("   F: ", machine.registers.f);
-        writeln("   G: ", machine.registers.g);
-        writeln("   H: ", machine.registers.h);
-        writeln("   I: ", machine.registers.i);
-        writeln("   J: ", machine.registers.j);
-        writeln("   Stack:");
-        writeln("       ", machine.stack);
-        writeln("   Memory:");
-        writeln("       ", machine.memory);
-        writeln("   Instruction Pointer: ", machine.ip);
-        writeln("   Flags:");
-        writeln("   Zero: ", machine.flags.zero);
-        writeln("   Overflow: ", machine.flags.overflow);
-        writeln("   Negative: ", machine.flags.negative);
-        writeln("   Carry: ", machine.flags.carry);
-    }
-}
-
-struct Registers {
-    int a;
-    int b;
-    int c;
-    int d;
-    string e;
-    float f;
-    float g;
-    real h;
-    real i;
-    real j;
-}
-
-struct Flags {
-    bool zero;
-    bool negative;
-    bool overflow;
-    bool carry;
-}
 
 int function(ref Machine machine, real[] params)[26] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params) {
     int pcount = commands[cast(ulong)opcode](machine, params) + 1;
     machine.ip += pcount;
+    if(machine._debug)writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(params[0 .. pcount-1]),");");
+
 }
+string printOpcode(real opcode) {
+    switch (cast(int)opcode) {
+        case 0:
+    return "NOP";
+    break;
+    case 1:
+    return "ADD";
+    break;
+    case 2:
+    return "SUB";
+        break;
+        case 3:
+        return "MUL";
+        break;
+        case 4:
+        return "ADDF";
+        break;
+        case 5:
+        return "SUBF";
+        break;
+        case 6:
+        return "MULF";
+        break;
+        case 7:
+        return "AND";
+        break;
+        case 8:
+        return "NOT";
+        break;
+        case 9:
+        return "OR";
+        break;
+        case 10:
+        return "XOR";
+        break;
+        case 11:
+        return "CP";
+        break;
+        case 12:
+        return "JMP";
+        break;
+        case 13:
+        return "JNZ";
+        break;
+        case 14:
+        return "JZ";
+        break;
+        case 15:
+        return "CMP";
+        break;
+        case 16:
+        return "SYS";
+        break;
+        case 17:
+        return "READ";
+        break;
+        case 18:
+        return "WRITE";
+        break;
+        case 19:
+        return "PUSH";
+        break;
+        case 20:
+        return "POP";
+        break;
+        case 21:
+        return "MOV";
+        break;
+        case 22:
+        return "CALL";
+        break;
+        case 23:
+        return "RET";
+        break;
+        case 24:
+        return "INC";
+        break;
+        case 25:
+        return "DEC";
+        break;
+        default:
+        return "UNKNOWN";
+        break;}
 
-void handleRegisters(ref Machine machine, ref real[] paramList, int count) {
-    int c = count;
-    if (count == 0)
-        c = cast(int)paramList.length - 1;
+}
+string printParams(real[] params) {
+    string[] res = new string[params.length];
+    for (int i = 0; i < params.length; i++) {
 
-    for (int i = 0; i < c; i++) {
-
-        for (int j = 0; j <= 9; j++) {
-            if (paramList[i] == (cast(real)4294967296 - j)) {
-                if (j != 5)
-                    paramList[i] = getRegister(machine, j);
-            }
+        if((-1*(params[i]-(cast(real)4294967296)))>0) {
+            res[i] = printRegister(-1*(params[i]-(cast(real)4294967296)));
+            if(res[i]=="UNKNOWN") res[i] = params[i].to!string;
+        }else{
+            res[i] = params[i].to!string;
         }
     }
+    return res.join(", ");
+}
 
+
+string printRegister(real id) {
+    switch (cast(int)id) {
+        case 9:
+        return "A";
+        break;
+        case 8:
+        return "B";
+        break;
+        case 7:
+        return "C";
+            break;
+            case 6:
+            return "D";
+            break;
+            case 5:
+            return "E";
+            break;
+            case 4:
+            return "F";
+            break;
+            case 3:
+            return "G";
+            break;
+            case 2:
+            return "H";
+            break;
+            case 1:
+            return "I";
+            break;
+            case 0:
+            return "J";
+            break;
+            default:
+            return "UNKNOWN";
+            break;
+            }
+}
+real[] handleRegisters(ref Machine machine, real[] paramsRaw, int count) {
+    int c = count;
+    real[] paramList = paramsRaw.dup;
+    if (count == 0){
+        c = cast(int)paramList.length - 1;
+    }
+    for (int i = 0; i < c; i++) {
+        for (int j = 0; j <= 9; j++) {
+            if (paramList[i] == (cast(real)4294967296 - j)) {
+                if (j != 5){
+                    paramList[i] = getRegister(machine, j);
+            }}
+        }
+    }
+    
+    return paramList;
 }
 
 real getRegister(ref Machine machine, real id) {
+    if(machine._debug)writeln("[DEBUG] Getting register ",printRegister(id));
     switch (cast(int)id) {
     default:
         return 0;
@@ -120,7 +204,7 @@ real getRegister(ref Machine machine, real id) {
 }
 
 void setRegister(ref Machine machine, real id, real value) {
-    writeln("Setting register ", id," to ", value);
+    if(machine._debug)writeln("[DEBUG] Setting register ", printRegister(id)," to ", value);
     switch (cast(int)id) {
     default:
         break;
@@ -164,7 +248,7 @@ void handleFlags(ref Machine machine, real res) {
 
 }
 
-Machine execBytecode(real[] prgm) {
+Machine execBytecode(real[] prgm,bool d) {
     commands[0] = &nop;
     commands[1] = &add;
     commands[2] = &sub;
@@ -181,7 +265,7 @@ Machine execBytecode(real[] prgm) {
     commands[13] = &jnz;
     commands[14] = &jz;
     commands[15] = &cmp;
-    commands[16] = &nop;
+    commands[16] = &sys;
     commands[17] = &read;
     commands[18] = &write;
     commands[19] = &push;
@@ -192,6 +276,7 @@ Machine execBytecode(real[] prgm) {
     commands[24] = &inc;
     commands[25] = &dec;
     Machine machine = Machine();
+    machine._debug = d;
     machine.memory_size = cast(real)prgm.length;
     machine.memory = new real[cast(ulong)machine.memory_size];
     machine.memory = prgm;
@@ -341,24 +426,19 @@ real[] compile(string src) {
         prgm[prgm.length - 1] = res;}
 
     }
-    writeln("Bytecode:");
-    writeln(prgm);
     return prgm;
 }
 
 string[] parseString(string source) {
-    writeln("Tokens:");
-    writeln(source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" "));
     return source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" ");
 }
 
-Machine runPrgm(string name,string source) {
+Machine runPrgm(string name,string source,bool d) {
     writeln("UASM Interpreter v1.0.0");
     writeln("Compiling...");
     real[] prgm = compile(source);
     writeln("Executing...");
-    Machine machine = execBytecode(prgm);
+    Machine machine = execBytecode(prgm,d);
     writeln("Program ",name," finsished");
-    machine.print();
     return machine;
 }
