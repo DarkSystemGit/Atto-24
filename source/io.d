@@ -12,9 +12,31 @@ int printASCII(ref Machine machine,real[] p) {
         write(params[0].to!char);
         return 1;
     }
+int readFile(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 3);
+    void[] file=new void[cast(ulong)params[2]];
+    char[] path=new char[1];
+    int mempos=cast(ulong)params[1];
+    bool eol;
+    for(int i=0;!eol;i++){
+        if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
+        path.length++;
+        path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
+        //writeln(cast(int)path[i]);
+        }else{eol=true;}
+    }
+    path.length--;
+    file=read(path);
+    for(int i=0;i<file.length;i++){
+        int pos=i+mempos;
+        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
+        machine.memory[pos]=cast(real)file[i];
+    }
 
+    return 3;
+}
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII];
+int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&readFile];
 int syscall(Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}
