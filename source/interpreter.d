@@ -207,6 +207,5 @@ void runPrgm(string name,string source,bool d,bool bytecode) {
     if(!bytecode){
     writeln("Executing...");
     Machine machine = execBytecode(prgm,d);
-    writeln("Program ",name," finsished");
     }
 }
