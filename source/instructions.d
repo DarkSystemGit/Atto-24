@@ -1,6 +1,7 @@
 import std;
-import interpreter;
+import registers;
 import data;
+import io;
 int add(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 2);
     machine.registers.a = cast(int)(params[0] + params[1]);
@@ -98,14 +99,14 @@ int cp(ref Machine machine, real[] p) {
 
 int jmp(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
-    machine.ip = (cast(int)params[0]) - 1;
+    machine.ip = (cast(int)params[0]) - 2;
     return 1;
 }
 
 int jz(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     if (machine.flags.zero) {
-        machine.ip = (cast(int)params[0]) - 1;
+        machine.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
@@ -113,7 +114,7 @@ int jz(ref Machine machine, real[] p) {
 int jnz(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     if (!machine.flags.zero) {
-        machine.ip = (cast(int)params[0]) - 1;
+        machine.ip = (cast(int)params[0])-2;
     }
     return 1;
 }
@@ -205,8 +206,7 @@ int nop(ref Machine m, real[] p) {
 }
 int sys(ref Machine m, real[] p) {
     sysManager sys=new sysManager();
-    int pcount= sys.getParamCount(handleRegisters(m, p, 1)[0]);
-    real[] params=handleRegisters(m, p, pcount);
-    sys.syscall(m,params[0],params[1..pcount]);  
-    return pcount;
+    real[] params=handleRegisters(m, p, 1);
+    return sys.syscall(m,params[0],params[1..$]);  
+   
 }

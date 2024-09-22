@@ -1,5 +1,4 @@
 import std;
-import io;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -44,7 +43,7 @@ struct Registers {
     int b;
     int c;
     int d;
-    string e;
+    int e;
     float f;
     float g;
     real h;
@@ -58,15 +57,3 @@ struct Flags {
     bool overflow;
     bool carry;
 }
-class sysHandler{
-    int paramCount;
-    void syscall(Machine machine, real[] params);
-}
-class sysManager{
-sysHandler[] syscalls=[new printHandler()];
-int getParamCount(real syscall) {
-    return syscalls[cast(ulong)syscall].paramCount;
-}
-void syscall(Machine m, real sys,real[] params) {
-    syscalls[cast(ulong)sys].syscall(m,params);
-}}
