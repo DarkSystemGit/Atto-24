@@ -16,7 +16,7 @@ int readFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 3);
     void[] file=new void[cast(ulong)params[2]];
     char[] path=new char[1];
-    int mempos=cast(ulong)params[1];
+    int mempos=cast(int)params[1];
     bool eol;
     for(int i=0;!eol;i++){
         if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
