@@ -31,7 +31,9 @@ int readFile(ref Machine machine,real[] p) {
         int pos=i+mempos;
         if(pos>machine.memory.length-1)machine.memory.length=pos+1;
         machine.memory[pos]=cast(real)file[i];
+         machine.memory_size=machine.memory.length;
     }
+   
     writeln("Read, mem: ",machine.memory);
     return 3;
 }

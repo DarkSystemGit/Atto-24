@@ -7,7 +7,7 @@ int function(ref Machine machine, real[] params)[26] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params) {
     int pcount = commands[cast(ulong)opcode](machine, params) + 1;
     machine.ip += pcount;
-    if(machine._debug)writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(params[0 .. pcount-1]),");");
+    if(machine._debug)writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(params[0 .. pcount-1]),");","Memory: ",machine.memory);
 
 }
 
@@ -191,7 +191,7 @@ real[] compile(string src,bool bytecode) {
         prgm[prgm.length - 1] = res;}
 
     }
-    if(bytecode)writeln("Bytes: ",prgm);
+    if(bytecode){writeln("Bytes: ",prgm);writeln("Length: ",prgm.length);}
     return prgm;
 }
 

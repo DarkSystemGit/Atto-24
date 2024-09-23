@@ -121,6 +121,7 @@ int jnz(ref Machine machine, real[] p) {
 
 int read(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
+    writeln("read: ",machine.memory);
     setRegister(machine, (cast(real)4294967296) - params[1],
             machine.memory[cast(ulong)params[0]]);
     return 2;
