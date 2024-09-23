@@ -14,7 +14,7 @@ int printASCII(ref Machine machine,real[] p) {
     }
 int readFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 3);
-    void[] file=new void[cast(ulong)params[2]];
+    byte[] file=new byte[cast(ulong)params[2]];
     char[] path=new char[1];
     int mempos=cast(int)params[1];
     bool eol;
@@ -26,13 +26,13 @@ int readFile(ref Machine machine,real[] p) {
         }else{eol=true;}
     }
     path.length--;
-    file=read(path);
+    file=cast(byte[])read(path);
     for(int i=0;i<file.length;i++){
         int pos=i+mempos;
         if(pos>machine.memory.length-1)machine.memory.length=pos+1;
         machine.memory[pos]=cast(real)file[i];
     }
-
+    writeln("Read, mem: ",machine.memory);
     return 3;
 }
 class sysManager{
