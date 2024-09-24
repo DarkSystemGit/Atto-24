@@ -34,11 +34,11 @@ int readFile(ref Machine machine,real[] p) {
          machine.memory_size=machine.memory.length;
     }
    
-    writeln("Read, mem: ",machine.memory);
+
     return 3;
 }
 class sysManager{
 int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&readFile];
-int syscall(Machine m, real sys,real[] params) {
+int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}
