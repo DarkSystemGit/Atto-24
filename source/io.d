@@ -1,4 +1,6 @@
 import std;
+import core.thread;
+import core.time;
 import data;
 import registers;
 int print(ref Machine machine, real[] p) {
@@ -12,6 +14,16 @@ int printASCII(ref Machine machine,real[] p) {
         write(params[0].to!char);
         return 1;
     }
+int printStr(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    int mempos=cast(int)params[0];
+    bool eol;
+    for(int i=0;!eol;i++){
+        if(cast(int)machine.memory[mempos+i]!=0){
+            write(cast(char)cast(int)machine.memory[mempos+i]);
+        }else{eol=true;}}
+    return 1;
+}
 int readFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 3);
     byte[] file=new byte[cast(ulong)params[2]];
@@ -22,7 +34,6 @@ int readFile(ref Machine machine,real[] p) {
         if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
         path.length++;
         path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
-        //writeln(cast(int)path[i]);
         }else{eol=true;}
     }
     path.length--;
@@ -33,12 +44,36 @@ int readFile(ref Machine machine,real[] p) {
         machine.memory[pos]=cast(real)file[i];
          machine.memory_size=machine.memory.length;
     }
-   
-
     return 3;
 }
+int writeFile(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 3);
+    int filePath=cast(int)params[0];
+    int fileLength=cast(int)params[2];
+    int filePos=cast(int)params[1];
+    bool eol;
+    char[] path=new char[1];
+    byte[] file=new byte[fileLength];
+    for(int i=0;i<fileLength;i++){
+        file[i]=cast(byte)machine.memory[i+filePos];
+    }
+    for(int i=0;!eol;i++){
+        if(cast(int)machine.memory[cast(ulong)filePath+i]!=0){
+            path.length++;
+            path[i]=cast(char)cast(int)machine.memory[filePath+i];
+        }else{eol=true;}
+    }
+    path.length--;
+    std.file.write(path,file);
+    return 3;
+}
+int sleep(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    Thread.sleep(dur!("msecs")(cast(int)params[0]));
+    return 1;
+}
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&readFile];
+int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&sleep];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}

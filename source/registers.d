@@ -45,6 +45,9 @@ real getRegister(ref Machine machine, real id) {
     case (6):
         return cast(real)machine.registers.d;
         break;
+    case (5):
+    return cast(real)machine.registers.e;
+    break;
     case (4):
         return cast(real)machine.registers.f;
         break;
@@ -81,6 +84,9 @@ void setRegister(ref Machine machine, real id, real value) {
         break;
     case (6):
         machine.registers.d = cast(int)value;
+        break;
+        case (5):
+        machine.registers.e = cast(int)value;
         break;
     case (4):
         machine.registers.f = cast(float)value;
