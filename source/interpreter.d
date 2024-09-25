@@ -57,14 +57,22 @@ real[] compile(string src,bool bytecode) {
     string[] source = parseString(src,bytecode);
     bool eof = false;
     real[] prgm = new real[0];
+    bool str;
     for (int i = 0; i < source.length; i++) {
         bool e=true;
         string line = source[i];
         real res = 0;
+        
         if (line.indexOf("0x") != -1) {
             res = cast(real)chompPrefix(line, "0x").to!uint(16);
         } else if (line.isNumeric()) {
             res = cast(real)line.to!uint(10);
+        }else if(str){
+            if(line!="\""){
+            res=cast(real)((cast(char[])line)[0]);}else{
+                str=false;
+                res=0;
+            }
         } else {
             switch (line) {
             case "%A":
@@ -178,6 +186,10 @@ real[] compile(string src,bool bytecode) {
             case "decf":
                 res = 25;
                 break;
+            case "\"":
+                str=true;
+                e=false;
+                break;
             case "":
                 e=false;
                 break;
@@ -196,8 +208,18 @@ real[] compile(string src,bool bytecode) {
 }
 
 string[] parseString(string source,bool bytecode) {
-    if(bytecode)writeln("Tokens: ",source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" "));
-    return source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" ");
+    string[] rawSrc=source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" ");
+    string[] tokens = new string[0];
+    foreach (string line;rawSrc) {
+        if(line.indexOf("\"")==0){
+            string[] temp = line.split("");
+            tokens ~=temp;
+        }else{
+            tokens~= [line];
+        }
+    }
+    if(bytecode)writeln("Tokens: ",tokens);
+    return tokens;
 }
 
 void runPrgm(string name,string source,bool d,bool bytecode) {

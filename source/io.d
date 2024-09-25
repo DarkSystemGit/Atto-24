@@ -67,13 +67,26 @@ int writeFile(ref Machine machine,real[] p) {
     std.file.write(path,file);
     return 3;
 }
+int getFileLength(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    char[] path=new char[1];
+    bool eol;
+    for(int i=0;!eol;i++){
+        if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
+            path.length++;
+            path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
+        }else{eol=true;}}
+        path.length--;
+    setRegister(machine,(cast(real)4294967296) -params[1],getSize(path));
+    return 2;
+}
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
 }
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&sleep];
+int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&getFileLength,&sleep];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}
