@@ -1,8 +1,20 @@
 import std;
+import std.datetime : SysTime;
+import std.file;
 import core.thread;
 import core.time;
 import data;
 import registers;
+char[] readString(ref Machine machine, int mempos) {
+    char[] str = new char[0];
+    bool eol;
+    for(int i=0;!eol;i++){
+        if(cast(int)machine.memory[mempos+i]!=0){
+            str.length++;
+            str[i]=cast(char)cast(int)machine.memory[mempos+i];
+        }else{eol=true;}}
+    return str;
+}
 int print(ref Machine machine, real[] p) {
        real[] params=handleRegisters(machine, p, 1);
         write(params[0]);
@@ -80,13 +92,26 @@ int getFileLength(ref Machine machine,real[] p) {
     setRegister(machine,(cast(real)4294967296) -params[1],getSize(path));
     return 2;
 }
+int getFileLastModified(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    char[] path=readString(machine,cast(int)params[0]);
+    long time=path.timeLastModified(SysTime.min).toUnixTime();
+    setRegister(machine,(cast(real)4294967296) -params[1],time);
+    return 2;
+}
+int removeFile(ref Machine machine,real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    char[] path=readString(machine,cast(int)params[0]);
+    remove(path);
+    return 1;
+}
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
 }
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&getFileLength,&sleep];
+int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&getFileLength,&getFileLastModified,&removeFile,&sleep];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}
