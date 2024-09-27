@@ -15,6 +15,7 @@ char[] readString(ref Machine machine, int mempos) {
         }else{eol=true;}}
     return str;
 }
+//print
 int print(ref Machine machine, real[] p) {
        real[] params=handleRegisters(machine, p, 1);
         write(params[0]);
@@ -36,6 +37,7 @@ int printStr(ref Machine machine,real[] p) {
         }else{eol=true;}}
     return 1;
 }
+//files
 int readFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 3);
     byte[] file=new byte[cast(ulong)params[2]];
@@ -109,6 +111,29 @@ int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
+}
+int mkdir(ref Machine machine,real[] p){
+     real[] params=handleRegisters(machine, p, 2);
+     char[] path=readString(machine,cast(int)params[0]);
+     if(!params[1]){
+     mkdir(path);}else{mkdirRecurse(path);}
+     return 2;
+}
+int rmdir(ref Machine machine,real[] p){
+     real[] params=handleRegisters(machine, p, 1);
+     char[] path=readString(machine,cast(int)params[0]);
+     rmdirRecurse(path);
+     return 1;
+}
+int getcwd(ref Machine machine,real[] params){
+      setRegister(machine,(cast(real)4294967296) -params[0],getcwd());
+     return 1;
+}
+int cd(ref Machine machine,real[] p){
+     real[] params=handleRegisters(machine, p, 1);
+     char[] path=readString(machine,cast(int)params[0]);
+     chdir(path);
+     return 1;
 }
 class sysManager{
 int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&getFileLength,&getFileLastModified,&removeFile,&sleep];
