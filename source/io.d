@@ -32,7 +32,8 @@ int printStr(ref Machine machine,real[] p) {
     int mempos=cast(int)params[0];
     bool eol;
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[mempos+i]!=0){
+
+        if((machine.memory.length>mempos+i)&&(cast(int)machine.memory[mempos+i]!=0)){
             write(cast(char)cast(int)machine.memory[mempos+i]);
         }else{eol=true;}}
     return 1;
@@ -116,7 +117,7 @@ int mkdir(ref Machine machine,real[] p){
      real[] params=handleRegisters(machine, p, 2);
      char[] path=readString(machine,cast(int)params[0]);
      if(!params[1]){
-     mkdir(path);}else{mkdirRecurse(path);}
+     std.file.mkdir(path);}else{mkdirRecurse(path);}
      return 2;
 }
 int rmdir(ref Machine machine,real[] p){
@@ -125,8 +126,15 @@ int rmdir(ref Machine machine,real[] p){
      rmdirRecurse(path);
      return 1;
 }
-int getcwd(ref Machine machine,real[] params){
-      setRegister(machine,(cast(real)4294967296) -params[0],getcwd());
+int getcwd(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    int mempos=cast(int)params[0];
+    char[] path=cast(char[])std.file.getcwd();
+    for(int i=0;i<path.length;i++){
+        int pos=i+mempos;
+        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
+        machine.memory[pos]=cast(real)path[i];
+    }
      return 1;
 }
 int cd(ref Machine machine,real[] p){
@@ -136,7 +144,12 @@ int cd(ref Machine machine,real[] p){
      return 1;
 }
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[&print,&printASCII,&printStr,&readFile,&writeFile,&getFileLength,&getFileLastModified,&removeFile,&sleep];
+int function(ref Machine machine, real[] params)[] syscalls=[
+    &print,&printASCII,&printStr,&readFile,
+    &writeFile,&getFileLength,&getFileLastModified,&removeFile,
+    &sleep,&mkdir,&rmdir,&getcwd,
+    &cd
+    ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}
