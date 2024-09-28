@@ -150,12 +150,28 @@ int cd(ref Machine machine,real[] p){
      chdir(path);
      return 1;
 }
+int isDir(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    char[] path=readString(machine,cast(int)params[0]);
+    bool ex;
+    if(exists(path)){ex=std.file.isDir(path);}
+    setRegister(machine,(cast(real)4294967296) -params[1],ex);
+    return 2;
+}
+int isFile(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    char[] path=readString(machine,cast(int)params[0]);
+    bool ex;
+    if(exists(path)){ex=std.file.isFile(path);}
+    setRegister(machine,(cast(real)4294967296) -params[1],ex);
+    return 2;
+}
 class sysManager{
 int function(ref Machine machine, real[] params)[] syscalls=[
     &print,&printASCII,&printStr,&readFile,
     &writeFile,&getFileLength,&getFileLastModified,&removeFile,
     &sleep,&mkdir,&rmdir,&getcwd,
-    &cd
+    &cd,&isDir,&isFile
     ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

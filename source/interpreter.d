@@ -186,6 +186,12 @@ real[] compile(string src,bool bytecode) {
             case "decf":
                 res = 25;
                 break;
+            case "true":
+            res=1;
+            break;
+            case "false":
+            res=0;
+            break;    
             case "\"":
                 str=true;
                 e=false;
