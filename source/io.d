@@ -15,6 +15,17 @@ char[] readString(ref Machine machine, int mempos) {
         }else{eol=true;}}
     return str;
 }
+void writeString(ref Machine machine, int mempos, char[] str) {
+    str.length++;
+    str[str.length-1]=cast(char)0;
+     for(int i=0;i<str.length;i++){
+        int pos=i+mempos;
+        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
+        machine.memory[pos]=cast(real)str[i];
+        machine.memory_size=machine.memory.length;
+    }
+    machine.registers.a=cast(int)str.length;
+}
 //print
 int print(ref Machine machine, real[] p) {
        real[] params=handleRegisters(machine, p, 1);
@@ -130,11 +141,7 @@ int getcwd(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     int mempos=cast(int)params[0];
     char[] path=cast(char[])std.file.getcwd();
-    for(int i=0;i<path.length;i++){
-        int pos=i+mempos;
-        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
-        machine.memory[pos]=cast(real)path[i];
-    }
+    writeString(machine,mempos,path);
      return 1;
 }
 int cd(ref Machine machine,real[] p){
