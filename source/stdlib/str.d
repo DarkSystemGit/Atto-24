@@ -13,7 +13,6 @@ int strlen(ref Machine machine,real[] p){
 int strcat(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 3);
     char[] str=readString(machine,cast(int)params[0]);
-    str.length--;
     str~=readString(machine,cast(int)params[1]);
     int mempos=cast(int)params[2];
     writeString(machine,mempos,str);
