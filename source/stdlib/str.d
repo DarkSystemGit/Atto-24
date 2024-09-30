@@ -37,7 +37,7 @@ int strcpy(ref Machine machine,real[] p){
 //syscall 20; strcmp(string* str,string* cmp)
 int strcmp(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 2);
-    real register=(cast(real)4294967296)-params[1];
+    real register=(cast(real)4294967296)-params[2];
     setRegister(machine,register,readString(machine,cast(int)params[0])==readString(machine,cast(int)params[1]));
-    return 2;
+    return 3;
 }
