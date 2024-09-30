@@ -1,7 +1,7 @@
 import std;
 import registers;
 import data;
-import io;
+import stdlib;
 int add(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 2);
     machine.registers.a = cast(int)(params[0] + params[1]);

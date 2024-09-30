@@ -1,6 +1,6 @@
 import std;
 import data;
-import print;
+import log;
 void handleFlags(ref Machine machine, real res) {
     
     if (res == 0)
