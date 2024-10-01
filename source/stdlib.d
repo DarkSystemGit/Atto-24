@@ -23,7 +23,7 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &sleep,&mkdir,&rmdir,&getcwd,
     &cd,&isDir,&isFile,&rename,
     &ls,&strlen,&strcat,&strcpy,
-    &strcmp
+    &strcmp,&substr,&splitstr
     ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

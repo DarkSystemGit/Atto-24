@@ -40,3 +40,25 @@ int strcmp(ref Machine machine,real[] p){
     setRegister(machine,register,readString(machine,cast(int)params[0])==readString(machine,cast(int)params[1]));
     return 3;
 }
+//syscall 21; substr(string* str,string* substr,int start,int end,register ret)
+int substr(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 4);
+    real register=(cast(real)4294967296)-params[4];
+    char[] str=readString(machine,cast(int)params[0])[cast(int)params[2]..cast(int)params[3]];
+    char[] substr=readString(machine,cast(int)params[1]);
+    setRegister(machine,register,indexOf(str,substr));
+    return 5;
+}
+//syscall 22; splitstr(string* str,string* delimiter,char[]* mempos)
+int splitstr(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 3);
+    char[] str=readString(machine,cast(int)params[0]);
+    char[] delimiter=readString(machine,cast(int)params[1]);
+    string[] split=str.split(delimiter);
+    int mempos=cast(int)params[2];
+    foreach(string s;split){
+        writeString(machine,mempos,s);
+        mempos+=s.length;
+    }
+    return 3;
+}
