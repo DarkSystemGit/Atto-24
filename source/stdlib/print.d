@@ -24,6 +24,6 @@ int printStr(ref Machine machine,real[] p) {
 
         if((machine.memory.length>mempos+i)&&(cast(int)machine.memory[mempos+i]!=0)){
             write(cast(char)cast(int)machine.memory[mempos+i]);
-        }else{eol=true;}}
+        }else{eol=true;}}    
     return 1;
 }
