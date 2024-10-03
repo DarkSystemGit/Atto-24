@@ -54,9 +54,9 @@ int splitstr(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 3);
     char[] str=readString(machine,cast(int)params[0]);
     char[] delimiter=readString(machine,cast(int)params[1]);
-    string[] split=str.split(delimiter);
+    char[][] split=str.split(delimiter);
     int mempos=cast(int)params[2];
-    foreach(string s;split){
+    foreach(char[] s;split){
         writeString(machine,mempos,s);
         mempos+=s.length;
     }

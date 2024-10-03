@@ -47,7 +47,7 @@ Machine execBytecode(real[] prgm,bool d) {
     machine.memory = new real[cast(ulong)machine.memory_size];
     machine.memory = prgm;
 
-    while (machine.ip < machine.memory_size) {
+    while (machine.ip < machine.memory.length) {
         real[] params = machine.memory[machine.ip + 1 .. $];
         handleOpcode(machine, machine.memory[machine.ip], params);
     }
