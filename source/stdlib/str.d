@@ -58,7 +58,7 @@ int splitstr(ref Machine machine,real[] p){
     int mempos=cast(int)params[2];
     foreach(char[] s;split){
         writeString(machine,mempos,s);
-        mempos+=s.length;
+        mempos+=s.length+1;
     }
     return 3;
 }
