@@ -27,8 +27,3 @@ int printStr(ref Machine machine,real[] p) {
         }else{eol=true;}}    
     return 1;
 }
-//syscall 23;memdump()
-int memdump(ref Machine machine,real[] p) {
-    machine.print();
-    return 0;
-}

@@ -10,6 +10,7 @@ import utils;
 import print;
 import files;
 import str;
+import mem;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
@@ -23,7 +24,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &sleep,&mkdir,&rmdir,&getcwd,
     &cd,&isDir,&isFile,&rename,
     &ls,&strlen,&strcat,&strcpy,
-    &strcmp,&substr,&splitstr,&memdump
+    &strcmp,&substr,&splitstr,&memdump,
+    &malloc,&free
     ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

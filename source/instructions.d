@@ -128,7 +128,10 @@ int read(ref Machine machine, real[] p) {
 
 int write(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 2);
-
+    if(params[1]>machine.memory.length) {
+        machine.memory.length = cast(ulong)params[1];
+        machine.memory_size=cast(int)machine.memory.length;
+    }
     machine.memory[cast(ulong)params[1]] = params[0];
     return 2;
 

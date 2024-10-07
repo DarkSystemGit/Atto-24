@@ -18,7 +18,7 @@ int strcat(ref Machine machine,real[] p){
     writeString(machine,mempos,str);
     return 3;
 }
-//syscall 19; strcpy(string* str,string* cmp,int len)
+//syscall 19; strcpy(string* str,char[] mempos,int len)
 int strcpy(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 3);
     char[] str=readString(machine,cast(int)params[0]);

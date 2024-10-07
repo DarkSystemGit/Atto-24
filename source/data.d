@@ -1,4 +1,5 @@
 import std;
+import mem;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -10,6 +11,7 @@ struct Machine {
     int p;
     bool _debug;
     real bp;
+    machineHeap heap;
     real[] stack = new real[0];
     void print() {
         Machine machine = this;

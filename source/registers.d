@@ -2,7 +2,8 @@ import std;
 import data;
 import log;
 void handleFlags(ref Machine machine, real res) {
-    
+    machine.flags.zero = false;
+    machine.flags.negative = false;
     if (res == 0)
         machine.flags.zero = true;
     if (res < 0)
