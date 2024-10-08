@@ -29,6 +29,8 @@ struct Machine {
         writeln("   J: ", machine.registers.j);
         writeln("   Stack:");
         writeln("       ", machine.stack);
+        writeln("   Heap:");
+       foreach(heap; machine.heap.objs) {heap.print();writeln("");}
         writeln("   Memory:");
         writeln("       ", machine.memory);
         writeln("   Instruction Pointer: ", machine.ip);

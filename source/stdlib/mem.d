@@ -8,6 +8,13 @@ struct heapObj{
     int end;
     bool free=true;
     int id;
+    void print(){
+        writefln("  size: %d",size);
+        writefln("  start: %d",start);
+        writefln("  end: %d",end);
+        writefln("  free: %d",free);
+        writefln("  id: %d",id);
+    }
 }
 class machineHeap{
     int[][] sizes=new int[0][2];
@@ -42,7 +49,7 @@ class machineHeap{
                 }
         }
     }
-    if(f){
+    if(!f){
         addObj(size);
         return getObj(size);
     }else{
@@ -64,7 +71,6 @@ class machineHeap{
     }
     void free(int id){
         objs[id].free=true;
-        writeln(objs[id].start,memory.length);
         for(int i=objs[id].start;i<objs[id].end;i++){memory[i]=0;}
     }
 }
