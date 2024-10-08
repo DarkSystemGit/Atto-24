@@ -93,3 +93,55 @@ int free(ref Machine machine,real[] p){
     machine.heap.free(cast(int)params[0]);
     return 1;
 }    
+//syscall 26; memcpy(int src,int dest,int size)
+int memcopy(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 3);
+    int src=cast(int)params[0];
+    int dest=cast(int)params[1];
+    int size=cast(int)params[2];
+    for(int i=0;i<size;i++){
+        machine.memory[dest+i]=machine.memory[src+i];
+    }
+    return 3;
+}
+//syscall 27; memfill(int addr,int len,int value)
+int memfill(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 3);
+    int addr=cast(int)params[0];
+    int len=cast(int)params[1]; 
+    int value=cast(int)params[2];
+    for(int i=0;i<len;i++){
+        machine.memory[addr+i]=value;
+    }
+    return 3;
+}
+//syscall 28; cast(value,type)
+int cast(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 2);
+    real value=params[0];
+    int type=cast(int)params[1];
+    switch(type){
+        case 0:
+        machine.registers.a=cast(int)cast(bool)value;
+        break;
+        case 1:
+        machine.registers.a=cast(int)cast(char)value;
+        break;
+        case 2:
+        machine.registers.a=cast(int)cast(short)value;  
+        break;
+        case 3:
+        machine.registers.a=cast(int)value;
+        break;
+        case 4:
+        machine.registers.a=cast(int)cast(long)value;
+        break;
+        case 5:
+        machine.registers.f=cast(float)value;
+        break;
+        case 6:
+        machine.registers.d=cast(double)value;
+        break;
+        case 7:
+        machine.registers.a=cast
+    }
