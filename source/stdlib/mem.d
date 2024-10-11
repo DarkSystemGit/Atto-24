@@ -116,7 +116,7 @@ int memfill(ref Machine machine,real[] p){
     return 3;
 }
 //syscall 28; cast(value,type)
-int cast(ref Machine machine,real[] p){
+int castval(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 2);
     real value=params[0];
     int type=cast(int)params[1];
@@ -140,11 +140,9 @@ int cast(ref Machine machine,real[] p){
         machine.registers.f=cast(float)value;
         break;
         case 6:
-        machine.registers.d=cast(double)value;
-        break;
-        case 7:
         machine.registers.a=cast(int)cast(byte)value;
         break;
+        default: break;
     }
     return 2;
 }
