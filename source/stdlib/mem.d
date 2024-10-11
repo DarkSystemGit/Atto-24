@@ -143,5 +143,8 @@ int cast(ref Machine machine,real[] p){
         machine.registers.d=cast(double)value;
         break;
         case 7:
-        machine.registers.a=cast
+        machine.registers.a=cast(int)cast(byte)value;
+        break;
     }
+    return 2;
+}
