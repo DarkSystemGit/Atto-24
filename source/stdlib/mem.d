@@ -67,7 +67,7 @@ class machineHeap{
         obj.id=cast(int)objs.length;
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
-        memory.length=obj.end+1;
+        memory.length=ptr+obj.end+1;
     }
     void free(int id){
         objs[id].free=true;
@@ -100,6 +100,7 @@ int memcopy(ref Machine machine,real[] p){
     int dest=cast(int)params[1];
     int size=cast(int)params[2];
     for(int i=0;i<size;i++){
+        if(dest+i>machine.memory.length-1)machine.memory.length=dest+i+1;
         machine.memory[dest+i]=machine.memory[src+i];
     }
     return 3;
