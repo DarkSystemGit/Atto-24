@@ -1,0 +1,10 @@
+sys 24,20,%B,%C
+sub %B,1
+mov %A,%D
+sys 27,%D,20,0x41
+add %B,19
+write %A,0
+sys 2,%D
+sys 25,%C
+add %B,19
+jmp %A

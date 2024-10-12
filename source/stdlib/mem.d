@@ -112,6 +112,7 @@ int memfill(ref Machine machine,real[] p){
     int len=cast(int)params[1]; 
     int value=cast(int)params[2];
     for(int i=0;i<len;i++){
+        if(addr+i>machine.memory.length-1)machine.memory.length=addr+i+1;
         machine.memory[addr+i]=value;
     }
     return 3;
