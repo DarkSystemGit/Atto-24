@@ -53,7 +53,8 @@ struct date{
         return [dur.getMonths(),dur.getDays(),dur.getYears()];
     }
     int getUnixTime(){
-        
+        if(dur.getYears()<1970)return 0;
+        return dur.milliseconds-62125920000000
     }
     void setTime(int hours,int minutes,int seconds){
         dur.setHours(hours);
@@ -65,7 +66,8 @@ struct date{
         dur.setDays(days);
         dur.setYears(years);
     }    
-    this(){
-
+    this(int[] date,int[] time){
+        dur.setDate(date[0],date[1],date[2]);
+        dur.setTime(time[0],time[1],time[2]);
     }
 }
