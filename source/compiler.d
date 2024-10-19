@@ -134,6 +134,10 @@ real[] compile(string src,bool bytecode) {
             case "decf":
                 res = 25;
                 break;
+            case "setErrAddr":
+            res = 26;
+            break;
+            }
             case "true":
             res=1;
             break;

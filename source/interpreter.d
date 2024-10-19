@@ -5,7 +5,7 @@ import log;
 import registers;
 import compiler;
 import mem;
-int function(ref Machine machine, real[] params)[26] commands;
+int function(ref Machine machine, real[] params)[27] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params) {
     if(isNaN(opcode))opcode = 0;
     int pcount = commands[cast(ulong)opcode](machine, params) + 1;
@@ -43,6 +43,7 @@ Machine execBytecode(real[] prgm,bool d) {
     commands[23] = &ret;
     commands[24] = &inc;
     commands[25] = &dec;
+    commands[26] = &setErrAddr;
     Machine machine = Machine();
     machine._debug = d;
     machine.memory_size = (cast(real)prgm.length+50);
@@ -52,8 +53,16 @@ Machine execBytecode(real[] prgm,bool d) {
     machine.memory.length=machine.heap.ptr;
     machine.memory_size=machine.memory.length;
     while (machine.ip < machine.memory.length) {
+        if(!machine.err){
+            try{
         real[] params = machine.memory[machine.ip + 1 .. $];
-        handleOpcode(machine, machine.memory[machine.ip], params);
+        handleOpcode(machine, machine.memory[machine.ip], params);}catch(Exception e){
+            machine.err=true;
+        }
+        }else{
+            machine.ip=machine.errAddr;
+            machine.err=false;
+        }
     }
     return machine;
 }

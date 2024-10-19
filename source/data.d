@@ -10,6 +10,8 @@ struct Machine {
     int sp;
     int p;
     bool _debug;
+    bool err;
+    int errAddr;
     real bp;
     machineHeap heap;
     real[] stack = new real[0];

@@ -215,3 +215,8 @@ int sys(ref Machine m, real[] p) {
     return sys.syscall(m,params[0],params[1..$]);  
    
 }
+int setErrAddr(ref Machine m, real[] p) {
+    real[] params=handleRegisters(m, p, 1);
+    m.errAddr=cast(int)params[0];
+    return 1;
+}
