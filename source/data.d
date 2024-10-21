@@ -1,5 +1,6 @@
 import std;
 import mem;
+import time;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -13,6 +14,7 @@ struct Machine {
     bool err;
     int errAddr;
     real bp;
+    Objects objs;
     machineHeap heap;
     real[] stack = new real[0];
     void print() {
@@ -62,4 +64,12 @@ struct Flags {
     bool negative;
     bool overflow;
     bool carry;
+}
+struct Objects{
+    Time[] times;
+    int addTime(Time t){
+        t.id=times.length;
+        times ~= t;
+        return t.id;
+    }
 }

@@ -1,22 +1,9 @@
 import std.datetime;
-
-struct Date
-{
-    int tzToUTC(string tz){
-        
-    };
-    string UTCToTZ(int utc);
-    int[] getDate(int utc){
-
-    };
-    int getUTCOffset(TimeZone tz){
-
-    };
-}
-
 struct Time
 {
     SysTime time;
+    TimeZone offset=LocalTime;
+    int id;
     void addTime(Time t){
         this.setStdTime(getStdTime() + t.getStdTime());
     }
@@ -24,6 +11,13 @@ struct Time
     {
         this.setStdTime(getStdTime() - t.getStdTime());
     }
+    void setUTCoffset(int offset){
+        this.offset=new SimpleTimeZone(dur!"hours"(offset));
+        time.timezone=offset;
+    }
+    auto getUTCOffset(){
+        return offset.units;
+    }    
     void setTime(int hr, int min, int sec)
     {
         time.hour = hr;
@@ -38,14 +32,14 @@ struct Time
 
     int[] setCurrTime()
     {
-        time=Clock.currTime();
+        time=Clock.currTime(offset);
     }
 
     long getUnixTime(){
         return time.toUnixTime();
     }
     void setUnixTime(int unixTime){
-        time.fromUnixTime(unixTime,UTC());
+        time.fromUnixTime(unixTime,offset);
     }
     long getStdTime()
     {
@@ -54,7 +48,10 @@ struct Time
     void setStdTime(long stdTime){
         time.stdTime=stdTime;
     }
-    void setTimeZone(string tz){
-        time.timezone = tz;
+    int[] getDate(){
+        return [time.month, time.day, time.year];
     }
+}
+Time getTime(int id,ref Machine m){
+    return m.objs.times[id];
 }
