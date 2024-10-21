@@ -2,21 +2,27 @@ import std.datetime;
 
 struct Date
 {
-    string getTimeZone();
-
-    int tzToUTC(string tz);
+    int tzToUTC(string tz){
+        
+    };
     string UTCToTZ(int utc);
-    int[] getDate(int utc);
-    int getUTCOffset();
+    int[] getDate(int utc){
+
+    };
+    int getUTCOffset(TimeZone tz){
+
+    };
 }
 
 struct Time
 {
     SysTime time;
-    void addTime(Time t);
+    void addTime(Time t){
+        this.setStdTime(getStdTime() + t.getStdTime());
+    }
     void subTime(Time t)
     {
-
+        this.setStdTime(getStdTime() - t.getStdTime());
     }
     void setTime(int hr, int min, int sec)
     {
@@ -30,12 +36,12 @@ struct Time
         return [time.hour, time.minute, time.second];
     }
 
-    int[] setCurrTime(int utc)
+    int[] setCurrTime()
     {
-
+        time=Clock.currTime();
     }
 
-    int getUnixTime(){
+    long getUnixTime(){
         return time.toUnixTime();
     }
     void setUnixTime(int unixTime){
@@ -46,7 +52,7 @@ struct Time
         return time.stdTime();
     }
     void setStdTime(long stdTime){
-        time.fromStdTime(stdTime);
+        time.stdTime=stdTime;
     }
     void setTimeZone(string tz){
         time.timezone = tz;

@@ -5,18 +5,22 @@ import log;
 import registers;
 import compiler;
 import mem;
+
 int function(ref Machine machine, real[] params)[27] commands;
-void handleOpcode(ref Machine machine, real opcode, real[] params) {
-    if(isNaN(opcode))opcode = 0;
-    int pcount = commands[cast(ulong)opcode](machine, params) + 1;
+void handleOpcode(ref Machine machine, real opcode, real[] params)
+{
+    if (isNaN(opcode))
+        opcode = 0;
+    int pcount = commands[cast(ulong) opcode](machine, params) + 1;
     machine.ip += pcount;
-    if(machine._debug)writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(params[0 .. pcount-1]),");");
+    if (machine._debug)
+        writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(
+                params[0 .. pcount - 1]), ");");
 
 }
 
-
-
-Machine execBytecode(real[] prgm,bool d) {
+Machine execBytecode(real[] prgm, bool d)
+{
     commands[0] = &nop;
     commands[1] = &add;
     commands[2] = &sub;
@@ -46,35 +50,45 @@ Machine execBytecode(real[] prgm,bool d) {
     commands[26] = &setErrAddr;
     Machine machine = Machine();
     machine._debug = d;
-    machine.memory_size = (cast(real)prgm.length+50);
+    machine.memory_size = (cast(real) prgm.length + 50);
     machine.memory = prgm;
-    machine.memory.length=cast(ulong)machine.memory_size;
-    machine.heap=new machineHeap(cast(int)machine.memory_size,machine.memory[cast(ulong)machine.memory_size .. $]);
-    machine.memory.length=machine.heap.ptr;
-    machine.memory_size=machine.memory.length;
-    while (machine.ip < machine.memory.length) {
-        if(!machine.err){
-            try{
-        real[] params = machine.memory[machine.ip + 1 .. $];
-        handleOpcode(machine, machine.memory[machine.ip], params);}catch(Exception e){
-            machine.err=true;
+    machine.memory.length = cast(ulong) machine.memory_size;
+    machine.heap = new machineHeap(cast(int) machine.memory_size, machine.memory[cast(ulong) machine.memory_size .. $]);
+    machine.memory.length = machine.heap.ptr;
+    machine.memory_size = machine.memory.length;
+    while (machine.ip < machine.memory.length)
+    {
+        if (!machine.err)
+        {
+            try
+            {
+                real[] params = machine.memory[machine.ip + 1 .. $];
+                handleOpcode(machine, machine.memory[machine.ip], params);
+            }
+            catch (Exception e)
+            {   
+                machine.err = true;
+                machine.stack.length++;
+                machine.stack[machine.stack.length - 1] =machine.ip;
+            }
         }
-        }else{
-            machine.ip=machine.errAddr;
-            machine.err=false;
+        else
+        {   
+            machine.ip = machine.errAddr;
+            machine.err = false;
         }
     }
     return machine;
 }
 
-
-
-void runPrgm(string source,bool d,bool bytecode) {
+void runPrgm(string source, bool d, bool bytecode)
+{
     writeln("UASM Interpreter v1.0.0");
     writeln("Compiling...");
-    real[] prgm = compile(source,bytecode);
-    if(!bytecode){
-    writeln("Executing...");
-    Machine machine = execBytecode(prgm,d);
+    real[] prgm = compile(source, bytecode);
+    if (!bytecode)
+    {
+        writeln("Executing...");
+        Machine machine = execBytecode(prgm, d);
     }
 }

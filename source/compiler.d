@@ -137,7 +137,7 @@ real[] compile(string src,bool bytecode) {
             case "setErrAddr":
             res = 26;
             break;
-            }
+            
             case "true":
             res=1;
             break;
