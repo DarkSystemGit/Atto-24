@@ -1,5 +1,4 @@
 import std;
-import std.datetime : SysTime;
 import core.thread;
 import core.time;
 import data;
@@ -11,6 +10,7 @@ import print;
 import files;
 import str;
 import mem;
+import time;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);

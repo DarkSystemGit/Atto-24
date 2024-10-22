@@ -5,8 +5,13 @@ import utils;
 struct Time
 {
     SysTime time;
-    TimeZone offset=LocalTime;
+    TimeZone offset;
     int id;
+    this(int id){
+        this.id=id;
+        LocalTime l=LocalTime();
+        offset=new TimeZone(l.name,l.stdName,l.dstName);
+            }
     void addTime(Time t){
         this.setStdTime(getStdTime() + t.getStdTime());
     }
@@ -64,7 +69,7 @@ Time getTime(int id,ref Machine m){
     return m.objs.times[id];
 }
 int newTime(ref Machine m,real[] p){
-    setRegister(m,(cast(real)4294967296)-p[0],m.objs.addTime(new Time));
+    setRegister(m,(cast(real)4294967296)-p[0],m.objs.addTime());
     return 1;
 }
 int setTime(ref Machine m,real[] p){
