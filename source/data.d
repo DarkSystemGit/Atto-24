@@ -66,7 +66,7 @@ struct Flags {
     bool carry;
 }
 struct Objects{
-    Time[] times;
+    Time[] times=new Time[0];
     int addTime(Time t){
         t.id=times.length;
         times ~= t;
