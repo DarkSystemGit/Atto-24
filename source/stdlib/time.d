@@ -5,26 +5,26 @@ import utils;
 struct Time
 {
     SysTime time;
-    TimeZone offset;
+    TimeZone* offset;
     int id;
     this(int id){
         this.id=id;
-        LocalTime l=LocalTime();
-        offset=new TimeZone(l.name,l.stdName,l.dstName);
+        immutable LocalTime l=LocalTime();
+        offset=cast(TimeZone*)l;
             }
-    void addTime(Time t){
+    void addTime(Time* t){
         this.setStdTime(getStdTime() + t.getStdTime());
     }
-    void subTime(Time t)
+    void subTime(Time* t)
     {
         this.setStdTime(getStdTime() - t.getStdTime());
     }
     void setUTCoffset(int offset){
-        this.offset=new SimpleTimeZone(dur!"hours"(offset));
-        time.timezone=offset;
+        this.offset=cast(TimeZone*)new SimpleTimeZone(dur!"hours"(offset));
+        time.timezone=cast(immutable TimeZone)*this.offset;
     }
     auto getUTCOffset(){
-        return offset.units;
+        return (cast(SimpleTimeZone)*offset).utcOffset.total!"hours";
     }    
     void setTime(int hr, int min, int sec)
     {
@@ -38,16 +38,17 @@ struct Time
         return [time.hour, time.minute, time.second];
     }
 
-    int[] setCurrTime()
+    void setCurrTime()
     {
-        time=Clock.currTime(offset);
+        time=Clock.currTime();
+        time.timezone=cast(immutable TimeZone)*this.offset;
     }
 
     long getUnixTime(){
         return time.toUnixTime();
     }
     void setUnixTime(int unixTime){
-        time.fromUnixTime(unixTime,offset);
+        time.fromUnixTime(unixTime,cast(immutable TimeZone)*this.offset);
     }
     long getStdTime()
     {
@@ -60,12 +61,12 @@ struct Time
         return [time.month, time.day, time.year];
     }
     void setDate(int[] date){
-        time.month=date[0];
+        time.month=cast(Month)date[0];
         time.day=date[1];
         time.year=date[2];
     }
 }
-Time getTime(int id,ref Machine m){
+Time* getTime(int id,ref Machine m){
     return m.objs.times[id];
 }
 int newTime(ref Machine m,real[] p){
@@ -74,81 +75,77 @@ int newTime(ref Machine m,real[] p){
 }
 int setTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,4);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setTime(cast(int)params[1],cast(int)params[2],cast(int)params[3]);
     return 4;
 }
 int setTimeUnix(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setUnixTime(cast(int)params[1]);
     return 2;
 }
 int setTimeStd(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setStdTime(cast(int)params[1]);
     return 2;
 }
 int getStdTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     setRegister(m,t.getStdTime(),p[0]);
     return 1;
 } 
 int getUnixTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     setRegister(m,t.getUnixTime(),p[0]);
     return 1;
 }
-int getTime(ref Machine m,real[] p){
+int getDateTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);   
-    setRegister(m,t.getTime(),p[0]);
-    return 1;
-}
-int getDate(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);
-    setRegister(m,t.getDate(),p[0]);
+    Time* t=getTime(cast(int)params[0],m);
+    int[] dt=t.getDate();
+    dt~=t.getTime();
+    utils.write(m,p[0],dt);
     return 1;
 }    
 int setDate(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,4);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setDate([cast(int)params[1],cast(int)params[2],cast(int)params[3]]);
     return 4;
 }
 int setUTCOffset(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setUTCoffset(cast(int)params[1]);
     return 2;
 }
 int getUTCOffset(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     setRegister(m,t.getUTCOffset(),p[0]);
     return 1;
 }
 int addTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    Time t=getTime(cast(int)params[0],m);
-    Time t2=getTime(cast(int)params[1],m); 
+    Time* t=getTime(cast(int)params[0],m);
+    Time* t2=getTime(cast(int)params[1],m); 
     t.addTime(t2);
     return 2;
 }
 int subTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    Time t=getTime(cast(int)params[0],m);
-    Time t2=getTime(cast(int)params[1],m);
+    Time* t=getTime(cast(int)params[0],m);
+    Time* t2=getTime(cast(int)params[1],m);
     t.subTime(t2);
     return 2;
 }
 int setTimeToCurrTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
-    Time t=getTime(cast(int)params[0],m);
+    Time* t=getTime(cast(int)params[0],m);
     t.setCurrTime();
     return 1;
 }    

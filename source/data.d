@@ -12,6 +12,7 @@ struct Machine {
     int p;
     bool _debug;
     bool err;
+    bool running;
     int errAddr;
     real bp;
     Objects objs;

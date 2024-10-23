@@ -34,3 +34,11 @@ void writeString(ref Machine machine, int mempos, char[] str) {
     }
     machine.registers.a=cast(int)str.length;
 }
+void write(ref Machine m,real mempos,int[] data){   
+    for(int i=0;i<data.length;i++){
+        int pos=i+cast(int)mempos;
+        if(pos>m.memory.length-1)m.memory.length=pos+1;
+        m.memory[pos]=cast(real)data[i];
+        m.memory_size=m.memory.length;
+    }    
+}

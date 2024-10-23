@@ -220,3 +220,7 @@ int setErrAddr(ref Machine m, real[] p) {
     m.errAddr=cast(int)params[0];
     return 1;
 }
+int exit(ref Machine m, real[] p) {
+    m.running=false;
+    return 0;
+}

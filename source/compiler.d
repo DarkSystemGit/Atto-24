@@ -6,6 +6,7 @@ real[] compile(string src,bool bytecode) {
     bool eof = false;
     real[] prgm = new real[0];
     bool str;
+
     for (int i = 0; i < source.length; i++) {
         bool e=true;
         string line = source[i];
@@ -137,7 +138,9 @@ real[] compile(string src,bool bytecode) {
             case "setErrAddr":
             res = 26;
             break;
-            
+            case "exit":
+            res=27;
+            break;
             case "true":
             res=1;
             break;
@@ -148,6 +151,7 @@ real[] compile(string src,bool bytecode) {
                 str=true;
                 e=false;
                 break;
+        
             case "":
                 e=false;
                 break;
@@ -166,14 +170,14 @@ real[] compile(string src,bool bytecode) {
 }
 
 string[] parseString(string source,bool bytecode) {
-    string[] rawSrc=source.strip().replace(',', " ").replace(";", "").replace("\n"," ").split(" ");
+    string[] rawSrc=source.strip().replace(',', ";").replace("\n",";").split(";");
     string[] tokens = new string[0];
     foreach (string line;rawSrc) {
-        if(line.indexOf("\"")==0){
-            string[] temp = line.split("");
-            tokens ~=temp;
+        if(line.indexOf("\"")==0||line.indexOf("/*")==0){
+            if(line.indexOf("\"")==0){
+            tokens ~=line.split("");}
         }else{
-            tokens~= [line];
+            tokens~= line.split(" ");
         }
     }
     if(bytecode)writeln("Tokens: ",tokens);
