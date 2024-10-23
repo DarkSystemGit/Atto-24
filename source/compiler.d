@@ -3,10 +3,10 @@ import data;
 import log;
 real[] compile(string src,bool bytecode) {
     string[] source = parseString(src,bytecode);
-    bool eof = false;
     real[] prgm = new real[0];
     bool str;
-
+    int[string] labels;
+    string[int] unResolvedRefs;
     for (int i = 0; i < source.length; i++) {
         bool e=true;
         string line = source[i];
@@ -157,13 +157,29 @@ real[] compile(string src,bool bytecode) {
                 break;
 
             default:
+                if(line.indexOf(":")==line.length-1){
+                    string name=line.split(":")[0];
+                    int addr=cast(int)prgm.length;
+                    labels[name]=addr;
+                    e=false;
+                }else if(labels.keys.canFind(line)){
+                    res=labels[line];
+                }else{
+                    unResolvedRefs[cast(int)prgm.length]=line;
+                    e=false;
+                }
+                
                 break;
             }
         }
+        if(e){       prgm.length++;
+        prgm[prgm.length-1] = res;}
 
-        if(e){prgm.length++;
-        prgm[prgm.length - 1] = res;}
-
+    }
+    foreach(int i, string link;unResolvedRefs){
+        if(labels.keys.canFind(link)){ 
+            prgm[i]=labels[link];
+        }
     }
     if(bytecode){writeln("Bytes: ",prgm);writeln("Length: ",prgm.length);}
     return prgm;
