@@ -161,7 +161,7 @@ real[] compile(string src,bool bytecode) {
                     string name=line.split(":")[0];
                     int addr=cast(int)prgm.length;
                     labels[name]=addr;
-                    e=false;
+                    
                 }else if(labels.keys.canFind(line)){
                     res=labels[line];
                 }else{

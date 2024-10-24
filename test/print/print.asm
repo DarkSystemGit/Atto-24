@@ -6,7 +6,8 @@ String:
 Init:
 mov String,%C
 Loop:
-sys 1,%C
+read %C,%A
+sys 1,%A
 inc %C
 sub %C,13 
 cmp %A,String
