@@ -9,6 +9,6 @@ Loop:
 read %C,%A
 sys 1,%A
 inc %C
-sub %C,13 
+sub %C,14
 cmp %A,String
 jnz Loop;
