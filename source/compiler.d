@@ -6,6 +6,7 @@ real[] compile(string src,bool bytecode) {
     real[] prgm = new real[0];
     bool str;
     int[string] labels;
+    int[string] defines;
     string[int] unResolvedRefs;
     for (int i = 0; i < source.length; i++) {
         bool e=true;
@@ -146,7 +147,11 @@ real[] compile(string src,bool bytecode) {
             break;
             case "false":
             res=0;
-            break;    
+            break;
+            case "#define":
+            defines[source[i+1]]=i+2;
+            e=false;
+            break;
             case "\"":
                 str=true;
                 e=false;
@@ -162,8 +167,9 @@ real[] compile(string src,bool bytecode) {
                     int addr=cast(int)prgm.length;
                     labels[name]=addr;
                     
-                }else if(labels.keys.canFind(line)){
-                    res=labels[line];
+                }else if(labels.keys.canFind(line)||defines.keys.canFind(line)){
+                    if(labels.keys.canFind(line))res=labels[line];
+                    else if(source[i-1]!="#define") res=prgm[defines[line]];
                 }else{
                     unResolvedRefs[cast(int)prgm.length]=line;
                     e=false;
