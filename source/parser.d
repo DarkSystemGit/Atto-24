@@ -100,6 +100,14 @@ class Tokenizer
                     n ~= advance();
                 }
                 addToken(TokenType.NUMBER, n);
+            }else if (std.ascii.isAlpha(cast(char)c)){
+                string n;
+                n~=c;
+                while (std.ascii.isAlpha(cast(char)peek()))
+                {
+                    n ~= advance();
+                }
+                addToken(TokenType.IDENTIFIER,n)    ;
             }
             return;
         }
@@ -224,6 +232,6 @@ class Tokenizer
     }
 void main(){
     Tokenizer tk=new Tokenizer();
-    tk.scanTokens("1234567890; \"Hello Wiorld\"");
+    tk.scanTokens("1234567890; \"Hello Wiorld\"; test");
     writeln(tk.tokens);
 }
