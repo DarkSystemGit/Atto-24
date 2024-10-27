@@ -87,6 +87,9 @@ class Tokenizer
                 s ~= advance();
             }
             return;
+        case ';':
+             addToken(TokenType.SEMICOLON, ";");
+             return;
         default:
             if (std.ascii.isDigit(cast(char)c))
             {
@@ -221,5 +224,6 @@ class Tokenizer
     }
 void main(){
     Tokenizer tk=new Tokenizer();
-    
+    tk.scanTokens("1234567890; \"Hello Wiorld\"");
+    writeln(tk.tokens);
 }
