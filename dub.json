@@ -4,6 +4,7 @@
 	],
 	"copyright": "Copyright © 2024, darksystem",
 	"dependencies": {
+		"colorize": "~>1.0.5",
 		"dfmt": "~>0.15.2"
 	},
 	"description": "Universal Assembly Language Interpreter",
