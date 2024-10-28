@@ -156,7 +156,6 @@ class Tokenizer
                 consume('*', "Expected star");
                 cComment();
             }
-          
             return;
         case ';':
             addToken(TokenType.SEMICOLON, ";");
@@ -170,6 +169,7 @@ class Tokenizer
         case '#':
             string n;
             n~=c;
+
             while (isAlphanum(cast(char)peek())&&(!isAtEnd()))
             {
                 n ~= advance();
@@ -219,17 +219,19 @@ class Tokenizer
         return std.ascii.isAlpha(c) || std.ascii.isDigit(c)||c=='_';
     }
         void comment(){
-            while (peek() != '\n')
+            while ((peek() != '\n')&&(!isAtEnd()))
             {
                 advance();
             }
+            return;
         }
         void cComment(){
-            while (peek() != '*'){
+            while ((peek() != '*')&&(!isAtEnd())){
                 advance();
             }
             consume('*', "Expected star");
             consume('/', "Expected slash");
+            return;
         }    
         void scanTokens(string src)
         {
