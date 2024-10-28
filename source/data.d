@@ -74,3 +74,130 @@ struct Objects{
         return t.id;
     }
 }
+enum TokenType
+{
+    REG_A,
+    REG_B,
+    REG_C,
+    REG_D,
+    REG_E,
+    REG_F,
+    REG_G,
+    REG_H,
+    REG_I,
+    REG_J,
+    NOP,
+    ADD,
+    ADDF,
+    SUB,
+    SUBF,
+    MUL,
+    AND,
+    NOT,
+    OR,
+    XOR,
+    CP,
+    JMP,
+    JNZ,
+    JZ,
+    CMP,
+    SYS,
+    READ,
+    WRITE,
+    PUSH,
+    POP,
+    MOV,
+    CALL,
+    RET,
+    INC,
+    DEC,
+    INCF,
+    DECF,
+    SETERRADDR,
+    EXIT,
+    TRUE,
+    FALSE,
+    STRING,
+    DEFINE,
+    NUMBER,
+    NULL,
+    IDENTIFIER,
+    EOF,
+    SEMICOLON,
+    COLON,
+    COMMA,
+    EQUALS,
+    LPAREN,
+    RPAREN,
+    NONE
+}
+enum StmtType{
+    COMMAND,
+    LABEL_DEF,
+    DEFINE,
+    REFRENCE
+}
+struct Statement{
+    StmtType type;
+    Token[] tokens;
+    StmtData props;
+}
+Statement makeCmdStmt(Token cmd,Token[] oprands){
+    Statement s;
+    s.type=StmtType.COMMAND;
+    s.tokens=cmd~oprands;
+    s.props.cd.cmd=cmd;
+    s.props.cd.oprands=oprands;
+    return s;
+}
+Statement makeLabelDefStmt(string name,int addr,Token[] tokens){
+    Statement s;
+    s.type=StmtType.LABEL_DEF;
+    s.tokens=tokens;
+    s.props.ld.name=name;
+    s.props.ld.addr=addr;
+    return s;
+}
+Statement makeDefineStmt(string name,Token value,Token[] tokens){
+    Statement s;
+    s.type=StmtType.DEFINE;
+    s.tokens=tokens;
+    s.props.dd.name=name;
+    s.props.dd.value=value;
+    return s;
+}
+Statement makeRef(string name,Token[] tokens){
+    Statement s;
+    s.type=StmtType.REFRENCE;
+    s.tokens=tokens;
+    s.props.rd.name=name;
+    return s;
+}
+union StmtData{
+    CommandData cd;
+    LabelData ld;
+    DefineData dd;
+    RefData rd;
+}
+struct CommandData{
+    Token cmd;
+    Token[] oprands;
+}
+struct LabelData{
+    string name;
+    int addr;
+}
+struct DefineData{
+    string name;
+    Token value;
+}
+struct RefData{
+    string name;
+}
+struct Token
+{
+    TokenType type;
+    string literal;
+    int line;
+    int col;
+}

@@ -1,67 +1,6 @@
 import std;
 import colorize;
-enum TokenType
-{
-    REG_A,
-    REG_B,
-    REG_C,
-    REG_D,
-    REG_E,
-    REG_F,
-    REG_G,
-    REG_H,
-    REG_I,
-    REG_J,
-    NOP,
-    ADD,
-    ADDF,
-    SUB,
-    SUBF,
-    MUL,
-    AND,
-    NOT,
-    OR,
-    XOR,
-    CP,
-    JMP,
-    JNZ,
-    JZ,
-    CMP,
-    SYS,
-    READ,
-    WRITE,
-    PUSH,
-    POP,
-    MOV,
-    CALL,
-    RET,
-    INC,
-    DEC,
-    INCF,
-    DECF,
-    SETERRADDR,
-    EXIT,
-    TRUE,
-    FALSE,
-    STRING,
-    DEFINE,
-    NUMBER,
-    NULL,
-    IDENTIFIER,
-    EOF,
-    SEMICOLON,
-    COLON,
-    COMMA,
-    EQUALS,
-    LPAREN,
-    RPAREN
-}
-
-struct Token
-{
-    TokenType type;
-    string literal;
-}
+import data;
 
 class Tokenizer
 {
@@ -250,6 +189,8 @@ class Tokenizer
 
         void addToken(Token t)
         {
+            t.line=line;
+            t.col=col;
             tokens.length++;
             tokens[tokens.length - 1] = t;
         }
@@ -330,18 +271,34 @@ class Tokenizer
         Token[] tokens;
         int pos;
         bool err;
-        this(Token[] tokens){
-            this.tokens = tokens;
+        Statement[] stmts;
+        void parse(Token[] tokens){
+             this.tokens = tokens;
+             while(!isAtEnd()){
+                parseTokens();
+             }
         }
-
+        void addStmt(Statement stmt){
+            stmts.length++;
+            stmts[stmts.length-1]=stmt;
+        }
+        void parseTokens(){
+            bool cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR],tokens[pos])
+            bool define=check();
+        }
         Token consume(TokenType t, string err)
         {
             if (check(t))
                 return advance();
             error(err);
-            return Token();
+            return Token(); 
         }
-
+        TokenType matchTTs(TokenType[] tlist,Token t){
+            for(int i=0; i<tlist.length;i++){
+                if(t.type=tlist[i])return tlist[i];
+            }
+            return TokenType.NONE;
+        }
         bool check(TokenType t)
         {
             if (isAtEnd())
@@ -371,9 +328,10 @@ class Tokenizer
             return tokens[pos - 1];
         }
 
-        void error(string msg)
-        {
-            err = true;
-            writeln("Error at Token "~ pos.to!string~", "~tokens[pos].literal~" :"~msg);
-        };
+        void error(string msg){
+            err=true;
+            cwrite(("Error at ("~peek().line.to!string()~","~peek().col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwriteln(msg.color(mode.bold));
+
+        }
     }
