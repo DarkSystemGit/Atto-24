@@ -135,7 +135,7 @@ enum StmtType{
     COMMAND,
     LABEL_DEF,
     DEFINE,
-    REFRENCE
+    NUM
 }
 struct Statement{
     StmtType type;
@@ -166,18 +166,18 @@ Statement makeDefineStmt(string name,Token value,Token[] tokens){
     s.props.dd.value=value;
     return s;
 }
-Statement makeRef(string name,Token[] tokens){
+Statement makeNum(real value,Token[] tokens){
     Statement s;
-    s.type=StmtType.REFRENCE;
+    s.type=StmtType.NUM;
     s.tokens=tokens;
-    s.props.rd.name=name;
+    s.props.nd.value=value;
     return s;
 }
 union StmtData{
     CommandData cd;
     LabelData ld;
     DefineData dd;
-    RefData rd;
+    NumData nd;
 }
 struct CommandData{
     Token cmd;
@@ -191,8 +191,8 @@ struct DefineData{
     string name;
     Token value;
 }
-struct RefData{
-    string name;
+struct NumData{
+    real value;
 }
 struct Token
 {

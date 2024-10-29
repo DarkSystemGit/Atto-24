@@ -146,6 +146,7 @@ class Tokenizer
                 }
 
                 if(!(n in keywords))addToken(TokenType.IDENTIFIER,n);
+                else if(n[n.length-1]==':')addToken(TokenType.LABEL,n);
                 else addToken(keywords[n],n);
             }else{
                 error("Unexpected character, "~c);
@@ -155,7 +156,7 @@ class Tokenizer
         }
     }
     bool isAlphanum(char c){
-        return std.ascii.isAlpha(c) || std.ascii.isDigit(c)||c=='_';
+        return std.ascii.isAlpha(c) || std.ascii.isDigit(c)||c=='_'||c==':';
     }
         void comment(){
             while ((peek() != '\n')&&(!isAtEnd()))
@@ -283,8 +284,20 @@ class Tokenizer
             stmts[stmts.length-1]=stmt;
         }
         void parseTokens(){
-            bool cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR],tokens[pos])
-            bool define=check();
+            TokenType cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR],tokens[pos]);
+            bool define=check(TokenType.DEFINE);
+            bool label=check(TokenType.LABEL);
+            bool num=check(TokenType.NUMBER);
+            if(cmd!=TokenType.NONE){
+                command(cmd);
+            }else if(label){
+                addStmt(makeLabelDefStmt(peek().literal.replace(":",""),pos,advance()));
+            }else if(define){
+                advance();
+                Token[] tlist=consumeUntil(TokenType.SEMICOLON);
+                if(matchTTs([TokenType.IDENTIFIER],tlist[1])){
+                addStmt(makeDefineStmt(consume(TokenType.IDENTIFIER,"Expected identifier").literal,));
+            }
         }
         Token consume(TokenType t, string err)
         {
@@ -292,6 +305,16 @@ class Tokenizer
                 return advance();
             error(err);
             return Token(); 
+        }
+        Token[] consumeUntil(TokenType t){
+            Token[] tlist;
+            while((peek().type!=t)&&(!isAtEnd())){
+                tlist ~= advance();
+            }
+            return tlist;
+        }
+        void match(TokenType t,string err){
+            if (!check(t))error(err);
         }
         TokenType matchTTs(TokenType[] tlist,Token t){
             for(int i=0; i<tlist.length;i++){
