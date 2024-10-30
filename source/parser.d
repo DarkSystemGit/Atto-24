@@ -11,6 +11,7 @@ class Tokenizer
     int col;
     bool err;
     Token[] tokens;
+    string file;
     TokenType[string] keywords;
     TokenType[string] registers;
     this(){
@@ -173,15 +174,19 @@ class Tokenizer
             consume('/', "Expected slash");
             return;
         }    
-        void scanTokens(string src)
+        void scanTokens(string src,string file)
         {
             this.source = src;
             this.pos = 0;
             this.col=0;
             this.line=1;
+            this.file=file;
+             
             while (!isAtEnd())
             { 
+                
                 start = pos;
+               
                 scanToken(this.source);
             }
             TokenType eof = TokenType.EOF;
@@ -261,6 +266,7 @@ class Tokenizer
         }
         void error(string msg){
             err=true;
+            cwrite((file~": ").color(mode.bold));
             cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
 
@@ -273,7 +279,9 @@ class Tokenizer
         int pos;
         bool err;
         Statement[] stmts;
-        void parse(Token[] tokens){
+        string file;
+        void parse(Token[] tokens,string file){
+            this.file=file;
              this.tokens = tokens;
              while(!isAtEnd()){
                 parseTokens();
@@ -288,9 +296,17 @@ class Tokenizer
             bool define=check(TokenType.DEFINE);
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
-            writeln(cmd,define,label,num,peek());
             if(cmd!=TokenType.NONE){
-                addStmt(makeCmdStmt(cmd,consumeUntil(TokenType.SEMICOLON)));
+                advance();
+                Token[] tlist=consumeUntil(TokenType.SEMICOLON);
+                Token[] args;
+                foreach(Token t;tlist){
+                    if(t.type!=TokenType.COMMA){
+                        args.length++;
+                        args[args.length-1]=t;
+                    }
+                }
+                addStmt(makeCmdStmt(cmd,args));
                   consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(label){
                 addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos));
@@ -298,6 +314,7 @@ class Tokenizer
                 advance();
                 string name=consume(TokenType.IDENTIFIER,"Expected identifier").literal;
                 addStmt(makeDefineStmt(name,advance()));
+               
                 consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(num){
                 Token[] tvalues=consumeUntil(TokenType.SEMICOLON);
@@ -309,21 +326,24 @@ class Tokenizer
                         error("Expected number, got "~tvalues[i].literal);
                     }
                 }
-                addStmt(makeNumStmt(values));}
-                  consume(TokenType.SEMICOLON,"Expected semicolon");
+                addStmt(makeNumStmt(values));
+                consume(TokenType.SEMICOLON,"Expected semicolon");
+            }
         }
         Token consume(TokenType t, string err)
         {
-            if (check(t))
+            if (check(t)){
                 return advance();
+            }else{
             error(err);
+            }
             return Token(); 
         }
         Token[] consumeUntil(TokenType t){
             Token[] tlist;
             while((peek().type!=t)&&(!isAtEnd())){
                 tlist ~= advance();
-            }
+            }       
             return tlist;
         }
         void match(TokenType t,string err){
@@ -366,8 +386,20 @@ class Tokenizer
 
         void error(string msg){
             err=true;
+            cwrite((file~": ").color(mode.bold));
             cwrite(("Error at ("~peek().line.to!string()~","~peek().col.to!string()~"): ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
 
+        }
+    }
+class Compiler{
+        Statement[] stmts;
+        void comp(string source,string file){
+            Tokenizer t=new Tokenizer();
+            Parser p=new Parser();
+            t.scanTokens(source,file);
+            writeln(t.tokens);
+            p.parse(t.tokens,file);
+            stmts=p.stmts;
         }
     }

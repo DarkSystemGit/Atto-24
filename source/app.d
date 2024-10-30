@@ -1,6 +1,7 @@
 import std;
 import interpreter;
 import parser;
+import data;
 void main(string[] argv) { 
     string[string] args;
     args["--src"]="";
@@ -10,11 +11,23 @@ void main(string[] argv) {
         args[argv[i]]=argv[i+1];
     }
     if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
-     Tokenizer tk=new Tokenizer();
-    tk.scanTokens(readText(args["--src"]));
-    writeln(tk.tokens);
-    Parser p=new Parser();
-    p.parse(tk.tokens);
-    writeln(p.stmts);
+    Compiler c=new Compiler();
+    string src=readText(args["--src"]);
+
+    c.comp(src,args["--src"]);
+    foreach(stmt; c.stmts){
+        write(stmt.type," ");
+        if(stmt.type==StmtType.COMMAND){
+            writeln(stmt.props.cd);
+
+        }else if(stmt.type==StmtType.LABEL_DEF){
+            writeln(stmt.props.ld);
+        }else if(stmt.type==StmtType.NUM){
+            writeln(stmt.props.nd);
+        }else if(stmt.type==StmtType.DEFINE){
+            writeln(stmt.props.dd);
+        }
+
+    }
     //runPrgm(readText(args["--src"]),args["--debug"].to!bool,args["--compiler-debug"].to!bool);
 }
