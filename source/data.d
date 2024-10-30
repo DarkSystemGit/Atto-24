@@ -129,6 +129,7 @@ enum TokenType
     EQUALS,
     LPAREN,
     RPAREN,
+    LABEL,
     NONE
 }
 enum StmtType{
@@ -150,26 +151,26 @@ Statement makeCmdStmt(Token cmd,Token[] oprands){
     s.props.cd.oprands=oprands;
     return s;
 }
-Statement makeLabelDefStmt(string name,int addr,Token[] tokens){
+Statement makeLabelDefStmt(string name,int addr){
     Statement s;
     s.type=StmtType.LABEL_DEF;
-    s.tokens=tokens;
+    s.tokens=[];
     s.props.ld.name=name;
     s.props.ld.addr=addr;
     return s;
 }
-Statement makeDefineStmt(string name,Token value,Token[] tokens){
+Statement makeDefineStmt(string name,Token value){
     Statement s;
     s.type=StmtType.DEFINE;
-    s.tokens=tokens;
+    s.tokens=[];
     s.props.dd.name=name;
     s.props.dd.value=value;
     return s;
 }
-Statement makeNum(real value,Token[] tokens){
+Statement makeNumStmt(real[] value){
     Statement s;
     s.type=StmtType.NUM;
-    s.tokens=tokens;
+    s.tokens=[];
     s.props.nd.value=value;
     return s;
 }
@@ -192,7 +193,7 @@ struct DefineData{
     Token value;
 }
 struct NumData{
-    real value;
+    real[] value;
 }
 struct Token
 {

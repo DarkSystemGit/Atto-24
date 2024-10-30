@@ -291,13 +291,26 @@ class Tokenizer
             if(cmd!=TokenType.NONE){
                 command(cmd);
             }else if(label){
-                addStmt(makeLabelDefStmt(peek().literal.replace(":",""),pos,advance()));
+                addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos));
             }else if(define){
                 advance();
-                Token[] tlist=consumeUntil(TokenType.SEMICOLON);
-                if(matchTTs([TokenType.IDENTIFIER],tlist[1])){
-                addStmt(makeDefineStmt(consume(TokenType.IDENTIFIER,"Expected identifier").literal,));
-            }
+                string name=consume(TokenType.IDENTIFIER,"Expected identifier").literal;
+                consume(TokenType.EQUALS,"Expected = symbol");
+                addStmt(makeDefineStmt(name,advance()));
+            }else if(num){
+                Token[] tvalues=consumeUntil(TokenType.SEMICOLON);
+                real[] values;
+                for(int i=0;i<tvalues.length;i++){
+                    try{
+                    values ~= cast(real)tvalues[i].literal.to!real();
+                    }catch(Exception e){
+                        error("Expected number, got "~tvalues[i].literal);
+                    }
+                }
+                addStmt(makeNumStmt(values));}
+        }
+        void command(TokenType cmd){
+
         }
         Token consume(TokenType t, string err)
         {
@@ -318,7 +331,7 @@ class Tokenizer
         }
         TokenType matchTTs(TokenType[] tlist,Token t){
             for(int i=0; i<tlist.length;i++){
-                if(t.type=tlist[i])return tlist[i];
+                if(t.type==tlist[i])return tlist[i];
             }
             return TokenType.NONE;
         }

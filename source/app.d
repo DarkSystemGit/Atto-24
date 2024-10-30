@@ -13,6 +13,8 @@ void main(string[] argv) {
      Tokenizer tk=new Tokenizer();
     tk.scanTokens(readText(args["--src"]));
     writeln(tk.tokens);
-    Parser p=new Parser(tk.tokens);
+    Parser p=new Parser();
+    p.parse(tk.tokens);
+    writeln(p.stmts);
     //runPrgm(readText(args["--src"]),args["--debug"].to!bool,args["--compiler-debug"].to!bool);
 }
