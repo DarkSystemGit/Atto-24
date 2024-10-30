@@ -288,15 +288,17 @@ class Tokenizer
             bool define=check(TokenType.DEFINE);
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
+            writeln(cmd,define,label,num,peek());
             if(cmd!=TokenType.NONE){
-                command(cmd);
+                addStmt(makeCmdStmt(cmd,consumeUntil(TokenType.SEMICOLON)));
+                  consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(label){
                 addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos));
             }else if(define){
                 advance();
                 string name=consume(TokenType.IDENTIFIER,"Expected identifier").literal;
-                consume(TokenType.EQUALS,"Expected = symbol");
                 addStmt(makeDefineStmt(name,advance()));
+                consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(num){
                 Token[] tvalues=consumeUntil(TokenType.SEMICOLON);
                 real[] values;
@@ -308,9 +310,7 @@ class Tokenizer
                     }
                 }
                 addStmt(makeNumStmt(values));}
-        }
-        void command(TokenType cmd){
-
+                  consume(TokenType.SEMICOLON,"Expected semicolon");
         }
         Token consume(TokenType t, string err)
         {

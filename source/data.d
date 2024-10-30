@@ -143,10 +143,9 @@ struct Statement{
     Token[] tokens;
     StmtData props;
 }
-Statement makeCmdStmt(Token cmd,Token[] oprands){
+Statement makeCmdStmt(TokenType cmd,Token[] oprands){
     Statement s;
     s.type=StmtType.COMMAND;
-    s.tokens=cmd~oprands;
     s.props.cd.cmd=cmd;
     s.props.cd.oprands=oprands;
     return s;
@@ -154,7 +153,6 @@ Statement makeCmdStmt(Token cmd,Token[] oprands){
 Statement makeLabelDefStmt(string name,int addr){
     Statement s;
     s.type=StmtType.LABEL_DEF;
-    s.tokens=[];
     s.props.ld.name=name;
     s.props.ld.addr=addr;
     return s;
@@ -162,7 +160,6 @@ Statement makeLabelDefStmt(string name,int addr){
 Statement makeDefineStmt(string name,Token value){
     Statement s;
     s.type=StmtType.DEFINE;
-    s.tokens=[];
     s.props.dd.name=name;
     s.props.dd.value=value;
     return s;
@@ -170,7 +167,6 @@ Statement makeDefineStmt(string name,Token value){
 Statement makeNumStmt(real[] value){
     Statement s;
     s.type=StmtType.NUM;
-    s.tokens=[];
     s.props.nd.value=value;
     return s;
 }
@@ -181,7 +177,7 @@ union StmtData{
     NumData nd;
 }
 struct CommandData{
-    Token cmd;
+    TokenType cmd;
     Token[] oprands;
 }
 struct LabelData{
