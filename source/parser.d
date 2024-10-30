@@ -394,6 +394,11 @@ class Tokenizer
     }
 class Compiler{
         Statement[] stmts;
+        int pos;
+        real[] bytecode;
+        int bcpos;
+        Token[string] defines;
+        Token[string] labels;
         void comp(string source,string file){
             Tokenizer t=new Tokenizer();
             Parser p=new Parser();
@@ -401,5 +406,54 @@ class Compiler{
             writeln(t.tokens);
             p.parse(t.tokens,file);
             stmts=p.stmts;
+            parsePrePass();
+        }
+        void parsePrePass(){
+            foreach(Statement stmt;this.stmts){
+                if(stmt.type==StmtType.DEFINE){
+                    defines[stmt.props.dd.name]=stmt.props.dd.value;
+                }else if(stmt.type==StmtType.LABEL_DEF){
+                    label[stmt.props.ld.name]=stmt.props.ld.addr;
+                }
+            }
+        }
+        void resolveLabel(string name){
+            labels[name]=bcpos+1;
+        }
+        void addBytecode(real val){
+            bytecode.length++;
+            bcpos++;
+            bytecode[bytecode.length-1]=val;
+        }
+        void compileStmt(Statement stmt){
+
+        }
+        int getCmdValue(TokenType cmd){}
+        real[] compileToken(Token token){
+            switch(token.type){
+                case TokenType.NUMBER:
+                return [token.literal.to!real()];
+                case TokenType.IDENTIFIER:
+                if(defines.keys.contains(token.literal)){
+                    return compileToken(defines[token.literal]);
+                }else if(labels.keys.contains(token.literal)){
+                    return [labels[token.literal]];
+                }
+                case TokenType.STRING:
+                    real[] str;
+                    foreach(char c;token.literal){
+                        str~=cast(real)c;
+                    }
+                    return str;
+                default:
+                return [0];
+            }
+        }
+        Statement peek(){
+            return stmts[pos];
+        }
+        Statement advance(){
+            pos++;
+            return stmts[pos-1];
         }
     }
