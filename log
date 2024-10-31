@@ -1,0 +1,25 @@
+[Token(JMP, "jmp", 1, 3), Token(IDENTIFIER, "Init", 1, 8), Token(SEMICOLON, ";", 1, 9), Token(LABEL, "String:", 3, 34), Token(NUMBER, "72", 4, 37), Token(COMMA, ",", 4, 38), Token(NUMBER, "101", 4, 41), Token(COMMA, ",", 4, 42), Token(NUMBER, "108", 4, 45), Token(COMMA, ",", 4, 46), Token(NUMBER, "108", 4, 49), Token(COMMA, ",", 4, 50), Token(NUMBER, "111", 4, 53), Token(COMMA, ",", 4, 54), Token(NUMBER, "32", 4, 56), Token(COMMA, ",", 4, 57), Token(NUMBER, "87", 4, 59), Token(COMMA, ",", 4, 60), Token(NUMBER, "111", 4, 63), Token(COMMA, ",", 4, 64), Token(NUMBER, "114", 4, 67), Token(COMMA, ",", 4, 68), Token(NUMBER, "108", 4, 71), Token(COMMA, ",", 4, 72), Token(NUMBER, "100", 4, 75), Token(COMMA, ",", 4, 76), Token(NUMBER, "33", 4, 78), Token(COMMA, ",", 4, 79), Token(NUMBER, "10", 4, 81), Token(SEMICOLON, ";", 4, 82), Token(LABEL, "Init:", 6, 105), Token(MOV, "mov", 7, 109), Token(IDENTIFIER, "String", 7, 116), Token(COMMA, ",", 7, 117), Token(REG_C, "%C", 7, 119), Token(LABEL, "Loop:", 8, 125), Token(READ, "read", 9, 130), Token(REG_C, "%C", 9, 133), Token(COMMA, ",", 9, 134), Token(REG_A, "%A", 9, 136), Token(SYS, "sys", 10, 140), Token(IDENTIFIER, "1", 10, 142), Token(COMMA, ",", 10, 143), Token(REG_A, "%A", 10, 145), Token(INC, "inc", 11, 149), Token(REG_C, "%C", 11, 152), Token(SUB, "sub", 12, 156), Token(REG_C, "%C", 12, 159), Token(COMMA, ",", 12, 160), Token(NUMBER, "14", 12, 162), Token(CMP, "cmp", 13, 166), Token(REG_A, "%A", 13, 169), Token(COMMA, ",", 13, 170), Token(IDENTIFIER, "String", 13, 176), Token(JNZ, "jnz", 14, 180), Token(IDENTIFIER, "Loop", 14, 185), Token(SEMICOLON, ";", 14, 186), Token(EOF, "", 14, 186)]
+JMP false false false Token(JMP, "jmp", 1, 3)
+[Token(IDENTIFIER, "Init", 1, 8)]
+NONE false true false Token(LABEL, "String:", 3, 34)
+NONE false false true Token(NUMBER, "72", 4, 37)
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+[1m./test/print/print.asm: [0m[1m[31mError at (4,82): [0m[0m[1mExpected number, got ,[0m
+NONE false true false Token(LABEL, "Init:", 6, 105)
+MOV false false false Token(MOV, "mov", 7, 109)
+[Token(IDENTIFIER, "String", 7, 116), Token(COMMA, ",", 7, 117), Token(REG_C, "%C", 7, 119), Token(LABEL, "Loop:", 8, 125), Token(READ, "read", 9, 130), Token(REG_C, "%C", 9, 133), Token(COMMA, ",", 9, 134), Token(REG_A, "%A", 9, 136), Token(SYS, "sys", 10, 140), Token(IDENTIFIER, "1", 10, 142), Token(COMMA, ",", 10, 143), Token(REG_A, "%A", 10, 145), Token(INC, "inc", 11, 149), Token(REG_C, "%C", 11, 152), Token(SUB, "sub", 12, 156), Token(REG_C, "%C", 12, 159), Token(COMMA, ",", 12, 160), Token(NUMBER, "14", 12, 162), Token(CMP, "cmp", 13, 166), Token(REG_A, "%A", 13, 169), Token(COMMA, ",", 13, 170), Token(IDENTIFIER, "String", 13, 176), Token(JNZ, "jnz", 14, 180), Token(IDENTIFIER, "Loop", 14, 185)]
+COMMAND CommandData(JMP, [Token(IDENTIFIER, "Init", 1, 8)])
+LABEL_DEF LabelData("String", 4)
+NUM NumData([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33, 10])
+LABEL_DEF LabelData("Init", 31)
+COMMAND CommandData(MOV, [Token(IDENTIFIER, "String", 7, 116), Token(REG_C, "%C", 7, 119), Token(LABEL, "Loop:", 8, 125), Token(READ, "read", 9, 130), Token(REG_C, "%C", 9, 133), Token(REG_A, "%A", 9, 136), Token(SYS, "sys", 10, 140), Token(IDENTIFIER, "1", 10, 142), Token(REG_A, "%A", 10, 145), Token(INC, "inc", 11, 149), Token(REG_C, "%C", 11, 152), Token(SUB, "sub", 12, 156), Token(REG_C, "%C", 12, 159), Token(NUMBER, "14", 12, 162), Token(CMP, "cmp", 13, 166), Token(REG_A, "%A", 13, 169), Token(IDENTIFIER, "String", 13, 176), Token(JNZ, "jnz", 14, 180), Token(IDENTIFIER, "Loop", 14, 185)])

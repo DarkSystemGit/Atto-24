@@ -66,6 +66,7 @@ class Tokenizer
         {
         case '\n':
             line++;
+            col=0;
             return;
         case ' ':return;    
         case '\t':return;
@@ -145,9 +146,8 @@ class Tokenizer
                 {
                     n ~= advance();
                 }
-
-                if(!(n in keywords))addToken(TokenType.IDENTIFIER,n);
-                else if(n[n.length-1]==':')addToken(TokenType.LABEL,n);
+                if(n[n.length-1]==':'){addToken(TokenType.LABEL,n);}
+                else  if(!(n in keywords))addToken(TokenType.IDENTIFIER,n);
                 else addToken(keywords[n],n);
             }else{
                 error("Unexpected character, "~c);
@@ -292,23 +292,26 @@ class Tokenizer
             stmts[stmts.length-1]=stmt;
         }
         void parseTokens(){
-            TokenType cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR],tokens[pos]);
+            TokenType cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV],tokens[pos]);
             bool define=check(TokenType.DEFINE);
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
+
             if(cmd!=TokenType.NONE){
                 advance();
                 Token[] tlist=consumeUntil(TokenType.SEMICOLON);
                 Token[] args;
                 foreach(Token t;tlist){
+                    
                     if(t.type!=TokenType.COMMA){
                         args.length++;
                         args[args.length-1]=t;
                     }
                 }
                 addStmt(makeCmdStmt(cmd,args));
-                  consume(TokenType.SEMICOLON,"Expected semicolon");
+                consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(label){
+
                 addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos));
             }else if(define){
                 advance();
@@ -321,7 +324,8 @@ class Tokenizer
                 real[] values;
                 for(int i=0;i<tvalues.length;i++){
                     try{
-                    values ~= cast(real)tvalues[i].literal.to!real();
+                        if(tvalues[i].type!=TokenType.COMMA){
+                    values ~= cast(real)tvalues[i].literal.to!real();}
                     }catch(Exception e){
                         error("Expected number, got "~tvalues[i].literal);
                     }
@@ -398,7 +402,7 @@ class Compiler{
         real[] bytecode;
         int bcpos;
         Token[string] defines;
-        Token[string] labels;
+        int[string] labels;
         void comp(string source,string file){
             Tokenizer t=new Tokenizer();
             Parser p=new Parser();
@@ -413,7 +417,7 @@ class Compiler{
                 if(stmt.type==StmtType.DEFINE){
                     defines[stmt.props.dd.name]=stmt.props.dd.value;
                 }else if(stmt.type==StmtType.LABEL_DEF){
-                    label[stmt.props.ld.name]=stmt.props.ld.addr;
+                    labels[stmt.props.ld.name]=stmt.props.ld.addr;
                 }
             }
         }
@@ -428,17 +432,20 @@ class Compiler{
         void compileStmt(Statement stmt){
 
         }
-        int getCmdValue(TokenType cmd){}
+        int getCmdValue(TokenType cmd){
+            return 0;
+        }
         real[] compileToken(Token token){
             switch(token.type){
                 case TokenType.NUMBER:
                 return [token.literal.to!real()];
                 case TokenType.IDENTIFIER:
-                if(defines.keys.contains(token.literal)){
+                if(defines.keys().canFind(token.literal)){
                     return compileToken(defines[token.literal]);
-                }else if(labels.keys.contains(token.literal)){
+                }else if(labels.keys().canFind(token.literal)){
                     return [labels[token.literal]];
                 }
+                return [0];
                 case TokenType.STRING:
                     real[] str;
                     foreach(char c;token.literal){
@@ -446,7 +453,7 @@ class Compiler{
                     }
                     return str;
                 default:
-                return [0];
+                  return [0];
             }
         }
         Statement peek(){
