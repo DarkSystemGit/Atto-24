@@ -27,7 +27,9 @@ void main(string[] argv) {
             writeln(stmt.props.nd);
         }else if(stmt.type==StmtType.DEFINE){
             writeln(stmt.props.dd);
-        }
+        }else if(stmt.type==StmtType.STRING){
+            writeln(stmt.props.sd);
+            }
 
     }
     /*

@@ -137,7 +137,8 @@ enum StmtType{
     COMMAND,
     LABEL_DEF,
     DEFINE,
-    NUM
+    NUM,
+    STRING
 }
 struct Statement{
     StmtType type;
@@ -171,11 +172,18 @@ Statement makeNumStmt(real[] values){
     s.props.nd.values=values;
     return s;
 }
+Statement makeStringStmt(string value){
+    Statement s;
+    s.type=StmtType.STRING;
+    s.props.sd.value=value;
+    return s;
+}
 union StmtData{
     CommandData cd;
     LabelData ld;
     DefineData dd;
     NumData nd;
+    StringData sd;
 }
 struct CommandData{
     TokenType cmd;
@@ -199,3 +207,6 @@ struct Token
     int line;
     int col;
 }
+struct StringData{
+    string value;
+}    

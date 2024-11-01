@@ -299,7 +299,8 @@ class Tokenizer
             bool define=check(TokenType.DEFINE);
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
-
+            bool str=check(TokenType.STRING);
+            writeln(peek(),cmd,define,label,num,str);
             if(cmd!=TokenType.NONE){
                 advance();
                 Token[] tlist=consumeUntil(TokenType.SEMICOLON);
@@ -339,6 +340,11 @@ class Tokenizer
                 }
                 addStmt(makeNumStmt(values));
                 consume(TokenType.SEMICOLON,"Expected semicolon");
+            }else if(str){
+                addStmt(makeStringStmt(advance().literal));
+                consume(TokenType.SEMICOLON,"Expected semicolon");
+            }else{
+                error("Expected command, label, define, number or string, not "~peek().literal);
             }
         }
         Token consume(TokenType t, string err)
@@ -421,9 +427,11 @@ class Compiler{
             Parser p=new Parser();
             t.scanTokens(source,file);
             if(t.err)return;
+            writeln("Tokens: ",t.tokens);
             p.parse(t.tokens,file);
             if(p.err)return;
             stmts=p.stmts;
+            writeln("Parsed: ",stmts);
             parsePrePass();
             while(!isAtEnd()){
                 compileStmt(peek());
@@ -476,6 +484,9 @@ class Compiler{
                 case StmtType.LABEL_DEF:
                     resolveLabel(stmt.props.ld.name);
                     break;
+                case StmtType.STRING:
+                    addBytecode(handleString(stmt.props.sd.value));
+                    break;    
             }
             advance();
             
@@ -507,14 +518,17 @@ class Compiler{
                 }
                 return [0];
                 case TokenType.STRING:
-                    real[] str;
-                    foreach(char c;token.literal){
-                        str~=cast(real)c;
-                    }
-                    return str;
+                    return handleString(token.literal);
                 default:
                   return [0];
             }
+        }
+        handleString(raw){
+            real[] str;
+                    foreach(char c;raw){
+                        str~=cast(real)c;
+                    }
+                    return str;
         }
         Statement peek(){
             return stmts[pos];
