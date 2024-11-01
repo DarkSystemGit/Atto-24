@@ -31,6 +31,7 @@ class Tokenizer
         keywords["sub"]=TokenType.SUB;
         keywords["subf"]=TokenType.SUBF;
         keywords["mul"]=TokenType.MUL;
+        keywords["mulf"]=TokenType.MULF;
         keywords["and"]=TokenType.AND;
         keywords["not"]=TokenType.NOT;
         keywords["or"]=TokenType.OR;
@@ -129,7 +130,7 @@ class Tokenizer
             }
             return;    
         default:
-            if ((std.ascii.isDigit(cast(char)c)||(cast(char)c =='-'))&&std.ascii.isDigit(cast(char)peek()))
+            if (std.ascii.isDigit(cast(char)c)||((cast(char)c =='-'))&&std.ascii.isDigit(cast(char)peek()))
             {
                 string n;
                 n~=c;
@@ -280,6 +281,8 @@ class Tokenizer
         bool err;
         Statement[] stmts;
         string file;
+        TokenType[] cmdlist=[TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.MULF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV];
+
         void parse(Token[] tokens,string file){
             this.file=file;
              this.tokens = tokens;
@@ -292,7 +295,7 @@ class Tokenizer
             stmts[stmts.length-1]=stmt;
         }
         void parseTokens(){
-            TokenType cmd=matchTTs([TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV],tokens[pos]);
+            TokenType cmd=matchTTs(this.cmdlist,tokens[pos]);
             bool define=check(TokenType.DEFINE);
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
@@ -307,12 +310,16 @@ class Tokenizer
                         args.length++;
                         args[args.length-1]=t;
                     }
+                    if(matchTTs(this.cmdlist,t)!=TokenType.NONE){
+                        error("Expected semicolon",t.line,t.col);
+                    }
                 }
+                
                 addStmt(makeCmdStmt(cmd,args));
                 consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(label){
 
-                addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos));
+                addStmt(makeLabelDefStmt(advance().literal.replace(":",""),pos-1));
             }else if(define){
                 advance();
                 string name=consume(TokenType.IDENTIFIER,"Expected identifier").literal;
@@ -389,11 +396,14 @@ class Tokenizer
         }
 
         void error(string msg){
+            error(msg,peek().line,peek().col);
+
+        }
+        void error(string msg,int line,int col){
             err=true;
             cwrite((file~": ").color(mode.bold));
             cwrite(("Error at ("~peek().line.to!string()~","~peek().col.to!string()~"): ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
-
         }
     }
 class Compiler{
@@ -403,39 +413,88 @@ class Compiler{
         int bcpos;
         Token[string] defines;
         int[string] labels;
+        string[int] unresolvedRefs;
+        int[TokenType] commands=[TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27];
+        real[TokenType] regs=[TokenType.REG_A:4294967296 - 9,TokenType.REG_B:4294967296 - 8,TokenType.REG_C:4294967296 - 7,TokenType.REG_D:4294967296 - 6,TokenType.REG_E:4294967296 - 5,TokenType.REG_F:4294967296 - 4,TokenType.REG_G:4294967296 - 3,TokenType.REG_H:4294967296 - 2,TokenType.REG_I:4294967296 - 1,TokenType.REG_J:4294967296 - 0];
         void comp(string source,string file){
             Tokenizer t=new Tokenizer();
             Parser p=new Parser();
             t.scanTokens(source,file);
-            writeln(t.tokens);
+            if(t.err)return;
             p.parse(t.tokens,file);
+            if(p.err)return;
             stmts=p.stmts;
             parsePrePass();
+            while(!isAtEnd()){
+                compileStmt(peek());
+            }
+            parsePostPass();
         }
         void parsePrePass(){
             foreach(Statement stmt;this.stmts){
                 if(stmt.type==StmtType.DEFINE){
                     defines[stmt.props.dd.name]=stmt.props.dd.value;
                 }else if(stmt.type==StmtType.LABEL_DEF){
-                    labels[stmt.props.ld.name]=stmt.props.ld.addr;
+                    labels[stmt.props.ld.name]=-1;
+                    
+                }
+            }
+        }
+        void parsePostPass(){
+            foreach(int pos,string name;unresolvedRefs){
+                if(labels[name]!=0){
+                    bytecode[pos]=labels[name];
                 }
             }
         }
         void resolveLabel(string name){
-            labels[name]=bcpos+1;
+            labels[name]=bcpos;
         }
         void addBytecode(real val){
             bytecode.length++;
             bcpos++;
             bytecode[bytecode.length-1]=val;
         }
+        void addBytecode(real[] val){
+            foreach(real value;val){addBytecode(value);}
+        }
         void compileStmt(Statement stmt){
-
+            switch(stmt.type){
+                case StmtType.COMMAND:
+                    addBytecode(getCmdValue(stmt.props.cd.cmd));
+                    foreach(Token tk;stmt.props.cd.oprands){
+                        addBytecode(compileToken(tk));
+                    }
+                    break;
+                case StmtType.NUM:  
+                foreach(real val;stmt.props.nd.values){
+                    addBytecode(val);
+                }
+                break;
+                default:
+                break;
+                case StmtType.LABEL_DEF:
+                    resolveLabel(stmt.props.ld.name);
+                    break;
+            }
+            advance();
+            
         }
         int getCmdValue(TokenType cmd){
-            return 0;
+            if(commands.keys().canFind(cmd)){
+                return commands[cmd];
+            }
+            return -1;
+        }
+        real getRegValue(TokenType reg){
+            if(regs.keys().canFind(reg)){
+                return regs[reg];
+            }
+            return -1;
         }
         real[] compileToken(Token token){
+            if(getCmdValue(token.type)!=-1){return [getCmdValue(token.type)];}
+            if(getRegValue(token.type)!=-1){return [getRegValue(token.type)];}
             switch(token.type){
                 case TokenType.NUMBER:
                 return [token.literal.to!real()];
@@ -443,6 +502,7 @@ class Compiler{
                 if(defines.keys().canFind(token.literal)){
                     return compileToken(defines[token.literal]);
                 }else if(labels.keys().canFind(token.literal)){
+                    if(labels[token.literal]==-1)unresolvedRefs[bcpos+1]=token.literal;
                     return [labels[token.literal]];
                 }
                 return [0];
@@ -462,5 +522,8 @@ class Compiler{
         Statement advance(){
             pos++;
             return stmts[pos-1];
+        }
+        bool isAtEnd(){
+            return pos>=stmts.length;
         }
     }

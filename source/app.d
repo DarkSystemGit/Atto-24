@@ -2,6 +2,7 @@ import std;
 import interpreter;
 import parser;
 import data;
+import compiler;
 void main(string[] argv) { 
     string[string] args;
     args["--src"]="";
@@ -13,7 +14,7 @@ void main(string[] argv) {
     if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
     Compiler c=new Compiler();
     string src=readText(args["--src"]);
-
+    writeln("New Compiler");
     c.comp(src,args["--src"]);
     foreach(stmt; c.stmts){
         write(stmt.type," ");
@@ -29,5 +30,14 @@ void main(string[] argv) {
         }
 
     }
+    /*
+    writeln(c.labels);
+    writeln(c.defines);
+   
+    writeln("Old compiler");
+    writeln(compile(src,true));
+    writeln("New bytecode");*/
+     writeln(c.bytecode);
+      Machine machine = execBytecode(c.bytecode, true);
     //runPrgm(readText(args["--src"]),args["--debug"].to!bool,args["--compiler-debug"].to!bool);
 }

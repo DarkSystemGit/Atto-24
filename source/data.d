@@ -113,6 +113,7 @@ enum TokenType
     DEC,
     INCF,
     DECF,
+    MULF,
     SETERRADDR,
     EXIT,
     TRUE,
@@ -164,10 +165,10 @@ Statement makeDefineStmt(string name,Token value){
     s.props.dd.value=value;
     return s;
 }
-Statement makeNumStmt(real[] value){
+Statement makeNumStmt(real[] values){
     Statement s;
     s.type=StmtType.NUM;
-    s.props.nd.value=value;
+    s.props.nd.values=values;
     return s;
 }
 union StmtData{
@@ -189,7 +190,7 @@ struct DefineData{
     Token value;
 }
 struct NumData{
-    real[] value;
+    real[] values;
 }
 struct Token
 {
