@@ -80,6 +80,10 @@ string printOpcode(real opcode) {
         case 25:
         return "DEC";
         break;
+        case 26:
+        return "SETERRADDR";
+        case 27:
+        return "EXIT";
         default:
         return "UNKNOWN";
         break;}

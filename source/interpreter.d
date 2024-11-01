@@ -83,14 +83,4 @@ Machine execBytecode(real[] prgm, bool d)
     return machine;
 }
 
-void runPrgm(string source, bool d, bool bytecode)
-{
-    writeln("UASM Interpreter v1.0.0");
-    writeln("Compiling...");
-    real[] prgm = compile(source, bytecode);
-    if (!bytecode)
-    {
-        writeln("Executing...");
-        Machine machine = execBytecode(prgm, d);
-    }
-}
+

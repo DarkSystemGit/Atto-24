@@ -1,9 +1,9 @@
 import std;
 import interpreter;
-import parser;
 import data;
 import compiler;
 void main(string[] argv) { 
+        writeln("UASM Interpreter v1.0.0");
     string[string] args;
     args["--src"]="";
     args["--debug"]="false";
@@ -12,10 +12,11 @@ void main(string[] argv) {
         args[argv[i]]=argv[i+1];
     }
     if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
+        writeln("Compiling...");
     Compiler c=new Compiler();
     string src=readText(args["--src"]);
-    writeln("New Compiler");
-    c.comp(src,args["--src"]);
+    c.comp(src,args["--src"],args["--compiler-debug"].to!bool);
+    if(args["--compiler-debug"].to!bool){
     foreach(stmt; c.stmts){
         write(stmt.type," ");
         if(stmt.type==StmtType.COMMAND){
@@ -29,17 +30,10 @@ void main(string[] argv) {
             writeln(stmt.props.dd);
         }else if(stmt.type==StmtType.STRING){
             writeln(stmt.props.sd);
-            }
-
+            }}
+        writeln(c.bytecode);
+    }else{
+        Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }
-    /*
-    writeln(c.labels);
-    writeln(c.defines);
-   
-    writeln("Old compiler");
-    writeln(compile(src,true));
-    writeln("New bytecode");*/
-     writeln(c.bytecode);
-      Machine machine = execBytecode(c.bytecode, false);
-    //runPrgm(readText(args["--src"]),args["--debug"].to!bool,args["--compiler-debug"].to!bool);
+
 }
