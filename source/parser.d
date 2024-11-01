@@ -523,11 +523,12 @@ class Compiler{
                   return [0];
             }
         }
-        handleString(raw){
+        real[] handleString(string raw){
             real[] str;
                     foreach(char c;raw){
                         str~=cast(real)c;
                     }
+                    str~=0;
                     return str;
         }
         Statement peek(){
