@@ -502,7 +502,7 @@ class Compiler{
                 if(defines.keys().canFind(token.literal)){
                     return compileToken(defines[token.literal]);
                 }else if(labels.keys().canFind(token.literal)){
-                    if(labels[token.literal]==-1)unresolvedRefs[bcpos+1]=token.literal;
+                    if(labels[token.literal]==-1)unresolvedRefs[bcpos]=token.literal;
                     return [labels[token.literal]];
                 }
                 return [0];

@@ -38,6 +38,6 @@ void main(string[] argv) {
     writeln(compile(src,true));
     writeln("New bytecode");*/
      writeln(c.bytecode);
-      Machine machine = execBytecode(c.bytecode, true);
+      Machine machine = execBytecode(c.bytecode, false);
     //runPrgm(readText(args["--src"]),args["--debug"].to!bool,args["--compiler-debug"].to!bool);
 }
