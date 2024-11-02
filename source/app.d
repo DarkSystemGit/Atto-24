@@ -33,6 +33,11 @@ void main(string[] argv) {
         }else if(stmt.type==StmtType.STRING){
             writeln(stmt.props.sd);
             }}
+        writeln("Defines: ");
+        writeln(c.defines);
+        writeln("Labels: ");
+        writeln(c.labels);
+        writeln("Bytecode:");
         writeln(c.bytecode);
     }else{
         Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);

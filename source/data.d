@@ -131,6 +131,7 @@ enum TokenType
     LPAREN,
     RPAREN,
     LABEL,
+    PTR,
     NONE
 }
 enum StmtType{

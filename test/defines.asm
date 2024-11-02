@@ -1,3 +1,3 @@
-#define  TEST_NUM 0x12345678;
-sys 0, TEST_NUM;
+#define  TEST_NUM "Hello world";
+sys 2, TEST_NUM;
 exit; 

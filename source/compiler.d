@@ -99,6 +99,7 @@ class Tokenizer
                 cComment();
             }
             return;
+
         case ';':
             addToken(TokenType.SEMICOLON, ";");
             return;
@@ -130,7 +131,14 @@ class Tokenizer
             }
             return;    
         default:
-            if(std.ascii.isDigit(cast(char)c)&&(peek()=='x')&&std.ascii.isDigit(cast(char)peekNext())){
+            if((c=='&')&&(isAlphanum(peek()))){
+                string s;
+                while ((isAlphanum(cast(char)peek()))&&(!isAtEnd()))
+                {
+                    s ~= advance();
+                }
+                addToken(TokenType.PTR,s);
+            }else if(std.ascii.isDigit(cast(char)c)&&(peek()=='x')&&std.ascii.isDigit(cast(char)peekNext())){
                 string n;
                 advance();
                 while ((std.ascii.isDigit(cast(char)peek()) || (peek() == '.' && isDigit(cast(char)peekNext())))&&(!isAtEnd()))
@@ -416,21 +424,37 @@ class Tokenizer
         void error(string msg,int line,int col){
             err=true;
             cwrite((file~": ").color(mode.bold));
-            cwrite(("Error at ("~peek().line.to!string()~","~peek().col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
         }
     }
 class Compiler{
         Statement[] stmts;
+        string file;
         int pos;
+        bool err;
         real[] bytecode;
         int bcpos;
         Token[string] defines;
         int[string] labels;
         string[int] unresolvedRefs;
+        int[int] unResolvedData;
+        real[][] dataSec;
+        string[] dataSecMap;
+        int dataPtr;
         int[TokenType] commands=[TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27];
         real[TokenType] regs=[TokenType.REG_A:4294967296 - 9,TokenType.REG_B:4294967296 - 8,TokenType.REG_C:4294967296 - 7,TokenType.REG_D:4294967296 - 6,TokenType.REG_E:4294967296 - 5,TokenType.REG_F:4294967296 - 4,TokenType.REG_G:4294967296 - 3,TokenType.REG_H:4294967296 - 2,TokenType.REG_I:4294967296 - 1,TokenType.REG_J:4294967296 - 0];
+
+        real[] resolveData(string name){
+            if(!(dataSecMap.canFind(name))){
+                dataSecMap~=name;
+                dataSec~=compileToken(defines[name]);
+            }
+            unResolvedData[bcpos]=cast(int)dataSecMap.countUntil(name);
+            return [-1];
+        }
         void comp(string source,string file,bool d){
+            this.file=file;
             Tokenizer t=new Tokenizer();
             Parser p=new Parser();
             t.scanTokens(source,file);
@@ -439,7 +463,6 @@ class Compiler{
             p.parse(t.tokens,file);
             if(p.err)return;
             stmts=p.stmts;
-            if(d)writeln("Parsed: ",stmts);
             parsePrePass();
             while(!isAtEnd()){
                 compileStmt(peek());
@@ -457,10 +480,16 @@ class Compiler{
             }
         }
         void parsePostPass(){
+            dataPtr=bcpos;
+            foreach(real[] c;dataSec){
+            addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){
                 if(labels[name]!=0){
                     bytecode[pos]=labels[name];
                 }
+            }
+            foreach(int pos,int dataPos;unResolvedData){
+                bytecode[pos]=dataPos+dataPtr;
             }
         }
         void resolveLabel(string name){
@@ -503,6 +532,7 @@ class Compiler{
             if(commands.keys().canFind(cmd)){
                 return commands[cmd];
             }
+
             return -1;
         }
         real getRegValue(TokenType reg){
@@ -511,6 +541,7 @@ class Compiler{
             }
             return -1;
         }
+        
         real[] compileToken(Token token){
             if(getCmdValue(token.type)!=-1){return [getCmdValue(token.type)];}
             if(getRegValue(token.type)!=-1){return [getRegValue(token.type)];}
@@ -519,15 +550,23 @@ class Compiler{
                 return [token.literal.to!real()];
                 case TokenType.IDENTIFIER:
                 if(defines.keys().canFind(token.literal)){
-                    return compileToken(defines[token.literal]);
+                    return resolveData(token.literal);
                 }else if(labels.keys().canFind(token.literal)){
                     if(labels[token.literal]==-1)unresolvedRefs[bcpos]=token.literal;
                     return [labels[token.literal]];
                 }
+                error("No such identifier, "~token.literal,token.line,token.col);
                 return [0];
+                case TokenType.PTR:
+                if(defines.keys().canFind(token.literal)){
+                    return compileToken(defines[token.literal]);
+                    }
+                error("No such identifier, "~token.literal,token.line,token.col);
+                return [0];    
                 case TokenType.STRING:
                     return handleString(token.literal);
                 default:
+                error("Error while compiling token, "~token.literal,token.line,token.col);
                   return [0];
             }
         }
@@ -548,5 +587,11 @@ class Compiler{
         }
         bool isAtEnd(){
             return pos>=stmts.length;
+        }
+        void error(string msg,int line,int col){
+            err=true;
+            cwrite((file~": ").color(mode.bold));
+            cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwriteln(msg.color(mode.bold));
         }
     }
