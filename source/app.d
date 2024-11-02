@@ -2,6 +2,7 @@ import std;
 import interpreter;
 import data;
 import compiler;
+import colorize;
 void main(string[] argv) { 
         writeln("UASM Interpreter v1.0.0");
     string[string] args;
@@ -14,8 +15,9 @@ void main(string[] argv) {
     if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
         writeln("Compiling...");
     Compiler c=new Compiler();
-    string src=readText(args["--src"]);
-    c.comp(src,args["--src"],args["--compiler-debug"].to!bool);
+    if(exists(args["--src"])){
+        string src=readText(args["--src"]);
+        c.comp(src,args["--src"],args["--compiler-debug"].to!bool);
     if(args["--compiler-debug"].to!bool){
     foreach(stmt; c.stmts){
         write(stmt.type," ");
@@ -35,5 +37,11 @@ void main(string[] argv) {
     }else{
         Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }
+    }else{
+        cwrite(("Error: ").color(fg.red).color(mode.bold));
+        cwriteln(("No such file, "~args["--src"]).color(mode.bold));
+        return;
+    }
+    
 
 }
