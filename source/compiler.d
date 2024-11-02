@@ -88,7 +88,7 @@ class Tokenizer
                 s ~= advance();}else{advance();}
             }
             if(peek()==';')advance();
-            consume('"',"No closing \" found");
+            consume('"',"No closing quote found");
             addToken(TokenType.STRING, s);
             return;
         case '/':
