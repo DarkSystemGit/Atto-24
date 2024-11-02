@@ -82,11 +82,13 @@ class Tokenizer
         return;
         case '"':
             string s;
-            while (peek() != '"')
+            while (((peek() != '"')&&(peek()!=';')&&(previous()!='\\'))&&(!isAtEnd()))
             {
-                s ~= advance();
+                if(peek()!='\\'){
+                s ~= advance();}else{advance();}
             }
-            advance();
+            if(peek()==';')advance();
+            consume('"',"No closing \" found");
             addToken(TokenType.STRING, s);
             return;
         case '/':
@@ -213,7 +215,7 @@ class Tokenizer
         void addToken(Token t)
         {
             t.line=line;
-            t.col=col;
+            t.col=cast(int)(col-t.literal.length);
             tokens.length++;
             tokens[tokens.length - 1] = t;
         }
@@ -263,7 +265,11 @@ class Tokenizer
                 return cast(char)0;
             return source[pos];
         }
-
+    char previous(){
+        if (isAtEnd())
+                return cast(char)0;
+        return source[pos-1];
+    }
         char peekNext()
         {
             if (pos + 1 >= source.length)
@@ -283,8 +289,8 @@ class Tokenizer
         }
         void error(string msg){
             err=true;
-            cwrite((file~": ").color(mode.bold));
-            cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwrite((file~"("~line.to!string()~","~col.to!string()~"): ").color(mode.bold));
+            cwrite(("Error: ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
 
         }
@@ -423,8 +429,8 @@ class Tokenizer
         }
         void error(string msg,int line,int col){
             err=true;
-            cwrite((file~": ").color(mode.bold));
-            cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwrite((file~"("~line.to!string()~","~col.to!string()~"): ").color(mode.bold));
+            cwrite(("Error: ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
         }
     }
@@ -590,8 +596,8 @@ class Compiler{
         }
         void error(string msg,int line,int col){
             err=true;
-            cwrite((file~": ").color(mode.bold));
-            cwrite(("Error at ("~line.to!string()~","~col.to!string()~"): ").color(fg.red).color(mode.bold));
+            cwrite((file~"("~line.to!string()~","~col.to!string()~"): ").color(mode.bold));
+            cwrite(("Error: ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
         }
     }
