@@ -14,6 +14,7 @@ void main(string[] argv) {
     }
     if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
         writeln("Compiling...");
+
     Compiler c=new Compiler();
     if(exists(args["--src"])){
         string src=readText(args["--src"]);
