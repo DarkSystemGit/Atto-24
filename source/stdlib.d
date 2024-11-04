@@ -26,7 +26,10 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &ls,&strlen,&strcat,&strcpy,
     &strcmp,&substr,&splitstr,&memdump,
     &malloc,&free,&memcopy,&memfill,
-    &mem.castval
+    &mem.castval, &newTime, &setTime,&setTimeUnix,
+    &setTimeStd,&getStdTime, &getUnixTime, &getDateTime,
+    &setDate,&setUTCOffset,&getUTCOffset,&addTime,
+    &subTime,&setTimeToCurrTime 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
