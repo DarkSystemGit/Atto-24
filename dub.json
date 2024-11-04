@@ -4,7 +4,8 @@
 	],
 	"copyright": "Copyright © 2024, darksystem",
 	"dependencies": {
-		"colorize": "~>1.0.5"
+		"colorize": "~>1.0.5",
+		"thepath": "~>2.0.0"
 	},
 	"description": "Universal Assembly Language Interpreter",
 	"license": "GPL-3.0-or-later",

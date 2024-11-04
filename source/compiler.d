@@ -1,7 +1,7 @@
 import std;
 import colorize;
 import data;
-
+import thepath;
 class Tokenizer
 {
     string source;
@@ -121,6 +121,22 @@ class Tokenizer
             }
             if(n=="#define"){
                 addToken(TokenType.DEFINE, n);
+            }else if(n=="#include"){
+                string f=Path(this.file).toAbsolute.parent.toString()~"/";
+                advance();
+                while(isAlphanum(cast(char)peek())&&(!isAtEnd())){
+                    f~=advance();
+                }
+                if(exists(f)){
+                    string file=readText(f);
+                    Tokenizer t=new Tokenizer();
+                    t.scanTokens(file,f);
+                    if(t.err)this.err=true;
+                    t.tokens.length--;
+                    this.tokens=t.tokens~this.tokens;
+                }else{
+                    error("Could not find include "~f);
+                }
             }else{
                 error("Unexpected string, "~n~" is not a valid token");
             }
@@ -176,7 +192,7 @@ class Tokenizer
         }
     }
     bool isAlphanum(char c){
-        return std.ascii.isAlpha(c) || std.ascii.isDigit(c)||c=='_'||c==':';
+        return std.ascii.isAlpha(c) || std.ascii.isDigit(c)||c=='_'||c==':'||c=='.';
     }
         void comment(){
             while ((peek() != '\n')&&(!isAtEnd()))
@@ -365,6 +381,8 @@ class Tokenizer
             }else if(str){
                 addStmt(makeStringStmt(advance().literal));
                 consume(TokenType.SEMICOLON,"Expected semicolon");
+            }else if(peek().type==TokenType.SEMICOLON){
+                consume(TokenType.SEMICOLON,"Expected semicolon");
             }else{
                 error("Expected command, label, define, number or string, not "~peek().literal);
             }
@@ -495,6 +513,7 @@ class Compiler{
                 }
             }
             foreach(int pos,int dataPos;unResolvedData){
+                
                 bytecode[pos]=dataPos+dataPtr;
             }
         }
@@ -556,7 +575,7 @@ class Compiler{
                 return [token.literal.to!real()];
                 case TokenType.IDENTIFIER:
                 if(defines.keys().canFind(token.literal)){
-                    return resolveData(token.literal);
+                    return compileToken(defines[token.literal]);
                 }else if(labels.keys().canFind(token.literal)){
                     if(labels[token.literal]==-1)unresolvedRefs[bcpos]=token.literal;
                     return [labels[token.literal]];
@@ -565,8 +584,8 @@ class Compiler{
                 return [0];
                 case TokenType.PTR:
                 if(defines.keys().canFind(token.literal)){
-                    return compileToken(defines[token.literal]);
-                    }
+                    return resolveData(token.literal);
+                }
                 error("No such identifier, "~token.literal,token.line,token.col);
                 return [0];    
                 case TokenType.STRING:
