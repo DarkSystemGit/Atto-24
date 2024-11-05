@@ -124,9 +124,12 @@ class Tokenizer
             }else if(n=="#include"){
                 string f=Path(this.file).toAbsolute.parent.toString()~"/";
                 advance();
-                while(isAlphanum(cast(char)peek())&&(!isAtEnd())){
+                consume('"', "Expected quote");
+                while((peek()!='"')&&(!isAtEnd())){
                     f~=advance();
                 }
+                consume('"', "Expected quote");
+                f=Path(f).toAbsolute.toString();
                 if(exists(f)){
                     string file=readText(f);
                     Tokenizer t=new Tokenizer();
