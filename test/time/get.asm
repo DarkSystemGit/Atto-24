@@ -13,6 +13,7 @@ exit;
 Loop:
 add %B,%C;
 read %A,%A;
+sys sys.printAscii 32;
 sys sys.printNum, %A;
 inc %B;
 jmp LoopCondition;

@@ -5,28 +5,32 @@ import registers;
 import utils;
 class Time
 {
-    SysTime time;
-    TimeZone* offset;
+    DateTime time;
+    int offset;
     int id;
     this(int id){
+        
         this.id=id;
-        this.time=SysTime(DateTime(1,1,1));
-        immutable LocalTime l=LocalTime();
-        offset=cast(TimeZone*)l;
+        this.time=DateTime(1,1,1);
+        writeln(LocalTime());
+        offset=0;
             }
     void addTime( Time t){
-        this.setStdTime(getStdTime() + t.getStdTime());
+        SysTime temp=cast(SysTime)time;
+        temp.stdTime=(getStdTime() + t.getStdTime());
+        this.time=cast(DateTime)temp;
     }
     void subTime( Time t)
     {
-        this.setStdTime(getStdTime() - t.getStdTime());
+        SysTime temp=cast(SysTime)time;
+        temp.stdTime=(getStdTime() - t.getStdTime());
+        this.time=cast(DateTime)temp;
     }
     void setUTCoffset(int offset){
-        this.offset=cast(TimeZone*)new SimpleTimeZone(dur!"hours"(offset));
-        time.timezone=cast(immutable TimeZone)*this.offset;
+        this.offset=offset;
     }
     auto getUTCOffset(){
-        return (cast(SimpleTimeZone)*offset).utcOffset.total!"hours";
+        return offset;
     }    
     void setTime(int hr, int min, int sec)
     {
@@ -37,32 +41,27 @@ class Time
 
     int[] getTime()
     {
-                writeln("BADUM");
-        return [cast(int)time.hour, cast(int)time.minute, cast(int)time.second];
+       
+        return [cast(int)time.hour+offset, cast(int)time.minute, cast(int)time.second];
     }
 
     void setCurrTime()
     {
-        time=Clock.currTime();
-        time.timezone=cast(immutable TimeZone)*this.offset;
+        time=cast(DateTime)Clock.currTime();
     }
 
     long getUnixTime(){
-        return time.toUnixTime();
+        return (cast(SysTime)time).toUnixTime();
     }
     void setUnixTime(int unixTime){
-        time.fromUnixTime(unixTime,cast(immutable TimeZone)*this.offset);
+        (cast(SysTime)time).fromUnixTime(unixTime);
     }
     long getStdTime()
     {
-        return time.stdTime();
+        return (cast(SysTime)time).stdTime();
     }
-    void setStdTime(long stdTime){
-        time.stdTime=stdTime;
-    }
-    int[] getDate(){
 
-        writeln(this.time);
+    int[] getDate(){
         return [time.month, time.day, time.year];
     }
     void setDate(int[] date){
@@ -91,10 +90,7 @@ int setTimeUnix(ref Machine m,real[] p){
     return 2;
 }
 int setTimeStd(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
-     Time t=getTime(cast(int)params[0],m);
-    t.setStdTime(cast(int)params[1]);
-    return 2;
+    return 0;
 }
 int getStdTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
@@ -114,7 +110,7 @@ int getDateTime(ref Machine m,real[] p){
      Time t=getTime(cast(int)params[0],m); 
     int[] dt=t.getDate();
     dt~=t.getTime();
-    utils.write(m,p[1],dt);
+    utils.write(m,params[1],dt);
     return 2;
 }    
 int setDate(ref Machine m,real[] p){
