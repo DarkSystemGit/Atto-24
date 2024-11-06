@@ -10,6 +10,7 @@ class Time
     int id;
     this(int id){
         this.id=id;
+        this.time=SysTime(DateTime(1,1,1));
         immutable LocalTime l=LocalTime();
         offset=cast(TimeZone*)l;
             }
@@ -34,10 +35,10 @@ class Time
         time.second = sec;
     }
 
-    ubyte[] getTime()
+    int[] getTime()
     {
-        writeln(this.time);
-        return [time.hour, time.minute, time.second];
+                writeln("BADUM");
+        return [cast(int)time.hour, cast(int)time.minute, cast(int)time.second];
     }
 
     void setCurrTime()
@@ -59,7 +60,9 @@ class Time
     void setStdTime(long stdTime){
         time.stdTime=stdTime;
     }
-    ubyte[] getDate(){
+    int[] getDate(){
+
+        writeln(this.time);
         return [time.month, time.day, time.year];
     }
     void setDate(int[] date){
@@ -107,7 +110,8 @@ int getUnixTime(ref Machine m,real[] p){
 }
 int getDateTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-     Time t=getTime(cast(int)params[0],m);
+
+     Time t=getTime(cast(int)params[0],m); 
     int[] dt=t.getDate();
     dt~=t.getTime();
     utils.write(m,p[1],dt);
