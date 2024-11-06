@@ -19,9 +19,9 @@ real[] handleRegisters(ref Machine machine, real[] paramsRaw, int count) {
     for (int i = 0; i < c; i++) {
         for (int j = 0; j <= 9; j++) {
             if (paramList[i] == (cast(real)4294967296 - j)) {
-                if (j != 5){
+                
                     paramList[i] = getRegister(machine, j);
-            }}
+        }
         }
     }
     
@@ -47,8 +47,8 @@ real getRegister(ref Machine machine, real id) {
         return cast(real)machine.registers.d;
         break;
     case (5):
-    return cast(real)machine.registers.e;
-    break;
+        return cast(real)machine.registers.e;
+        break;
     case (4):
         return cast(real)machine.registers.f;
         break;
