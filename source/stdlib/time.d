@@ -12,7 +12,7 @@ class Time
         
         this.id=id;
         this.time=DateTime(1,1,1);
-        writeln(LocalTime());
+        //writeln(LocalTime());
         offset=0;
             }
     void addTime( Time t){
