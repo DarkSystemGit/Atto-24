@@ -7,7 +7,7 @@ struct Machine {
     Registers registers;
     Flags flags;
     int ip;
-    int raddr;
+    int[] raddr;
     int sp;
     int p;
     bool _debug;

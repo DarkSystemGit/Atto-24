@@ -41,7 +41,7 @@ void main(string[] argv) {
         writeln("Bytecode:");
         writeln(c.bytecode);
     }else{
-        Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
+        if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }
     }else{
         cwrite(("Error: ").color(fg.red).color(mode.bold));

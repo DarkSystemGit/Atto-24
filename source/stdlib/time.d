@@ -54,13 +54,18 @@ class Time
         return (cast(SysTime)time).toUnixTime();
     }
     void setUnixTime(int unixTime){
-        (cast(SysTime)time).fromUnixTime(unixTime);
+        time=cast(DateTime)(cast(SysTime)time).fromUnixTime(unixTime);
     }
     long getStdTime()
     {
         return (cast(SysTime)time).stdTime();
     }
-
+    void setStdTime(long stdTime){
+    SysTime temp=(cast(SysTime)time);
+        
+        temp.stdTime=stdTime;
+        time=cast(DateTime)temp;
+    }
     int[] getDate(){
         return [time.month, time.day, time.year];
     }
@@ -90,7 +95,10 @@ int setTimeUnix(ref Machine m,real[] p){
     return 2;
 }
 int setTimeStd(ref Machine m,real[] p){
-    return 0;
+     real[] params=handleRegisters(m,p,2);
+     Time t=getTime(cast(int)params[0],m);
+    t.setStdTime(cast(int)params[1]);
+    return 2;
 }
 int getStdTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);

@@ -30,6 +30,7 @@
 #define time.new 29; 
 #define time.set 30;
 #define time.setUnix 31;
+#define time.setStd 32;
 #define time.getStd 33;
 #define time.getUnix 34;
 #define time.getDateTime 35;
