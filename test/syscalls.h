@@ -40,3 +40,4 @@
 #define time.add 39;
 #define time.sub 40;
 #define time.setToCurrent 41; 
+#define time.setGMT 42;

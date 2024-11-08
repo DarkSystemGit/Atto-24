@@ -57,6 +57,24 @@ jmp PrintLoop;
 Final:
 sys time.setStd %E,0;
 sys time.getDateTime %E,%C;
+push Sub;
+jmp PrintLoop;
+Sub:
+sys time.new %I;
+sys time.setUnix %I,0;
+sys time.sub %E,%I;
+push Add;
+sys time.getDateTime %E,%C;
+jmp PrintLoop;
+Add:
+sys time.setUnix %E,0;
+sys time.add %E,%I;
+sys time.getDateTime %E,%C;
+push GMT;
+jmp PrintLoop;
+GMT:
+sys time.setGMT %E;
+sys time.getDateTime %E,%C;
 push Exit;
 jmp PrintLoop;
 Exit:

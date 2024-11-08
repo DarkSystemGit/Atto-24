@@ -66,6 +66,9 @@ class Time
         temp.stdTime=stdTime;
         time=cast(DateTime)temp;
     }
+    void setGMTtime(){
+         time=cast(DateTime)Clock.currTime(UTC());
+    }
     int[] getDate(){
         return [time.month, time.day, time.year];
     }
@@ -157,5 +160,11 @@ int setTimeToCurrTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     t.setCurrTime();
+    return 1;
+}    
+int setTimeToGMT(ref Machine m,real[] p){
+    real[] params=handleRegisters(m,p,1);
+     Time t=getTime(cast(int)params[0],m);
+    t.setGMTtime();
     return 1;
 }    
