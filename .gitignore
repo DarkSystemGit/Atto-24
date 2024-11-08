@@ -14,3 +14,4 @@ uasm-test-*
 *.o
 *.obj
 *.lst
+gitpod.sh
