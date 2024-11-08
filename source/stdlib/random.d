@@ -20,5 +20,13 @@ struct random{
     }
 }
 struct distrubution{
-    
+    int min;
+    int max;
+    real[]  values;
+    real sample(Mt19937_64 randGen){
+        if(values.length==0){
+            return randGen.uniform(min,max,randGen);
+        }else if(){}
+        return 0;
+    }
 }
