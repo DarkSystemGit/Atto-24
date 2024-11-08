@@ -1,6 +1,7 @@
 import std;
 import mem;
 import time;
+import random;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -68,6 +69,12 @@ struct Flags {
 }
 struct Objects{
     Time[] times=new Time[0];
+    Distrubution[] dists;
+    int addDist(){
+        Distrubution dist=  Distrubution(dists.length);
+        dists ~= dist;
+        return dist.id;
+    }
     int addTime(){
         Time t=new Time(cast(int)times.length);
         times ~= t;
