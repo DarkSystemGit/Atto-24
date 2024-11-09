@@ -59,6 +59,7 @@ class machineHeap{
     }
     int getDataPtr(heapObj obj){return obj.start+ptr;}
     void addObj(int size){
+        size=cast(int)exp2(ceil(log2(cast(float)size)));
         heapObj obj;
         obj.size=size;
         obj.free=true;

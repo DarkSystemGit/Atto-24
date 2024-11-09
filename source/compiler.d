@@ -55,7 +55,7 @@ class Tokenizer
         keywords["dec"]=TokenType.DEC;
         keywords["incf"]=TokenType.INCF;
         keywords["decf"]=TokenType.DECF;
-        keywords["seterraddr"]=TokenType.SETERRADDR;
+        keywords["setErrAddr"]=TokenType.SETERRADDR;
         keywords["exit"]=TokenType.EXIT;
         keywords["true"]=TokenType.TRUE;
         keywords["false"]=TokenType.FALSE;
@@ -509,6 +509,8 @@ class Compiler{
             }
         }
         void parsePostPass(){
+            //error handling fix;
+            addBytecode(27);
             dataPtr=bcpos;
             foreach(real[] c;dataSec){
             addBytecode(c);}

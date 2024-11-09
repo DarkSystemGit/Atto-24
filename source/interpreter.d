@@ -20,7 +20,7 @@ void handleOpcode(ref Machine machine, real opcode, real[] params)
 }
 
 Machine execBytecode(real[] prgm, bool d)
-{
+{   
     commands[0] = &nop;
     commands[1] = &add;
     commands[2] = &sub;
@@ -62,28 +62,22 @@ Machine execBytecode(real[] prgm, bool d)
     machine.running=true;
     while ((machine.ip < machine.memory.length)&&machine.running)
     {
-        if (!machine.err)
-        {
-            try
-            {
-                
+        
+            try{
+                try{
                 real[] params = machine.memory[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.memory[machine.ip], params);
-            }
-            catch (Exception e)
+                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);}
+            }catch (Exception e)
             {   
-                machine.err = true;
-                machine.stack.length++;
-                machine.stack[machine.stack.length - 1] =machine.ip;
+                handleError(machine);
             }
-        }
-        else
-        {   
-            machine.ip = machine.errAddr;
-            machine.err = false;
-        }
+       
     }
     return machine;
 }
-
+void handleError(ref Machine machine){
+                machine.stack.length++;
+                machine.stack[machine.stack.length - 1] =machine.ip;
+                machine.ip = machine.errAddr;
+}
 

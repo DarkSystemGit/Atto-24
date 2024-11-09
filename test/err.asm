@@ -1,7 +1,11 @@
+
+#include "syscalls.h";
+#define errString "Error at address: ";
 setErrAddr Error;
-mov 5,5;
+sys 8;
+mov 5;
 exit;
 Error:
-sys 2,String;
-String:
-"Error!";
+sys sys.printString,&errString;
+pop %A;
+sys sys.printNum %A;

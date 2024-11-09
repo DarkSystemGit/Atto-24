@@ -152,8 +152,7 @@ int push(ref Machine machine, real[] p) {
 int pop(ref Machine machine, real[] params) {
 
     if (machine.stack.length != machine.bp) {
-        setRegister(machine, (cast(real)4294967296) - params[0],
-                machine.stack[machine.stack.length - 1]);
+        setRegister(machine, (cast(real)4294967296) - params[0],machine.stack[machine.stack.length - 1]);
         machine.stack = machine.stack.remove(machine.stack.length - 1);
     } else {
         setRegister(machine, (cast(real)4294967296) - params[0], 0);
