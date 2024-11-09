@@ -41,3 +41,13 @@
 #define time.sub 40;
 #define time.setToCurrent 41; 
 #define time.setGMT 42;
+#define time.free 43;
+#define random.new 44;
+#define randomDistrubution.new 45;
+#define random.setSeed 46;
+#define random.get 47;
+#define random.setDistribution 48;
+#define randomDistrubution.setProbibilities 49;
+#define randomDistrubution.setUniform 50;
+#define random.free 51;
+#define randomDistrubution.free 52;

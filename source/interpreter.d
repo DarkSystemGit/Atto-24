@@ -6,7 +6,7 @@ import registers;
 import compiler;
 import mem;
 
-int function(ref Machine machine, real[] params)[28] commands;
+int function(ref Machine machine, real[] params)[30] commands;
 void handleOpcode(ref Machine machine, real opcode, real[] params)
 {
     if (isNaN(opcode))
@@ -49,6 +49,8 @@ Machine execBytecode(real[] prgm, bool d)
     commands[25] = &dec;
     commands[26] = &setErrAddr;
     commands[27] = &exit;
+    commands[28] = &div;
+    commands[29] = &mod;
     Machine machine = Machine();
     machine._debug = d;
     machine.memory_size = (cast(real) prgm.length + 50);

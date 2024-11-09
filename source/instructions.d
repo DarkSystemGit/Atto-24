@@ -29,7 +29,12 @@ int div(ref Machine machine, real[] p) {
     
     return 2;
 }
-
+int mod(ref Machine machine, real[] p) {
+     real[] params=handleRegisters(machine, p, 2);
+    machine.registers.f = params[0] % params[1];
+    
+    return 2;
+}
 int addf(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 2);
     machine.registers.f = cast(float)params[0] + cast(float)params[1];

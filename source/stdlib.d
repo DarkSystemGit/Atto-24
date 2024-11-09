@@ -11,6 +11,7 @@ import files;
 import str;
 import mem;
 import time;
+import random;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
@@ -29,7 +30,10 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &mem.castval, &newTime, &setTime,&setTimeUnix,
     &setTimeStd,&getStdTime, &getUnixTime, &getDateTime,
     &setDate,&setUTCOffset,&getUTCOffset,&addTime,
-    &subTime,&setTimeToCurrTime,&setTimeToGMT 
+    &subTime,&setTimeToCurrTime,&setTimeToGMT,&freeTime,
+    &newRandom,&newDistrubution,&setRandSeed,&sampleRand,
+    &setDistrubution,&setDistrubutionProbabilities,&setUniformDistrubution,&freeRandom,
+    &freeDistrubution 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

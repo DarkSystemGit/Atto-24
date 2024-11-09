@@ -42,6 +42,8 @@ class Tokenizer
         keywords["jz"]=TokenType.JZ;
         keywords["cmp"]=TokenType.CMP;
         keywords["sys"]=TokenType.SYS;
+        keywords["div"]=TokenType.DIV;
+        keywords["mod"]=TokenType.MOD;
         keywords["read"]=TokenType.READ;
         keywords["write"]=TokenType.WRITE;
         keywords["push"]=TokenType.PUSH;
@@ -322,7 +324,7 @@ class Tokenizer
         bool err;
         Statement[] stmts;
         string file;
-        TokenType[] cmdlist=[TokenType.ADD,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.MULF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV];
+        TokenType[] cmdlist=[TokenType.ADD,TokenType.MOD,TokenType.DIV,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.MULF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV];
 
         void parse(Token[] tokens,string file){
             this.file=file;
@@ -469,7 +471,7 @@ class Compiler{
         real[][] dataSec;
         string[] dataSecMap;
         int dataPtr;
-        int[TokenType] commands=[TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27];
+        int[TokenType] commands=[TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29];
         real[TokenType] regs=[TokenType.REG_A:4294967296 - 9,TokenType.REG_B:4294967296 - 8,TokenType.REG_C:4294967296 - 7,TokenType.REG_D:4294967296 - 6,TokenType.REG_E:4294967296 - 5,TokenType.REG_F:4294967296 - 4,TokenType.REG_G:4294967296 - 3,TokenType.REG_H:4294967296 - 2,TokenType.REG_I:4294967296 - 1,TokenType.REG_J:4294967296 - 0];
 
         real[] resolveData(string name){

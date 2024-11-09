@@ -77,7 +77,7 @@ struct Objects{
         return dist.id;
     }
     int addRandom(){
-        random.Random rand=random.Random(rands.length);
+        random.Random rand=random.Random(cast(int)rands.length);
         rands~=rand;
         return rand.id;
     }
@@ -109,6 +109,8 @@ enum TokenType
     NOT,
     OR,
     XOR,
+    DIV,
+    MOD,
     CP,
     JMP,
     JNZ,

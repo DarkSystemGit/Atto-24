@@ -168,3 +168,8 @@ int setTimeToGMT(ref Machine m,real[] p){
     t.setGMTtime();
     return 1;
 }    
+int freeTime(ref Machine m,real[] p){
+    real[] params=handleRegisters(m,p,1);
+    m.objs.times[cast(int)params[0]]=null;
+    return 1;
+}
