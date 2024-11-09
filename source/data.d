@@ -71,7 +71,7 @@ struct Objects{
     Distrubution[] dists;
     random.Random[] rands;
     int addDist(){
-        Distrubution dist=  Distrubution(cast(int)dists.length);
+        Distrubution dist=new Distrubution(cast(int)dists.length);
         dists ~= dist;
         return dist.id;
     }

@@ -170,20 +170,19 @@ int mov(ref Machine machine, real[] params) {
 }
 
 int call(ref Machine machine, real[] p) {
-    real[] params=handleRegisters(machine, p, 2);
-
-    machine.p = cast(int)params[1];
+    real[] params=handleRegisters(machine, p, 1);
     machine.raddr~=machine.ip;
     machine.ip = (cast(int)params[0]) - 1;
-    return 2;
+    return 1;
 }
 
-int ret(ref Machine machine, real[] params) {
-    for (int j = cast(int)params.length; j < machine.p; j++) {
+int ret(ref Machine machine, real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    for (int j = cast(int)params.length; j < params[0]; j++) {
         machine.stack = machine.stack.remove(machine.stack.length - 1);
     }
     machine.ip = machine.raddr[machine.raddr.length-1]+1;
-    return 0;
+    return 1;
 }
 
 int inc(ref Machine machine, real[] params) {
