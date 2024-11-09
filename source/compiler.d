@@ -10,6 +10,7 @@ class Tokenizer
     int line;
     int col;
     bool err;
+    bool imports;
     Token[] tokens;
     string file;
     TokenType[string] keywords;
@@ -139,6 +140,7 @@ class Tokenizer
                     if(t.err)this.err=true;
                     t.tokens.length--;
                     this.tokens=t.tokens~this.tokens;
+                    imports=true;
                 }else{
                     error("Could not find include "~f);
                 }
@@ -462,6 +464,7 @@ class Compiler{
         string file;
         int pos;
         bool err;
+        bool imports;
         real[] bytecode;
         int bcpos;
         Token[string] defines;
@@ -488,6 +491,7 @@ class Compiler{
             Parser p=new Parser();
             t.scanTokens(source,file);
             if(t.err)return;
+            this.imports=t.imports;
             if(d)writeln("Tokens: ",t.tokens);
             p.parse(t.tokens,file);
             if(p.err)return;
@@ -539,6 +543,11 @@ class Compiler{
             switch(stmt.type){
                 case StmtType.COMMAND:
                     addBytecode(getCmdValue(stmt.props.cd.cmd));
+                    if((stmt.props.cd.cmd==TokenType.JMP||stmt.props.cd.cmd==TokenType.JNZ||stmt.props.cd.cmd==TokenType.JZ)&&(stmt.props.cd.oprands[0].type==TokenType.NUMBER)){
+                        cwrite((file~"("~stmt.props.cd.oprands[0].line.to!string()~","~stmt.props.cd.oprands[0].col.to!string()~"): ").color(mode.bold));
+                        cwrite(("Warning: ").color(fg.yellow).color(mode.bold));
+                        cwriteln("Using fixed jump addresses with includes is not recommended, as inculded files could break them".color(mode.bold));
+                    }
                     foreach(Token tk;stmt.props.cd.oprands){
                         addBytecode(compileToken(tk));
                     }
