@@ -12,7 +12,7 @@ struct Random{
         return dist.sample(randGen);
     }
     this(int id){this.id=id;}
-    void initm(int seed){
+    void initMain(int seed){
         this.seed=seed;
         randGen.seed(seed);
     }
@@ -20,6 +20,7 @@ struct Random{
         this.seed=seed;
         randGen.seed(seed);
     }
+    void setDistrubution(Distrubution dist){this.dist=dist;}
 }
 struct Distrubution{
     int min;
@@ -50,4 +51,15 @@ struct Distrubution{
         this.values=[];
         this.inited=true;
     }
+}
+int newRandom(ref Machine m,real[] p){
+    real[] params=handleRegisters(m,p,1);
+    int id=m.objs.addRandom();
+    m.objs.rands[id].initMain(cast(int)params[0]);
+    setRegister(m,(cast(real)4294967296)-p[1],id);
+    return 2;
+}
+int newDistrubution(ref Machine m,real[] p){
+    setRegister(m,(cast(real)4294967296)-p[0],m.objs.addDistrubution());
+    return 1;
 }

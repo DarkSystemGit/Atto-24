@@ -70,14 +70,14 @@ struct Flags {
 struct Objects{
     Time[] times=new Time[0];
     Distrubution[] dists;
-    Random[] rands;
+    random.Random[] rands;
     int addDist(){
-        Distrubution dist=  Distrubution(dists.length);
+        Distrubution dist=  Distrubution(cast(int)dists.length);
         dists ~= dist;
         return dist.id;
     }
     int addRandom(){
-        Random rand=Random(rands.length);
+        random.Random rand=random.Random(rands.length);
         rands~=rand;
         return rand.id;
     }
