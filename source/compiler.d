@@ -80,6 +80,26 @@ class Tokenizer
         case ')':
         addToken(TokenType.RPAREN, ")");
         return;
+        case '[':
+        string contents;
+        while((peek()!=']')&&(!isAtEnd())){
+            contents~=advance();
+        }
+        Tokenizer tkbuilder=new Tokenizer();
+        tkbuilder.scanTokens(contents,this.file,this.line);
+        tkbuilder.tokens.length--;
+        Token t;
+        t.type=TokenType.ARRAY;
+        t.literal=contents;
+        t.subtokens=tkbuilder.tokens;
+        consume(']',"No closing bracket found");
+        addToken(t);
+        return;
+        case '\'':
+        char chars=advance();
+        addToken(TokenType.NUMBER,(cast(real)chars).to!string());
+        consume('\'',"No closing quote found");
+        return;
         case '=':
         addToken(TokenType.EQUALS, "=");
         return;
@@ -216,12 +236,12 @@ class Tokenizer
             consume('/', "Expected slash");
             return;
         }    
-        void scanTokens(string src,string file)
+        void scanTokens(string src,string file,int line=1)
         {
             this.source = src;
             this.pos = 0;
             this.col=0;
-            this.line=1;
+            this.line=line;
             this.file=file;
              
             while (!isAtEnd())
@@ -369,7 +389,7 @@ class Tokenizer
             }else if(define){
                 advance();
                 string name=consume(TokenType.IDENTIFIER,"Expected identifier").literal;
-                addStmt(makeDefineStmt(name,advance()));
+                addStmt(makeDefineStmt(name,consumeUntil(TokenType.SEMICOLON)));
                
                 consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(num){
@@ -467,7 +487,7 @@ class Compiler{
         bool imports;
         real[] bytecode;
         int bcpos;
-        Token[string] defines;
+        Token[][string] defines;
         int[string] labels;
         string[int] unresolvedRefs;
         int[int] unResolvedData;
@@ -480,10 +500,15 @@ class Compiler{
         real[] resolveData(string name){
             if(!(dataSecMap.canFind(name))){
                 dataSecMap~=name;
-                dataSec~=compileToken(defines[name]);
+                dataSec~=compileTokens(defines[name]);
             }
             unResolvedData[bcpos]=cast(int)dataSecMap.countUntil(name);
             return [-1];
+        }
+        real[] compileTokens(Token[] tks){
+            real[] res;
+            foreach(Token tk;tks){res~=compileToken(tk);};
+            return res;
         }
         void comp(string source,string file,bool d){
             this.file=file;
@@ -589,9 +614,13 @@ class Compiler{
             switch(token.type){
                 case TokenType.NUMBER:
                 return [token.literal.to!real()];
+                case TokenType.COMMA:
+                return [];
+                case TokenType.ARRAY:
+                return compileTokens(token.subtokens);
                 case TokenType.IDENTIFIER:
                 if(defines.keys().canFind(token.literal)){
-                    return compileToken(defines[token.literal]);
+                    return compileTokens(defines[token.literal]);
                 }else if(labels.keys().canFind(token.literal)){
                     if(labels[token.literal]==-1)unresolvedRefs[bcpos]=token.literal;
                     return [labels[token.literal]];

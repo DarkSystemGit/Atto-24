@@ -37,6 +37,7 @@ class Distrubution{
         }else if(this.vals.length==0){
             return cast(real)uniform(min,max,randGen);
         }else if(this.vals.length>0){
+            randGen.dice(vals);
             return randGen.dice(vals);
         }
        
@@ -94,7 +95,7 @@ int setDistrubution(ref Machine m,real[] p){
 int setDistrubutionProbabilities(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
     real[] probs;
-    for(int i=2;i<params[1];i++){
+    for(int i=2;i<params[1]+2;i++){
         probs~=params[i];
     }
     Distrubution dist=getDistrubution(cast(int)params[0],m);

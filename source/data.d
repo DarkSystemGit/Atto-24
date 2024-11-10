@@ -144,6 +144,7 @@ enum TokenType
     EQUALS,
     LPAREN,
     RPAREN,
+    ARRAY,
     LABEL,
     PTR,
     NONE
@@ -174,7 +175,7 @@ Statement makeLabelDefStmt(string name,int addr){
     s.props.ld.addr=addr;
     return s;
 }
-Statement makeDefineStmt(string name,Token value){
+Statement makeDefineStmt(string name,Token[] value){
     Statement s;
     s.type=StmtType.DEFINE;
     s.props.dd.name=name;
@@ -210,7 +211,7 @@ struct LabelData{
 }
 struct DefineData{
     string name;
-    Token value;
+    Token[] value;
 }
 struct NumData{
     real[] values;
@@ -219,6 +220,7 @@ struct Token
 {
     TokenType type;
     string literal;
+    Token[] subtokens;
     int line;
     int col;
 }
