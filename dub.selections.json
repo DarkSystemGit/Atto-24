@@ -1,7 +1,12 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"bindbc-common": "1.0.3",
+		"bindbc-loader": "1.1.5",
+		"bindbc-sdl": "1.5.0",
 		"colorize": "1.0.5",
+		"dgfx": "1.1.0",
+		"dsdl2": "0.2.1-beta",
 		"dshould": "1.7.2",
 		"prettyprint": "1.0.9",
 		"thepath": "2.0.0",

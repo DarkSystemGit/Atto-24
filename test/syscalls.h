@@ -51,3 +51,8 @@
 #define randomDistrubution.setUniform 50;
 #define random.free 51;
 #define randomDistrubution.free 52;
+#define gfx.new 53;
+#define gfx.getVRAMBuffer 54;
+#define gfx.free 55;
+#define gfx.render 56;
+#define gfx.setPalette 57;

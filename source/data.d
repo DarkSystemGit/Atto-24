@@ -2,6 +2,7 @@ import std;
 import mem;
 import time;
 import random;
+import dgfx;
 struct Machine {
     real memory_size = 0;
     real[] memory = new real[0];
@@ -70,6 +71,20 @@ struct Objects{
     Time[] times=new Time[0];
     Distrubution[] dists;
     random.Random[] rands;
+    GFX gfx;
+    int vramAddr;
+    Sprite[] sprites;
+    TileMap[] maps;
+    int addSprite(){
+        Sprite sprite;
+        sprites~=sprite;
+        return cast(int)(sprites.length-1);
+    }
+    int addMap(){
+        TileMap map;
+        maps~=map;
+        return cast(int)(maps.length-1);
+    }
     int addDist(){
         Distrubution dist=new Distrubution(cast(int)dists.length);
         dists ~= dist;

@@ -9,6 +9,7 @@ void main(string[] argv) {
     args["--src"]="";
     args["--debug"]="false";
     args["--compiler-debug"]="false";
+    args["--bcoffset"]="0";
     for(int i=1;i<argv.length-1;i+=2) {
         args[argv[i]]=argv[i+1];
     }
@@ -39,7 +40,7 @@ void main(string[] argv) {
         writeln("Labels: ");
         writeln(c.labels);
         writeln("Bytecode:");
-        writeln(c.bytecode);
+        writeln(c.bytecode[args["--bcoffset"].to!int..$]);
     }else{
         if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }

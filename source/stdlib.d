@@ -12,6 +12,7 @@ import str;
 import mem;
 import time;
 import random;
+import gfx;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
@@ -33,7 +34,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &subTime,&setTimeToCurrTime,&setTimeToGMT,&freeTime,
     &newRandom,&newDistrubution,&setRandSeed,&sampleRand,
     &setDistrubution,&setDistrubutionProbabilities,&setUniformDistrubution,&freeRandom,
-    &freeDistrubution 
+    &freeDistrubution,&initGFX,&getVRAMBuffer,&freeGFX,
+    &renderGFX,&setPalette 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

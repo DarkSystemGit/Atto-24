@@ -14,8 +14,8 @@ void handleOpcode(ref Machine machine, real opcode, real[] params)
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
     machine.ip += pcount;
     if (machine._debug)
-        writeln("[DEBUG] Executed opcode ", printOpcode(opcode), "(", printParams(
-                params[0 .. pcount - 1]), ");");
+        writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
+                params[0 .. pcount - 1]), "); | Bytecode: ",machine.memory[machine.ip-pcount..machine.ip-1]);
 
 }
 
