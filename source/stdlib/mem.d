@@ -20,10 +20,10 @@ class machineHeap{
     int[][] sizes=new int[0][2];
     int ptr;
     heapObj[] objs=new heapObj[1];
-    real[] memory;
-    this(int ptr,ref real[] memory){
+    Machine *m;
+    this(int ptr,Machine *m){
         this.ptr=ptr;
-        this.memory=memory;
+        this.m=m;
         heapObj startobj;
         int[] objSize=[0,0];
         startobj.size=0;
@@ -68,12 +68,11 @@ class machineHeap{
         obj.id=cast(int)objs.length;
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
-        memory.length=ptr+obj.end+1;
-
+        (*m).memory.length=ptr+obj.end+1;
     }
     void free(int id){
         objs[id].free=true;
-        for(int i=objs[id].start;i<objs[id].end;i++){memory[i]=0;}
+        for(int i=objs[id].start;i<objs[id].end;i++){(*m).memory[i]=0;}
     }
 }
 //syscall 23;memdump()

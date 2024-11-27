@@ -12,12 +12,15 @@ inc %A;
 add %A,%C;
 write 7,%A;
 sub %A,%C;
+sys sys.printAscii 10;
+sys sys.printNum %A;
 jmp GameLoop;
 glb:
-mov 76799,%A;   
+sys 23; 
 sys gfx.render;
-jmp GameLoop;
+jmp glb;
 Error:
 sys sys.printString &errStr;
-sys 23;
+pop %A;
+sys sys.printNum %A;
 exit;

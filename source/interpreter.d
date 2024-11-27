@@ -5,8 +5,9 @@ import log;
 import registers;
 import compiler;
 import mem;
-
+import core.sys.posix.signal;
 int function(ref Machine machine, real[] params)[30] commands;
+bool running;
 void handleOpcode(ref Machine machine, real opcode, real[] params)
 {
     if (isNaN(opcode))
@@ -18,9 +19,13 @@ void handleOpcode(ref Machine machine, real opcode, real[] params)
                 params[0 .. pcount - 1]), "); | Bytecode: ",machine.memory[machine.ip-pcount..machine.ip-1]);
 
 }
-
+extern(C) void sighandler(int num) nothrow @nogc @system{
+    //writeln("SIGINT");
+    running=false;
+}
 Machine execBytecode(real[] prgm, bool d)
 {   
+    signal(SIGINT, &sighandler);
     commands[0] = &nop;
     commands[1] = &add;
     commands[2] = &sub;
@@ -56,21 +61,24 @@ Machine execBytecode(real[] prgm, bool d)
     machine.memory_size = (cast(real) prgm.length + 50);
     machine.memory = prgm;
     machine.memory.length = cast(ulong) machine.memory_size;
-    machine.heap = new machineHeap(cast(int) machine.memory_size, machine.memory);
+    machine.heap = new machineHeap(cast(int) machine.memory_size, &machine);
     machine.memory.length = machine.heap.ptr;
     machine.memory_size = machine.memory.length;
     machine.running=true;
-    while ((machine.ip < machine.memory.length)&&machine.running)
+    running=machine.running;
+    while ((machine.ip < machine.memory.length)&&machine.running&&running)
     {
             if(machine._debug){
+                write(">");
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();
                 if(line=="dump")machine.print();
+                writeln("Run State:  ",machine.running);
             }
             try{
                 try{
-                real[] params = machine.memory[machine.ip + 1 .. $];
+                real[] params = copyArray(machine.memory[machine.ip + 1 .. $]);
                 handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);}
             }catch (Exception e)
             {   
@@ -78,7 +86,14 @@ Machine execBytecode(real[] prgm, bool d)
             }
        
     }
+    exit(machine,[]);
     return machine;
+}
+real[] copyArray(real[] arr){
+    //99.29% of all program time is spent here, OPTIMIZE!!!
+    real[] arr2 = new real[arr.length];
+    foreach(i,v;arr){arr2[i]=v;}
+    return arr2;
 }
 void handleError(ref Machine machine){
                 machine.stack.length++;

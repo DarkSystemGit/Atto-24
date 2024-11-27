@@ -9,6 +9,7 @@
 		"dsdl2": "0.2.1-beta",
 		"dshould": "1.7.2",
 		"prettyprint": "1.0.9",
+		"profiled": "0.0.2",
 		"thepath": "2.0.0",
 		"unit-threaded": "2.2.0"
 	}
