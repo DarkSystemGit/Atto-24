@@ -225,5 +225,6 @@ int setErrAddr(ref Machine m, real[] p) {
 }
 int exit(ref Machine m, real[] p) {
     m.running=false;
+    if(m.objs.gfx !is null)m.objs.gfx.kill();
     return 0;
 }

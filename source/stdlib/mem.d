@@ -21,14 +21,14 @@ class machineHeap{
     int ptr;
     heapObj[] objs=new heapObj[1];
     real[] memory;
-    this(int ptr,real[] memory){
+    this(int ptr,ref real[] memory){
         this.ptr=ptr;
         this.memory=memory;
         heapObj startobj;
         int[] objSize=[0,0];
         startobj.size=0;
-        startobj.start=0;
-        startobj.end=1;
+        startobj.start=ptr;
+        startobj.end=ptr+1;
         startobj.free=false;
         startobj.id=0;
         objs[0]=startobj;
@@ -57,7 +57,7 @@ class machineHeap{
         return obj;
     }
     }
-    int getDataPtr(heapObj obj){return obj.start+ptr;}
+    int getDataPtr(heapObj obj){return obj.start;}
     void addObj(int size){
         size=cast(int)exp2(ceil(log2(cast(float)size)));
         heapObj obj;
@@ -69,6 +69,7 @@ class machineHeap{
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
         memory.length=ptr+obj.end+1;
+
     }
     void free(int id){
         objs[id].free=true;

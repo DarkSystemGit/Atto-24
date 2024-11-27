@@ -56,13 +56,18 @@ Machine execBytecode(real[] prgm, bool d)
     machine.memory_size = (cast(real) prgm.length + 50);
     machine.memory = prgm;
     machine.memory.length = cast(ulong) machine.memory_size;
-    machine.heap = new machineHeap(cast(int) machine.memory_size, machine.memory[cast(ulong) machine.memory_size .. $]);
+    machine.heap = new machineHeap(cast(int) machine.memory_size, machine.memory);
     machine.memory.length = machine.heap.ptr;
     machine.memory_size = machine.memory.length;
     machine.running=true;
     while ((machine.ip < machine.memory.length)&&machine.running)
     {
-        
+            if(machine._debug){
+                string line;
+                while((line=readln())is null){}
+                line=line.strip();
+                if(line=="dump")machine.print();
+            }
             try{
                 try{
                 real[] params = machine.memory[machine.ip + 1 .. $];
