@@ -84,8 +84,8 @@ int memdump(ref Machine machine,real[] p) {
 int malloc(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     heapObj obj=machine.heap.getObj(cast(int)params[0]);
-    setRegister(machine,(cast(real)4294967296)-params[1],machine.heap.getDataPtr(obj));
-    setRegister(machine,(cast(real)4294967296)-params[2],obj.id);
+    setRegister(machine,(cast(real)4294967296)-p[1],machine.heap.getDataPtr(obj));
+    setRegister(machine,(cast(real)4294967296)-p[2],obj.id);
     return 3;
 }
 //syscall 25; free(int id)

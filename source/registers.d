@@ -10,14 +10,15 @@ void handleFlags(ref Machine machine, real res) {
         machine.flags.negative = true;
 
 }
-real[] handleRegisters(ref Machine machine, real[] paramList, int count) {
+real[] handleRegisters(ref Machine machine, real[] paramRaw, int count) {
     int c = count;
     if (count == 0){
-        c = cast(int)paramList.length - 1;
+        c = cast(int)paramRaw.length - 1;
     }
+    real[] paramList = new real[c+1];
     for (int i = 0; i < c; i++) {
         //writeln("[DEBUG] Handling register ",printRegister(paramList[i])," ",(4294967296 - paramList[i])<(10)," ",cast(real)4294967296 - paramList[i] );
-        if((4294967296 - paramList[i])<(10))paramList[i]=getRegister(machine,cast(real)4294967296 - paramList[i] );
+        if((4294967296 - paramRaw[i])<(10)){paramList[i]=getRegister(machine,cast(real)4294967296 - paramRaw[i] );}else{paramList[i]=paramRaw[i];}
     }
     
     return paramList;

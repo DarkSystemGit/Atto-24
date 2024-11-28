@@ -40,7 +40,7 @@ int isDir(ref Machine machine,real[] p){
     char[] path=readString(machine,cast(int)params[0]);
     bool ex;
     if(exists(path)){ex=std.file.isDir(path);}
-    setRegister(machine,(cast(real)4294967296) -params[1],ex);
+    setRegister(machine,(cast(real)4294967296) -p[1],ex);
     return 2;
 }
 //syscall 16; ls(string* path,char[][] mempos)

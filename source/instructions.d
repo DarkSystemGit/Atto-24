@@ -87,7 +87,7 @@ int xor(ref Machine machine, real[] p) {
 int cp(ref Machine machine, real[] p) {
 
     real[] params=handleRegisters(machine, p, 1);
-    if((cast(real)4294967296-params[1])<10)setRegister(machine, (cast(real)4294967296-params[1]), params[0]);
+    if((cast(real)4294967296-p[1])<10)setRegister(machine, (cast(real)4294967296-p[1]), params[0]);
     return 2;
 }
 
@@ -115,7 +115,7 @@ int jnz(ref Machine machine, real[] p) {
 
 int read(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
-    setRegister(machine, (cast(real)4294967296) - params[1],
+    setRegister(machine, (cast(real)4294967296) - p[1],
             machine.memory[cast(ulong)params[0]]);
     return 2;
 }
@@ -204,7 +204,7 @@ int nop(ref Machine m, real[] p) {
 int sys(ref Machine m, real[] p) {
     sysManager sys=new sysManager();
     real[] params=handleRegisters(m, p, 1);
-    return sys.syscall(m,params[0],params[1..$]);  
+    return sys.syscall(m,params[0],p[1..$]);  
    
 }
 int setErrAddr(ref Machine m, real[] p) {

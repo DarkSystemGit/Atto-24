@@ -6,7 +6,7 @@ import utils;
 int strlen(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     char[] str=readString(machine,cast(int)params[0]);
-    setRegister(machine,(cast(real)4294967296)-params[1],str.length);
+    setRegister(machine,(cast(real)4294967296)-p[1],str.length);
     return 2;
 }
 //syscall 18; strcat(string* str,string* str2,char[]* mempos)
@@ -36,14 +36,14 @@ int strcpy(ref Machine machine,real[] p){
 //syscall 20; strcmp(string* str,string* cmp)
 int strcmp(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 2);
-    real register=(cast(real)4294967296)-params[2];
+    real register=(cast(real)4294967296)-p[2];
     setRegister(machine,register,readString(machine,cast(int)params[0])==readString(machine,cast(int)params[1]));
     return 3;
 }
 //syscall 21; substr(string* str,string* substr,int start,int end,register ret)
 int substr(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 4);
-    real register=(cast(real)4294967296)-params[4];
+    real register=(cast(real)4294967296)-p[4];
     char[] str=readString(machine,cast(int)params[0])[cast(int)params[2]..cast(int)params[3]];
     char[] substr=readString(machine,cast(int)params[1]);
     setRegister(machine,register,indexOf(str,substr));

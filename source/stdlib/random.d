@@ -94,10 +94,7 @@ int setDistrubution(ref Machine m,real[] p){
 }
 int setDistrubutionProbabilities(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
-    real[] probs;
-    for(int i=2;i<params[1]+2;i++){
-        probs~=params[i];
-    }
+    real[] probs=p[2..cast(ulong)params[1]+2];
     Distrubution dist=getDistrubution(cast(int)params[0],m);
     dist.setProbibities(probs);
     return cast(int)(2+params[1]);

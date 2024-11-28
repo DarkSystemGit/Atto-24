@@ -13,6 +13,7 @@ void handleOpcode(ref Machine machine, real opcode, real[] params)
     if (isNaN(opcode))
         opcode = 0;
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
+    //writeln(pcount," ",machine.ip," ",opcode);
     machine.ip += pcount;
     if (machine._debug)
         writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
@@ -69,7 +70,7 @@ Machine execBytecode(real[] prgm, bool d)
     while ((machine.ip < machine.memory.length)&&machine.running&&running)
     {
             if(machine._debug){
-                write(">");
+                write(machine.ip,">");
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();
@@ -78,7 +79,7 @@ Machine execBytecode(real[] prgm, bool d)
             }
             try{
                 try{
-                real[] params = copyArray(machine.memory[machine.ip + 1 .. $]);
+                real[] params = machine.memory[machine.ip + 1 .. $];
                 handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);}
             }catch (Exception e)
             {   

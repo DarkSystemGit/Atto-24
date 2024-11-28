@@ -8,7 +8,7 @@ struct Machine {
     real[] memory = new real[0];
     Registers registers;
     Flags flags;
-    int ip;
+    int ip=0;
     int[] raddr;
     int sp;
     int p;
