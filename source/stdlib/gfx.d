@@ -24,7 +24,7 @@ int freeGFX(ref Machine machine,real[] params){
     return 0;
 }
 int renderGFX(ref Machine machine,real[] params){
-    writeln(machine.objs.vramAddr,machine.memory[machine.objs.vramAddr]);
+    //writeln(machine.objs.vramAddr,machine.memory[machine.objs.vramAddr]);
     for(int i=0;i<(320*240);i++){
         machine.objs.gfx.pixels[i]=cast(ubyte)(machine.memory[machine.objs.vramAddr+i]);
     }
