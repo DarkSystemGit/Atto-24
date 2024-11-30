@@ -50,6 +50,7 @@ int pollEvents(ref Machine m,real[] p){
     }
     eventBytes=[cast(int)m.objs.gfx.events.length]~eventBytes;
     heapObj obj=m.heap.getObj(cast(int)eventBytes.length);
+    //writeln(m.heap.getDataPtr(obj));
     setRegister(m,addrregister,m.heap.getDataPtr(obj));
     setRegister(m,idregister,obj.id);
     utils.write(m,m.heap.getDataPtr(obj),eventBytes);

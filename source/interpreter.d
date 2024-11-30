@@ -75,10 +75,7 @@ Machine execBytecode(real[] prgm, bool d)
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();
-                if(line=="dump")machine.print();
-                if(line=="exit")running=false;
-                if(line=="run")machine._debug=false;
-                writeln("Run State:  ",machine.running);
+                debugPrompt(machine,line);
             }
             try{
                 try{
@@ -104,4 +101,49 @@ void handleError(ref Machine machine){
                 machine.stack[machine.stack.length - 1] =machine.ip;
                 machine.ip = machine.errAddr;
 }
-
+void debugPrompt(ref Machine m,string line){
+    switch (line){
+        case "continue":
+            m._debug=false;
+            return;
+        case "dump":
+            m.print(); 
+            return;
+        case "kill":
+            running=false;   
+            return;  
+        case "isRunning":
+            writeln("Run State:  ",m.running);
+            return;
+        case "%A":
+            writeln(m.registers.a);
+            return;
+        case "%B":
+            writeln(m.registers.b);
+            return;
+        case "%C":
+            writeln(m.registers.c);
+            return;
+        case "%D":
+            writeln(m.registers.d);
+            return;
+        case "%E":
+            writeln(m.registers.e);
+            return;
+        case "%F":
+            writeln(m.registers.f);
+            return;
+        case "%G":
+            writeln(m.registers.g);
+            return;
+        case "%H":
+            writeln(m.registers.h);
+            return;
+        case "%I":
+            writeln(m.registers.i);
+            return;
+        case "%J":
+            writeln(m.registers.j);
+            return;
+        default: break;      }
+}
