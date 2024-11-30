@@ -6,7 +6,7 @@ import registers;
 import compiler;
 import mem;
 import core.sys.posix.signal;
-int function(ref Machine machine, real[] params)[30] commands;
+int function(ref Machine machine, real[] params)[31] commands;
 bool running;
 void handleOpcode(ref Machine machine, real opcode, real[] params)
 {
@@ -57,6 +57,7 @@ Machine execBytecode(real[] prgm, bool d)
     commands[27] = &exit;
     commands[28] = &div;
     commands[29] = &mod;
+    commands[30]=  &breakpoint;
     Machine machine = Machine();
     machine._debug = d;
     machine.memory_size = (cast(real) prgm.length + 50);
@@ -75,6 +76,8 @@ Machine execBytecode(real[] prgm, bool d)
                 while((line=readln())is null){}
                 line=line.strip();
                 if(line=="dump")machine.print();
+                if(line=="exit")running=false;
+                if(line=="run")machine._debug=false;
                 writeln("Run State:  ",machine.running);
             }
             try{

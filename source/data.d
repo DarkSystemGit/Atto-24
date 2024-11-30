@@ -143,6 +143,7 @@ enum TokenType
     INCF,
     DECF,
     MULF,
+    BREAKPOINT,
     SETERRADDR,
     EXIT,
     TRUE,

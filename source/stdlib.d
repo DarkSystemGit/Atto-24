@@ -35,7 +35,7 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &newRandom,&newDistrubution,&setRandSeed,&sampleRand,
     &setDistrubution,&setDistrubutionProbabilities,&setUniformDistrubution,&freeRandom,
     &freeDistrubution,&initGFX,&getVRAMBuffer,&freeGFX,
-    &renderGFX,&setPalette 
+    &renderGFX,&setPalette,&pollEvents,&windowClosed 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

@@ -215,5 +215,10 @@ int setErrAddr(ref Machine m, real[] p) {
 int exit(ref Machine m, real[] p) {
     m.running=false;
     if(m.objs.gfx !is null)m.objs.gfx.kill();
+    m.objs.gfx=null;
+    return 0;
+}
+int breakpoint(ref Machine m, real[] p) {
+    m._debug=true;
     return 0;
 }
