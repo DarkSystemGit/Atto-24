@@ -56,5 +56,5 @@
 #define gfx.free 55;
 #define gfx.render 56;
 #define gfx.setPalette 57;
-#define gfx.pollEvents 58;
+#define gfx.getPressedKeys 58;
 #define gfx.windowClosed 59;

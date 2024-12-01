@@ -24,10 +24,7 @@ int freeGFX(ref Machine machine,real[] params){
     return 0;
 }
 int renderGFX(ref Machine machine,real[] params){
-    //writeln(machine.objs.vramAddr,machine.memory[machine.objs.vramAddr]);
-    //writeln("RENDERED");
     for(int i=0;i<(320*240);i++){
-        
         machine.objs.gfx.pixels[i]=cast(ubyte)(machine.memory[machine.objs.vramAddr+i]);
     }
     machine.objs.gfx.render();
@@ -38,23 +35,51 @@ int renderGFX(ref Machine machine,real[] params){
         //writeln(machine.objs.gfx.pixels);
     return 0;
 }
-int pollEvents(ref Machine m,real[] p){
-    real addrregister=(cast(real)4294967296)-p[0];
-    real idregister=(cast(real)4294967296)-p[1];
-    int[] eventBytes=[];
-    foreach(string ev;m.objs.gfx.events){
-        ev~=cast(char)0;
-        foreach(char c;ev){
-            eventBytes~=cast(int)c;
-        }
+int getKeys(ref Machine machine,real[] params){
+    //controller:
+    // 1
+    //2 4 5 6
+    // 3
+    //1:up, 2:left, 3:down, 4:right, 5:z, 6:x
+    int[] sdlKeys=cast(int[])machine.objs.gfx.getPressedKeys();
+     int[] keys=[cast(int)sdlKeys.length];
+    foreach(int i,int key;sdlKeys){
+        if(i<8){switch(key){
+            case 82:
+            //up
+            keys~=1;
+            break;
+            case 81:
+            //down
+            keys~=3;
+            break;
+            case 80:
+            //left
+            keys~=2;
+            break;
+            case 79:
+            //right
+            keys~=4;
+            break;
+            case 29:
+            //z
+            keys~=5;
+            break;
+            case 27:
+            //x
+            keys~=6;
+            break;
+            default:
+            break;
+        }}
+    };
+    if(machine.objs.gfxInputAddr==0){
+        machine.objs.inputs=machine.heap.getObj(8);
+        machine.objs.gfxInputAddr=machine.heap.getDataPtr(machine.objs.inputs);
     }
-    eventBytes=[cast(int)m.objs.gfx.events.length]~eventBytes;
-    heapObj obj=m.heap.getObj(cast(int)eventBytes.length);
-    //writeln(m.heap.getDataPtr(obj));
-    setRegister(m,addrregister,m.heap.getDataPtr(obj));
-    setRegister(m,idregister,obj.id);
-    utils.write(m,m.heap.getDataPtr(obj),eventBytes);
-    return 2;
+    utils.write(machine,machine.heap.getDataPtr(machine.objs.inputs),keys);
+     setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(machine.objs.inputs));
+    return 1;
 }
 int windowClosed(ref Machine m,real[] p){
     real register=(cast(real)4294967296)-p[0];

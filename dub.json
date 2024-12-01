@@ -13,7 +13,7 @@
 	"copyright": "Copyright © 2024, darksystem",
 	"dependencies": {
 		"colorize": "~>1.0.5",
-		"dgfx": "~>1.1.1",
+		"dgfx": "~>1.2.0",
 		"thepath": "~>2.0.0"
 	},
 	"description": "Universal Assembly Language Interpreter",

@@ -19,6 +19,9 @@ int sleep(ref Machine machine,real[] p) {
     Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
 }
+int nutin(ref Machine machine,real[] p){
+    return 0;
+}
 class sysManager{
 int function(ref Machine machine, real[] params)[] syscalls=[
     &print.print,&printASCII,&printStr,&readFile,
@@ -35,7 +38,7 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &newRandom,&newDistrubution,&setRandSeed,&sampleRand,
     &setDistrubution,&setDistrubutionProbabilities,&setUniformDistrubution,&freeRandom,
     &freeDistrubution,&initGFX,&getVRAMBuffer,&freeGFX,
-    &renderGFX,&setPalette,&pollEvents,&windowClosed 
+    &renderGFX,&setPalette,&getKeys,&windowClosed 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

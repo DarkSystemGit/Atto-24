@@ -23,8 +23,8 @@ cmp %D,0;
 jz GameRest;
 sys mem.free %E;
 GameRest:
-sys gfx.pollEvents %B,%E;
-call printEvents;
+sys gfx.getPressedKeys %B;
+call printKeys;
 sys gfx.render;
 mov 0,%A;
 jmp GameLoop;
@@ -35,39 +35,29 @@ sys sys.printNum %A;
 exit;
 End:
 exit;
-printEvents:
-bp;
-//save state
-push %D;
+printKeys:
+push %A;
 push %C;
+push %D;
 push %E;
 mov 0,%A;
-mov 0,%E;
-//gets array length
-read %B,%C;
+mov 0,%C;
 mov 0,%D;
-//zero adjusts the length
-sub %C,1;
-//%E=arr.length,%D=counter,%B=start addr
-mov %A,%E;
-mov %B,%C;
+mov 0,%E;
 LoopStart:
-//condition checking
-cmp %D,%E;
+read %B,%A;
+cmp %D,%A;
 jz EOL;
-//gets str len, adds it to current string pos, %C
-sys str.len %C,%A;
-add %A,%C;
-//prints it
-sys sys.printString %C;
-//movs the new sum to current
-mov %A,%C;
-//end of loop stuff
+add %B,%D;
+inc %A;
+read %A,%A;
+sys sys.printAscii 10;
+sys sys.printNum %A;
 inc %D;
 jmp LoopStart;
 EOL:
-//restores state
 pop %E;
-pop %C;
 pop %D;
+pop %C;
+pop %A;
 ret 0;

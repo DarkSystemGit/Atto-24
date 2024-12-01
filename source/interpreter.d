@@ -71,11 +71,7 @@ Machine execBytecode(real[] prgm, bool d)
     while ((machine.ip < machine.memory.length)&&machine.running&&running)
     {
             if(machine._debug){
-                write(machine.ip,">");
-                string line;
-                while((line=readln())is null){}
-                line=line.strip();
-                debugPrompt(machine,line);
+                dbgloop(machine);
             }
             try{
                 try{
@@ -97,53 +93,67 @@ real[] copyArray(real[] arr){
     return arr2;
 }
 void handleError(ref Machine machine){
+                if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.ip);
                 machine.stack.length++;
                 machine.stack[machine.stack.length - 1] =machine.ip;
                 machine.ip = machine.errAddr;
 }
-void debugPrompt(ref Machine m,string line){
+bool debugPrompt(ref Machine m,string line){
     switch (line){
         case "continue":
             m._debug=false;
-            return;
+            break;
         case "dump":
             m.print(); 
-            return;
+            break;
         case "kill":
             running=false;   
-            return;  
+            break;  
         case "isRunning":
             writeln("Run State:  ",m.running);
-            return;
+            break;
         case "%A":
             writeln(m.registers.a);
-            return;
+            break;
         case "%B":
             writeln(m.registers.b);
-            return;
+            break;
         case "%C":
             writeln(m.registers.c);
-            return;
+            break;
         case "%D":
             writeln(m.registers.d);
-            return;
+            break;
         case "%E":
             writeln(m.registers.e);
-            return;
+            break;
         case "%F":
             writeln(m.registers.f);
-            return;
+            break;
         case "%G":
             writeln(m.registers.g);
-            return;
+            break;
         case "%H":
             writeln(m.registers.h);
-            return;
+            break;
         case "%I":
             writeln(m.registers.i);
-            return;
+            break;
         case "%J":
             writeln(m.registers.j);
-            return;
-        default: break;      }
+            break;
+        default: 
+            if(line.canFind("dump")){
+                string[] parts=line.split(" ");
+                writeln(m.memory[parts[1].to!int..parts[2].to!int]);
+            }else{return true;}  
+        }
+        return false;
+}
+void dbgloop(ref Machine machine){
+    write(machine.ip,">");
+                string line;
+                while((line=readln())is null){}
+                line=line.strip();
+                if(!debugPrompt(machine,line))dbgloop(machine);
 }

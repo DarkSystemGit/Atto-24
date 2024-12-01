@@ -73,6 +73,8 @@ struct Objects{
     random.Random[] rands;
     GFX gfx;
     int vramAddr;
+    int gfxInputAddr;
+    heapObj inputs;
     Sprite[] sprites;
     TileMap[] maps;
     int addSprite(){
@@ -100,6 +102,14 @@ struct Objects{
         times ~= t;
         return t.id;
     }
+}
+enum Key{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    Z,
+    X
 }
 enum TokenType
 {
