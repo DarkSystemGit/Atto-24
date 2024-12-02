@@ -58,3 +58,14 @@
 #define gfx.setPalette 57;
 #define gfx.getPressedKeys 58;
 #define gfx.windowClosed 59;
+#define gfx.keys.up 1;
+#define gfx.keys.down 3;
+#define gfx.keys.left 2;
+#define gfx.keys.right 4;
+#define gfx.keys.z 5;
+#define gfx.keys.x 6;
+#define gfx.sprite.new 60;
+#define gfx.sprite.resize 61;
+#define gfx.sprite.scale 62;
+#define gfx.sprite.render 63;
+#define gfx.sprite.free 64;

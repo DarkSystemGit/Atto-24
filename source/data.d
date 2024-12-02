@@ -108,7 +108,7 @@ struct UserSprite{
     int y;
     float angle;
     ubyte[] pixels;
-    uint[2] scaledDims;
+    float[] scaledDims;
 }
 enum Key{
     UP,

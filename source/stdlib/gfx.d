@@ -4,15 +4,16 @@ import data;
 import utils;
 import mem;
 import registers;
+int[] screenDims=[320,240];
 int initGFX(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 2);
     string title=readString(machine,cast(int)params[0]).to!string;
-    machine.objs.gfx=new GFX(title,[320,240]);
+    machine.objs.gfx=new GFX(title,screenDims);
     machine.objs.vramAddr=cast(int)params[1];
     return 2;
 }
 int getVRAMBuffer(ref Machine machine,real[] params){
-    heapObj obj=machine.heap.getObj(240*320);
+    heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
     machine.objs.vramAddr=machine.heap.getDataPtr(obj);
     setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(obj));
     setRegister(machine,(cast(real)4294967296)-params[1],obj.id);
@@ -24,7 +25,7 @@ int freeGFX(ref Machine machine,real[] params){
     return 0;
 }
 int renderGFX(ref Machine machine,real[] params){
-    for(int i=0;i<(320*240);i++){
+    for(int i=0;i<(screenDims[0]*screenDims[1]);i++){
         machine.objs.gfx.pixels[i]=cast(ubyte)(machine.memory[machine.objs.vramAddr+i]);
     }
     machine.objs.gfx.render();
@@ -136,28 +137,37 @@ int initSprite(ref Machine machine,real[] p){
 }
 int resizeSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 3);
-    machine.memory[params[0]+4]=params[1];
-    machine.memory[params[0]+5]=params[2];
+    machine.memory[cast(ulong)params[0]+4]=params[1];
+    machine.memory[cast(ulong)params[0]+5]=params[2];
     return 3;
 }
 int scaleSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 3);
-    machine.memory[params[0]+4]=machine.memory[params[0]+4]*params[1];
-    machine.memory[params[0]+5]=machine.memory[params[0]+4]*params[2];
+    machine.memory[cast(ulong)params[0]+4]=machine.memory[cast(ulong)params[0]+4]*params[1];
+    machine.memory[cast(ulong)params[0]+5]=machine.memory[cast(ulong)params[0]+4]*params[2];
     return 3;
 }
 int drawSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
-    UserSprite usp=toSprite(machine.memory[cast(int)params[0]...cast(int)params[0]+6],machine);
+    UserSprite usp=toSprite(machine.memory[cast(int)params[0]..cast(int)params[0]+6],machine);
     Sprite sp;
     sp.angle=usp.angle;
     sp.pixels=usp.pixels;
     sp.scaledDims=usp.scaledDims;
     sp.move(usp.x,usp.y);
-    
+    foreach(i,ubyte pix;sp.mpixels){
+        int x=cast(int)(floor(cast(float)(i/sp.dims[0]))+sp.x);
+        int y=cast(int)((i%sp.dims[1])+sp.y);
+        if((pix!=0)&&(x<(screenDims[0]))&&(y<(screenDims[1]))&&(x>=0)&&(y>=0)){
+            ulong index=cast(ulong)((y*(screenDims[0]))+x);
+            machine.memory[machine.objs.vramAddr+index]=pix;    
+        }
+
+    }
+    return 1;
 }
 int freeSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
-    machine.heap.freeObj(sprites[cast(int)params[0]]);
+    machine.heap.free(sprites[cast(int)params[0]]);
     return 1;
 }
