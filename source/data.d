@@ -103,6 +103,13 @@ struct Objects{
         return t.id;
     }
 }
+struct UserSprite{
+    int x;
+    int y;
+    float angle;
+    ubyte[] pixels;
+    uint[2] scaledDims;
+}
 enum Key{
     UP,
     DOWN,
