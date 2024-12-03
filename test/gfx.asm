@@ -7,7 +7,7 @@ sys gfx.new &titleStr,%C;
 push %C;
 push %B;
 sys mem.malloc 64,%E,%B;
-sys mem.fill %E,64,4;
+sys mem.fill %E,63,4;
 sys gfx.sprite.new %B,100,100,0,%E;
 mov %B,%E;
 pop %B;

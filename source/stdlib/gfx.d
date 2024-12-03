@@ -121,12 +121,14 @@ UserSprite toSprite(real[] data,ref Machine m){
 int[int] sprites;
 //initSprite(reg addr,int x,int y,int angle,ubyte[64]* pixels)
 int initSprite(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p[1..4], 4);
+    
+    real[] params=handleRegisters(machine, p[1..5], 4);
     real[] sp=new real[6];
-    sp[0]=params[1];
-    sp[1]=params[2];
-    sp[2]=params[3];
-    sp[3]=params[4];
+   
+    sp[0]=params[0];
+    sp[1]=params[1];
+    sp[2]=params[2];
+    sp[3]=params[3];
     sp[4]=16;
     sp[5]=16;
     heapObj obj=machine.heap.getObj(6);
@@ -149,6 +151,7 @@ int scaleSprite(ref Machine machine,real[] p){
 }
 int drawSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
+    writeln(machine.memory[cast(int)params[0]..cast(int)params[0]+6]);
     UserSprite usp=toSprite(machine.memory[cast(int)params[0]..cast(int)params[0]+6],machine);
     Sprite sp;
     sp.angle=usp.angle;
