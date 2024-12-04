@@ -133,8 +133,10 @@ int initSprite(ref Machine machine,real[] p){
     sp[5]=16;
     heapObj obj=machine.heap.getObj(6);
     sprites[machine.heap.getDataPtr(obj)]=obj.id;
+    //writeln((cast(real)4294967296)-p[0]," ",p[0]);
     utils.write(machine,machine.heap.getDataPtr(obj),sp);
-    setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(obj));
+    writeln(machine.memory[machine.heap.getDataPtr(obj)..machine.heap.getDataPtr(obj)+6],machine.heap.getDataPtr(obj));
+    setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
     return 5;
 }
 int resizeSprite(ref Machine machine,real[] p){

@@ -9,6 +9,7 @@ push %B;
 sys mem.malloc 64,%E,%B;
 sys mem.fill %E,63,4;
 sys gfx.sprite.new %B,100,100,0,%E;
+bp;
 mov %B,%E;
 pop %B;
 pop %C;
@@ -33,6 +34,7 @@ jz GameRest;
 GameRest:
 sys gfx.getPressedKeys %B;
 call printKeys;
+bp;
 sys gfx.sprite.render %E;
 sys gfx.render;
 mov 0,%A;
