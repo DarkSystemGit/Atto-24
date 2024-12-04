@@ -14,6 +14,7 @@ int initGFX(ref Machine machine,real[] p){
 }
 int getVRAMBuffer(ref Machine machine,real[] params){
     heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
+    obj.free=false;
     machine.objs.vramAddr=machine.heap.getDataPtr(obj);
     setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(obj));
     setRegister(machine,(cast(real)4294967296)-params[1],obj.id);
@@ -131,11 +132,12 @@ int initSprite(ref Machine machine,real[] p){
     sp[3]=params[3];
     sp[4]=16;
     sp[5]=16;
+    //writeln(machine.heap.objs);
     heapObj obj=machine.heap.getObj(6);
     sprites[machine.heap.getDataPtr(obj)]=obj.id;
     //writeln((cast(real)4294967296)-p[0]," ",p[0]);
     utils.write(machine,machine.heap.getDataPtr(obj),sp);
-    writeln(machine.memory[machine.heap.getDataPtr(obj)..machine.heap.getDataPtr(obj)+6],machine.heap.getDataPtr(obj));
+    //writeln(machine.memory[machine.heap.getDataPtr(obj)..machine.heap.getDataPtr(obj)+6],machine.heap.getDataPtr(obj));
     setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
     return 5;
 }
@@ -153,7 +155,7 @@ int scaleSprite(ref Machine machine,real[] p){
 }
 int drawSprite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
-    writeln(machine.memory[cast(int)params[0]..cast(int)params[0]+6]);
+    //writeln(machine.memory[cast(int)params[0]..cast(int)params[0]+6]);
     UserSprite usp=toSprite(machine.memory[cast(int)params[0]..cast(int)params[0]+6],machine);
     Sprite sp;
     sp.angle=usp.angle;

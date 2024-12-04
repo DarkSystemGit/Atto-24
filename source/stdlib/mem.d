@@ -36,12 +36,14 @@ class machineHeap{
         sizes[0]=objSize;
     }
     heapObj getObj(int size){
+        //writeln(size);
         heapObj obj;
         bool f;
         sizes.sort!((a,b)=>a[0]<b[0]);
     foreach(int[] i;sizes){
         
         if(i[0]>size-1){
+            //objs[i[1]].print();
             if(objs[i[1]].free){
                 f=true;
                 obj=objs[i[1]];break;
@@ -53,19 +55,22 @@ class machineHeap{
         addObj(size);
         return getObj(size);
     }else{
-        obj.free=false;
+        this.objs[obj.id].free=false;
+        //if(true){writeln("[DEBUG] heap getObj;");obj.print();}
         return obj;
     }
     }
     int getDataPtr(heapObj obj){return obj.start;}
     void addObj(int size){
-        size=cast(int)exp2(ceil(log2(cast(float)size)));
+        size=cast(int)ceil((cast(float)size)/8)*8;
+        //writeln(size);
         heapObj obj;
         obj.size=size;
         obj.free=true;
         obj.start=objs[objs.length-1].end+1;
         obj.end=obj.start+size;
         obj.id=cast(int)objs.length;
+        
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
         (*m).memory.length=ptr+obj.end+1;
