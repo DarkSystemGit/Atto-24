@@ -84,7 +84,7 @@ pop %D;
 pop %A;
 ret;
 useKey:
-bp;
+//bp;
 cmp %A,1;
 jz up;
 cmp %A,3;
