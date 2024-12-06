@@ -7,7 +7,7 @@ sys random.get %A,%C;
 sys sys.printString &str1;
 sys sys.printNum %C;
 sys sys.printAscii 10;
-ret 0;
+ret;
 Init:
 sys random.new 44,%A;
 sys randomDistrubution.new %B;

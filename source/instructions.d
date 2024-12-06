@@ -166,12 +166,9 @@ int call(ref Machine machine, real[] p) {
 }
 
 int ret(ref Machine machine, real[] p) {
-    real[] params=handleRegisters(machine, p, 1);
-    for (int j = cast(int)params.length; j < params[0]; j++) {
-        machine.stack = machine.stack.remove(machine.stack.length - 1);
-    }
+    writeln(machine.raddr);
     machine.ip = machine.raddr[machine.raddr.length-1]-1;
-    return 1;
+    return 0;
 }
 
 int inc(ref Machine machine, real[] params) {
