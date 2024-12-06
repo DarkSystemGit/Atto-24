@@ -70,7 +70,7 @@ read %A,%A;
 cmp %C,1;
 jz NoPrint;
 sys sys.printAscii 10;
-sys sys.printNum %A;
+//sys sys.printNum %A;
 jmp Inc;
 NoPrint:
 call useKey;
@@ -93,29 +93,33 @@ cmp %A,2;
 jz left;
 cmp %A,4;
 jz right;
+cmp %A,5;
+jz rot;
 EOF:
-pop %C;
 ret;
 up:
 call getY;
 dec %A;
 call setY;
-ret;
+jmp EOF;
+rot:
+call rotate;
+jmp EOF;
 down:
 call getY;
 inc %A;
 call setY;
-ret;
+jmp EOF;
 left:
 call getX;
 dec %A;
 call setX;
-ret;
+jmp EOF;
 right:
 call getX;
 inc %A;
 call setX;
-ret;
+jmp EOF;
 getX:
 read %E,%A;
 ret;
@@ -130,4 +134,15 @@ setY:
 mov %A,%C;
 add 1,%E;
 write %C,%A;
+ret;
+rotate:
+push %D;
+mov %A,%C;
+add %E,2;
+read %A,%A;
+add %C,%A;
+mov %A,%C;
+add 2,%E;
+write %C,%A;
+pop %D;
 ret;
