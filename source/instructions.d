@@ -166,8 +166,8 @@ int call(ref Machine machine, real[] p) {
 }
 
 int ret(ref Machine machine, real[] p) {
-    writeln(machine.raddr);
-    machine.ip = machine.raddr[machine.raddr.length-1]-1;
+    //writeln(machine.raddr);
+    machine.ip = machine.raddr[machine.raddr.length-1];
     return 0;
 }
 

@@ -3,9 +3,10 @@
 	"versions": {
 		"bindbc-common": "1.0.3",
 		"bindbc-loader": "1.1.5",
-		"bindbc-sdl": "1.5.0",
+		"bindbc-sdl": "1.5.1",
 		"colorize": "1.0.5",
-		"dgfx": "1.2.1",
+		"dgfx": "1.2.2",
+		"dsdl": "~main",
 		"dsdl2": "0.2.1-beta",
 		"dshould": "1.7.2",
 		"prettyprint": "1.0.9",
