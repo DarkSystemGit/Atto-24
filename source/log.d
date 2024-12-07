@@ -84,6 +84,16 @@ string printOpcode(real opcode) {
         return "SETERRADDR";
         case 27:
         return "EXIT";
+        case 28:
+        return "DIV";
+        case 29:
+        return "MOD";
+        case 30:
+        return "BREAKPOINT";
+        case 31:
+        return "JG";
+        case 32:
+        return "JNG";
         default:
         return "UNKNOWN";
         break;}

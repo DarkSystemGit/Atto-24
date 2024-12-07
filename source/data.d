@@ -54,11 +54,11 @@ struct Registers {
     int c;
     int d;
     int e;
-    float f;
-    float g;
-    real h;
-    real i;
-    real j;
+    float f=0;
+    float g=0;
+    real h=0;
+    real i=0;
+    real j=0;
 }
 
 struct Flags {
@@ -71,6 +71,7 @@ struct Objects{
     Time[] times=new Time[0];
     Distrubution[] dists;
     random.Random[] rands;
+    tmInfo[] tilemaps;
     GFX gfx;
     int vramAddr;
     int gfxInputAddr;
@@ -109,6 +110,19 @@ struct UserSprite{
     float angle;
     ubyte[] pixels;
     float[] scaledDims;
+}
+struct UserTilemap{
+    int x;
+    int y;
+    ubyte[] tilelist=new ubyte[80*60];
+    ubyte[64][512] tileset;
+    int id;
+}
+struct tmInfo{
+    ubyte[] pixels=new ubyte[320*240];
+    int addr;
+    int heapId;
+    bool rerender;
 }
 enum Key{
     UP,
@@ -160,6 +174,8 @@ enum TokenType
     INCF,
     DECF,
     MULF,
+    JG,
+    JNG,
     BREAKPOINT,
     SETERRADDR,
     EXIT,

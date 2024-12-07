@@ -96,7 +96,20 @@ int jmp(ref Machine machine, real[] p) {
     machine.ip = (cast(int)params[0]) - 2;
     return 1;
 }
-
+int jg(ref Machine machine, real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    if (!machine.flags.negative) {
+        machine.ip = (cast(int)params[0]) - 2;
+    }
+    return 1;
+}
+int jng(ref Machine machine, real[] p) {
+    real[] params=handleRegisters(machine, p, 1);
+    if (machine.flags.negative) {
+        machine.ip = (cast(int)params[0]) - 2;
+    }
+    return 1;
+}
 int jz(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     if (machine.flags.zero) {

@@ -178,3 +178,83 @@ int freeSprite(ref Machine machine,real[] p){
     machine.heap.free(sprites[cast(int)params[0]]);
     return 1;
 }
+/* Tilemaps 
+Struct Tilemap{
+    int x;
+    int y;
+    ubyte[80*60]* tilelist;
+    (ubyte[512]*)[64] tileset;
+    int id;
+    void render();
+    void blit();
+}
+*/
+UserTilemap toTilemap(real[] data,Machine machine){
+    UserTilemap tm;
+    ubyte[80*60] tilelist;
+    ubyte[64][512] tileset;
+    tm.x=cast(int)data[0];
+    tm.y=cast(int)data[1];
+    for(int i=0;i<80*60;i++){
+        tilelist[i]=cast(ubyte)machine.memory[cast(ulong)i+cast(ulong)data[2]];
+    }
+    for(int i=0;i<64*512;i++){
+        int tileid=cast(int)floor(cast(real)i/64);
+        tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]];
+    }
+    tm.tilelist=tilelist;
+    tm.tileset=tileset;
+    tm.id=cast(int)data[4];
+    return tm;
+}
+//initTilemap(reg addr,int x,int y, ubyte[80*60]* tilelist,(ubyte[512]*)[64])* tileset)
+int initTilemap(ref Machine machine,real[] p){
+    tmInfo tminfo;
+    real[] params=handleRegisters(machine, p[1..5], 4);
+    heapObj obj=machine.heap.getObj(6);
+    tminfo.addr=machine.heap.getDataPtr(obj);
+    tminfo.heapId=obj.id;
+    tminfo.rerender=true;
+    real[] tm=new real[5];
+    tm[0]=params[0];
+    tm[1]=params[1];
+    tm[2]=params[2];
+    tm[3]=params[3];
+    tm[4]=machine.objs.tilemaps.length;
+    machine.objs.tilemaps~=tminfo;
+    utils.write(machine,machine.heap.getDataPtr(obj),tm);
+    setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
+    return 5;
+}
+int rerenderTilemap(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=true;
+    return 1;
+}
+int renderTilemap(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    UserTilemap utm=toTilemap(machine.memory[cast(int)params[0]..cast(int)params[0]+5],machine);
+    TileMap tm= new TileMap(utm.tilelist,[80,60],utm.x,utm.y);
+    tm.mod=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender;
+    tm.pixels=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels;
+    tm.tileset=utm.tileset;
+    tm.draw();
+    machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=false;
+    foreach(i,ubyte pix;tm.pixels){
+            if(pix!=0)machine.memory[machine.objs.vramAddr+i]=pix;
+            machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels[i]=pix;
+    }
+    return 1;
+}
+//setTileInTileset(tilemap* tm, int id, ubyte[64]* tile)
+int setTileInTileset(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 3);
+    machine.memory[cast(ulong)params[0]+cast(ulong)params[1]]=params[2];
+    return 3;
+}
+//setTile
+int freeTilemap(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine, p, 1);
+    machine.heap.free(machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].heapId);
+    return 1;
+}

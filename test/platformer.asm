@@ -1,0 +1,52 @@
+#include "syscalls.h";
+#define titleStr "Test";
+#define errStr "Error";
+setErrAddr Error;
+sys gfx.getVRAMBuffer %C,%B;
+sys gfx.new &titleStr,%C;
+push %C;
+sys mem.malloc 256,%E,%B;
+sys mem.fill %E,255,4;
+sys gfx.sprite.new %B,0,0,0,%E;
+mov %B,%E;
+pop %C;
+GameLoop:
+sys gfx.windowClosed %A;
+cmp 1,%A;
+jz CleanUp;
+sys mem.fill %C,76800,5;
+//bp;
+push %F;
+addf %G,0.01;
+mov %F,%G;
+add %E,1;
+read %A,%A;
+div %A,8;
+mov %F,%A;
+cmp %A,24;
+jlt loopWrite;
+mov 0,%G;
+loopWrite:
+pop %F;
+read %E,%A;
+addf %A,%F;
+write %E,%F;
+add %E,1;
+read %A,%A;
+add %A,%G;
+mov %A,%D;
+add %E,1;
+write %D,%A;
+sys gfx.getPressedKeys %B;
+sys gfx.sprite.render %E;
+sys gfx.render;
+jmp GameLoop;
+Error:
+bp;
+sys sys.printString &errStr;
+pop %A;
+sys sys.printNum %A;
+exit;
+CleanUp:
+sys gfx.sprite.free %E;
+exit;
