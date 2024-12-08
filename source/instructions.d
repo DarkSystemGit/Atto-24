@@ -205,7 +205,8 @@ int cmp(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 2);
     machine.flags.zero = false;
     machine.flags.negative = false;
-    handleFlags(machine, cast(int)(params[0] - params[1]));
+    handleFlags(machine, params[0] - params[1]);
+    //writeln(params[0]," ",params[1]," ",machine.flags);
     return 2;
 }
 

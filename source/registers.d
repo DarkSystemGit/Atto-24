@@ -4,6 +4,7 @@ import log;
 void handleFlags(ref Machine machine, real res) {
     machine.flags.zero = false;
     machine.flags.negative = false;
+    //writeln(res,res<0);
     if (res == 0)
         machine.flags.zero = true;
     if (res < 0)
