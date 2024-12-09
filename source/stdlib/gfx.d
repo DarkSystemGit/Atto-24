@@ -113,6 +113,7 @@ UserSprite toSprite(real[] data,ref Machine m){
     sp.angle=cast(float)data[2];
     ubyte[] pixels=new ubyte[16*16];
     for(int i=0;i<16*16;i++){
+        if(m.memory[cast(int)data[3]+i].isNaN)continue;
         pixels[i]=cast(ubyte)m.memory[cast(int)data[3]+i];
     }
     sp.pixels=pixels;
@@ -200,11 +201,16 @@ UserTilemap toTilemap(real[] data,Machine machine){
     }
     for(int i=0;i<64*512;i++){
         int tileid=cast(int)floor(cast(real)i/64);
-        tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]];
+        //if(!(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]<0))continue;
+        if(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64].isNaN)continue;
+        if(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]==0)continue;
+        //writeln(i," ",tileid," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]," ",cast(ulong)i%64," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+(i%64)," ",machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]);
+        tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64];
     }
     tm.tilelist=tilelist;
     tm.tileset=tileset;
     tm.id=cast(int)data[4];
+    //writeln("X: ",tm.x," Y: ",tm.y," ID: ",tm.id," Tilelist: ",tilelist," Tileset: ",tileset);
     return tm;
 }
 //initTilemap(reg addr,int x,int y, ubyte[80*60]* tilelist,(ubyte[512]*)[64])* tileset)
@@ -222,6 +228,7 @@ int initTilemap(ref Machine machine,real[] p){
     tm[3]=params[3];
     tm[4]=machine.objs.tilemaps.length;
     machine.objs.tilemaps~=tminfo;
+    toTilemap(tm,machine);
     utils.write(machine,machine.heap.getDataPtr(obj),tm);
     setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
     return 5;
@@ -240,9 +247,11 @@ int renderTilemap(ref Machine machine,real[] p){
     tm.tileset=utm.tileset;
     tm.draw();
     machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=false;
-    foreach(i,ubyte pix;tm.pixels){
-            if(pix!=0)machine.memory[machine.objs.vramAddr+i]=pix;
-            machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels[i]=pix;
+    for(int i=0;i<tm.pixels.length;i++){
+            ubyte pix=tm.pixels[i];
+            if(pix!=0&&i<320*240)machine.memory[machine.objs.vramAddr+i]=pix;
+            //writeln(machine.memory[cast(ulong)params[0]+4]," ",cast(ulong)params[0]+4," ",params[0]," ",i," ",pix);
+            machine.objs.tilemaps[cast(ulong)machine.memory[cast(ulong)params[0]+4]].pixels[i]=pix;
     }
     return 1;
 }

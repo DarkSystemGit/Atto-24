@@ -40,7 +40,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &freeDistrubution,&initGFX,&getVRAMBuffer,&freeGFX,
     &renderGFX,&setPalette,&getKeys,&windowClosed,
     &initSprite,&resizeSprite,&scaleSprite,&drawSprite,
-    &freeSprite 
+    &freeSprite,&initTilemap,&rerenderTilemap,&renderTilemap,
+    &setTileInTileset,&freeTilemap 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

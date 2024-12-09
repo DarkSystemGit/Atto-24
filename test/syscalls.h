@@ -69,3 +69,8 @@
 #define gfx.sprite.scale 62;
 #define gfx.sprite.render 63;
 #define gfx.sprite.free 64;
+#define gfx.tilemap.new 65;
+#define gfx.tilemap.render 66;
+#define gfx.tilemap.blit 67;
+#define gfx.tileset.setTile 68;
+#define gfx.tilemap.free 69;

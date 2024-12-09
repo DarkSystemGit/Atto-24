@@ -4,12 +4,34 @@
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;
 sys gfx.new &titleStr,%C;
+
 push %C;
 sys mem.malloc 256,%E,%B;
 sys mem.fill %E,255,4;
 sys gfx.sprite.new %B,1,1,0,%E;
 mov %B,%E;
 pop %C;
+
+push %C;
+push %A;
+push %B;
+push %D;
+sys mem.malloc 4800,%B,%C;
+sys mem.malloc 512,%C,%D;
+//Tilelist:%B,Tileset:%C
+sys mem.malloc 64,%D,%A;
+sys mem.fill %D,64,2;
+write %D,%C;
+add %B,1120;
+sys mem.fill %A,80,1;
+sys gfx.tilemap.new %A,0,0,%B,%C;
+sys gfx.tilemap.render %A;
+mov %A,%I;
+pop %D;
+pop %B;
+pop %A;
+pop %C;
+
 
 GameLoop:
 sys gfx.windowClosed %A;
@@ -37,10 +59,10 @@ jg subF;
 glr:
 push %F;
 read %E,%A;
-sys sys.printNum %A;
+/*sys sys.printNum %A;
 sys sys.printAscii 32;
 sys sys.printNum %F;
-sys sys.printAscii 10;
+sys sys.printAscii 10;*/
 addf %A,%F;
 mov %F,%H;
 write %H,%E;
@@ -55,6 +77,8 @@ write %D,%A;
 
 sys gfx.getPressedKeys %B;
 call HandleKeys;
+//bp;
+sys gfx.tilemap.blit %I;
 sys gfx.sprite.render %E;
 sys gfx.render;
 jmp GameLoop;

@@ -70,7 +70,10 @@ class machineHeap{
         obj.start=objs[objs.length-1].end+1;
         obj.end=obj.start+size;
         obj.id=cast(int)objs.length;
-        
+        for(int i=obj.start;i<obj.end;i++){
+            if((*m).memory.length<=i){(*m).memory.length=i+1;}
+            (*m).memory[i]=0;
+        }
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
         (*m).memory.length=ptr+obj.end+1;

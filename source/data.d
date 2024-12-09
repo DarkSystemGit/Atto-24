@@ -119,7 +119,7 @@ struct UserTilemap{
     int id;
 }
 struct tmInfo{
-    ubyte[] pixels=new ubyte[320*240];
+    ubyte[] pixels=new ubyte[640*480];
     int addr;
     int heapId;
     bool rerender;
