@@ -81,6 +81,7 @@ call HandleKeys;
 sys gfx.tilemap.blit %I;
 sys gfx.sprite.render %E;
 sys gfx.render;
+bp;
 jmp GameLoop;
 
 Error:

@@ -196,20 +196,25 @@ UserTilemap toTilemap(real[] data,Machine machine){
     ubyte[64][512] tileset;
     tm.x=cast(int)data[0];
     tm.y=cast(int)data[1];
+    tilelist[]=0;
     for(int i=0;i<80*60;i++){
         tilelist[i]=cast(ubyte)machine.memory[cast(ulong)i+cast(ulong)data[2]];
+        if(tilelist[i]!=0)writeln(tilelist[i]," ",machine.memory[cast(ulong)i+cast(ulong)data[2]]);
     }
+    
     for(int i=0;i<64*512;i++){
         int tileid=cast(int)floor(cast(real)i/64);
         //if(!(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]<0))continue;
         if(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64].isNaN)continue;
         if(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]==0)continue;
         //writeln(i," ",tileid," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]," ",cast(ulong)i%64," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+(i%64)," ",machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]);
+        //writeln(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]," ",cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]);
         tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64];
     }
     tm.tilelist=tilelist;
     tm.tileset=tileset;
     tm.id=cast(int)data[4];
+    //writeln(tilelist);
     //writeln("X: ",tm.x," Y: ",tm.y," ID: ",tm.id," Tilelist: ",tilelist," Tileset: ",tileset);
     return tm;
 }
@@ -245,7 +250,9 @@ int renderTilemap(ref Machine machine,real[] p){
     tm.mod=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender;
     tm.pixels=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels;
     tm.tileset=utm.tileset;
+    //writeln(tm.tiles);
     tm.draw();
+    //writeln(tm.pixels);
     machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=false;
     for(int i=0;i<tm.pixels.length;i++){
             ubyte pix=tm.pixels[i];
