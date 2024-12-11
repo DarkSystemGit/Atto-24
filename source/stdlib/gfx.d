@@ -199,7 +199,7 @@ UserTilemap toTilemap(real[] data,Machine machine){
     tilelist[]=0;
     for(int i=0;i<80*60;i++){
         tilelist[i]=cast(ubyte)machine.memory[cast(ulong)i+cast(ulong)data[2]];
-        if(tilelist[i]!=0)writeln(tilelist[i]," ",machine.memory[cast(ulong)i+cast(ulong)data[2]]);
+        //if(tilelist[i]!=0)writeln(tilelist[i]," ",machine.memory[cast(ulong)i+cast(ulong)data[2]]);
     }
     
     for(int i=0;i<64*512;i++){
@@ -212,6 +212,7 @@ UserTilemap toTilemap(real[] data,Machine machine){
         tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64];
     }
     tm.tilelist=tilelist;
+    //writeln(tm.tilelist);
     tm.tileset=tileset;
     tm.id=cast(int)data[4];
     //writeln(tilelist);
@@ -246,16 +247,18 @@ int rerenderTilemap(ref Machine machine,real[] p){
 int renderTilemap(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     UserTilemap utm=toTilemap(machine.memory[cast(int)params[0]..cast(int)params[0]+5],machine);
-    TileMap tm= new TileMap(utm.tilelist,[80,60],utm.x,utm.y);
-    tm.mod=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender;
-    tm.pixels=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels;
-    tm.tileset=utm.tileset;
-    //writeln(tm.tiles);
-    tm.draw();
+    bool mod=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender;
+    ubyte[] pixels=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels;
     //writeln(tm.pixels);
     machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=false;
-    for(int i=0;i<tm.pixels.length;i++){
-            ubyte pix=tm.pixels[i];
+    foreach(int i,ubyte tile;utm.tilelist){
+        int x=cast(int)floor(cast(real)i/80);
+        int y=i%80;
+        
+
+    }
+    for(int i=0;i<pixels.length;i++){
+            ubyte pix=pixels[i];
             if(pix!=0&&i<320*240)machine.memory[machine.objs.vramAddr+i]=pix;
             //writeln(machine.memory[cast(ulong)params[0]+4]," ",cast(ulong)params[0]+4," ",params[0]," ",i," ",pix);
             machine.objs.tilemaps[cast(ulong)machine.memory[cast(ulong)params[0]+4]].pixels[i]=pix;

@@ -22,8 +22,7 @@ sys mem.malloc 512,%C,%D;
 sys mem.malloc 64,%D,%A;
 sys mem.fill %D,64,2;
 write %D,%C;
-add %B,1120;
-sys mem.fill %A,80,1;
+call fillScreen;
 sys gfx.tilemap.new %A,0,0,%B,%C;
 sys gfx.tilemap.render %A;
 mov %A,%I;
@@ -156,3 +155,31 @@ jmp glr;
 zeroF:
 mov 0,%F;
 jmp glr;
+
+fillScreen:
+push %A;
+push %C;
+push %D;
+push %E;
+push %F;
+mov -1,%C;
+Loop:
+bp;
+inc %C;
+cmp %C,4800;
+jz EoLFS;
+mod %C,60;
+cmp %F,28;
+jnz Loop;
+cmp %F,29;
+jnz Loop;
+add %B,%C;
+write 1,%A;
+jmp Loop;
+EoLFS:
+pop %F;
+pop %E;
+pop %D;
+pop %C;
+pop %A;
+ret;
