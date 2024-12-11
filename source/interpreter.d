@@ -145,6 +145,9 @@ bool debugPrompt(ref Machine m,string line){
         case "%J":
             writeln(m.registers.j);
             break;
+        case "flags":
+            writeln(m.flags);
+            break;    
         default: 
             if(line.canFind("dump")){
                 string[] parts=line.split(" ");

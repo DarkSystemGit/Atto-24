@@ -192,7 +192,7 @@ Struct Tilemap{
 */
 UserTilemap toTilemap(real[] data,Machine machine){
     UserTilemap tm;
-    ubyte[80*60] tilelist;
+    ubyte[] tilelist=new ubyte[80*60];
     ubyte[64][512] tileset;
     tm.x=cast(int)data[0];
     tm.y=cast(int)data[1];
@@ -254,9 +254,18 @@ int renderTilemap(ref Machine machine,real[] p){
     foreach(int i,ubyte tile;utm.tilelist){
         int x=cast(int)floor(cast(real)i/80);
         int y=i%80;
-        
-
+        for(int tx=0;tx<8;tx++){
+            for(int ty=0;ty<8;ty++){
+                int fx=x*8+utm.x;
+                int fy=y*8+utm.y;
+                
+                int findex=fy*320+fx;
+                int tindex=ty*8+tx;
+                pixels[findex]=utm.tileset[tile][tindex];
+            }
+        }
     }
+    writeln(pixels);
     for(int i=0;i<pixels.length;i++){
             ubyte pix=pixels[i];
             if(pix!=0&&i<320*240)machine.memory[machine.objs.vramAddr+i]=pix;

@@ -76,11 +76,10 @@ write %D,%A;
 
 sys gfx.getPressedKeys %B;
 call HandleKeys;
-//bp;
 sys gfx.tilemap.blit %I;
 sys gfx.sprite.render %E;
 sys gfx.render;
-bp;
+exit;
 jmp GameLoop;
 
 Error:
@@ -164,15 +163,16 @@ push %E;
 push %F;
 mov -1,%C;
 Loop:
-bp;
+//bp;
 inc %C;
 cmp %C,4800;
 jz EoLFS;
-mod %C,60;
+mod %C,80;
 cmp %F,28;
-jnz Loop;
-cmp %F,29;
-jnz Loop;
+jlt Loop;
+cmp %F,30;
+jg Loop;
+//bp;
 add %B,%C;
 write 1,%A;
 jmp Loop;
