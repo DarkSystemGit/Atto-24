@@ -207,6 +207,7 @@ UserTilemap toTilemap(real[] data,Machine machine){
         //if(!(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]<0))continue;
         if(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64].isNaN)continue;
         if(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]==0)continue;
+        writeln(tileid," ",cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]);
         //writeln(i," ",tileid," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]," ",cast(ulong)i%64," ",machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+(i%64)," ",machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]);
         //writeln(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]," ",cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64]);
         tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64];
@@ -249,23 +250,22 @@ int renderTilemap(ref Machine machine,real[] p){
     UserTilemap utm=toTilemap(machine.memory[cast(int)params[0]..cast(int)params[0]+5],machine);
     bool mod=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender;
     ubyte[] pixels=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].pixels;
-    //writeln(tm.pixels);
+    //writeln(utm.tileset);
     machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=false;
     foreach(int i,ubyte tile;utm.tilelist){
         int x=cast(int)floor(cast(real)i/80);
         int y=i%80;
         for(int tx=0;tx<8;tx++){
             for(int ty=0;ty<8;ty++){
-                int fx=x*8+utm.x;
-                int fy=y*8+utm.y;
-                
+                int fx=x*8+utm.x+tx;
+                int fy=y*8+utm.y+ty;
                 int findex=fy*320+fx;
                 int tindex=ty*8+tx;
                 pixels[findex]=utm.tileset[tile][tindex];
             }
         }
     }
-    writeln(pixels);
+    //writeln(pixels);
     for(int i=0;i<pixels.length;i++){
             ubyte pix=pixels[i];
             if(pix!=0&&i<320*240)machine.memory[machine.objs.vramAddr+i]=pix;
