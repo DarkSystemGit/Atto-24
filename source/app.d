@@ -41,6 +41,8 @@ void main(string[] argv) {
         writeln(c.labels);
         writeln("Bytecode:");
         writeln(c.bytecode[args["--bcoffset"].to!int..$]);
+        writeln("Data Refences:");
+        writeln(c.unResolvedData);
     }else{
         if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }

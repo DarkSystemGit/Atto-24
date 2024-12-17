@@ -544,16 +544,18 @@ class Compiler{
             //error handling fix;
             addBytecode(27);
             dataPtr=bcpos;
-            foreach(real[] c;dataSec){
-            addBytecode(c);}
+            foreach(real[] c;dataSec){addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){
                 if(labels[name]!=0){
                     bytecode[pos]=labels[name];
                 }
             }
             foreach(int pos,int dataPos;unResolvedData){
-                
-                bytecode[pos]=dataPos+dataPtr;
+                int realPos=0;
+                for(int i=0;i<dataPos;i++){
+                    realPos+=dataSec[i].length;
+                } 
+                bytecode[pos]=realPos+dataPtr;
             }
         }
         void resolveLabel(string name){

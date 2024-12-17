@@ -1,5 +1,5 @@
 #include "syscalls.h";
-#define titleStr "Test";
+#define titleStr "GameTest";
 #define errStr "Error";
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;
@@ -21,11 +21,9 @@ sys mem.malloc 512,%C,%D;
 //Tilelist:%B,Tileset:%C
 sys mem.malloc 64,%D,%A;
 sys mem.fill %D,32,2;
-push %A;
 add %D,32;
 sys mem.fill %A,32,3;
-pop %A;
-add 1,%A;
+add 1,%C;
 write %D,%A;
 call fillScreen;
 sys gfx.tilemap.new %A,0,0,%B,%C;
@@ -84,7 +82,7 @@ call HandleKeys;
 sys gfx.tilemap.blit %I;
 sys gfx.sprite.render %E;
 sys gfx.render;
-exit;
+//exit;
 jmp GameLoop;
 
 Error:
@@ -166,21 +164,25 @@ push %C;
 push %D;
 push %E;
 push %F;
+/*
 mov -1,%C;
 Loop:
 //bp;
 inc %C;
 cmp %C,4800;
 jz EoLFS;
-mod %C,80;
-cmp %F,24;
+div %C,80;
+mov %F,%A;
+cmp %A,25;
 jlt Loop;
-cmp %F,30;
+cmp %A,30;
 jg Loop;
 //bp;
 add %B,%C;
 write 1,%A;
-jmp Loop;
+jmp Loop;*/
+add %B,2000;
+sys mem.fill %A,400,1;
 EoLFS:
 pop %F;
 pop %E;
