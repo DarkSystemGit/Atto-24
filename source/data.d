@@ -117,12 +117,14 @@ struct UserTilemap{
     ubyte[] tilelist=new ubyte[80*60];
     ubyte[64][512] tileset;
     int id;
+    int width;
+    int height;
 }
 struct tmInfo{
-    ubyte[320*240] pixels;
     int addr;
     int heapId;
     bool rerender;
+    TileMap tm;
 }
 enum Key{
     UP,

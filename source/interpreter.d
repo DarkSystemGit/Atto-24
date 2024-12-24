@@ -5,6 +5,7 @@ import log;
 import registers;
 import compiler;
 import mem;
+import colorize;
 import core.sys.posix.signal;
 int function(ref Machine machine, real[] params)[33] commands;
 bool running;
@@ -78,10 +79,10 @@ Machine execBytecode(real[] prgm, bool d)
             try{
                 try{
                 real[] params = machine.memory[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){writeln(e);handleError(machine);}
+                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);}
             }catch (Exception e)
             {   
-                writeln(e);
+               
                 handleError(machine);
             }
        
@@ -89,17 +90,32 @@ Machine execBytecode(real[] prgm, bool d)
     exit(machine,[]);
     return machine;
 }
-real[] copyArray(real[] arr){
-    //99.29% of all program time is spent here, OPTIMIZE!!!
-    real[] arr2 = new real[arr.length];
-    foreach(i,v;arr){arr2[i]=v;}
-    return arr2;
-}
 void handleError(ref Machine machine){
                 if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.ip);
                 machine.stack.length++;
                 machine.stack[machine.stack.length - 1] =machine.ip;
-                machine.ip = machine.errAddr;
+                if(machine.errAddr!=0){
+                machine.ip = machine.errAddr;}else{
+                    machine.stack.length--;
+                    cwrite(("[ERROR] ").color(fg.red).color(mode.bold));
+                    cwriteln(("An Error occured at this address: "~machine.ip.to!string).color(mode.bold));
+                    cwriteln("Stack:".color(mode.bold));
+                    cwriteln(machine.stack.to!string().color(mode.bold));
+                    cwriteln("Call Stack:".color(mode.bold));
+                    cwriteln(machine.raddr.to!string().color(mode.bold));
+                    cwriteln(("Registers:").color(mode.bold));
+                    cwriteln(("A: "~machine.registers.a.to!string()).color(mode.bold));
+                    cwriteln(("B: "~machine.registers.b.to!string()).color(mode.bold));
+                    cwriteln(("C: "~machine.registers.c.to!string()).color(mode.bold));
+                    cwriteln(("D: "~machine.registers.d.to!string()).color(mode.bold));
+                    cwriteln(("E: "~machine.registers.e.to!string()).color(mode.bold));
+                    cwriteln(("F: "~machine.registers.f.to!string()).color(mode.bold));
+                    cwriteln(("G: "~machine.registers.g.to!string()).color(mode.bold));
+                    cwriteln(("H: "~machine.registers.h.to!string()).color(mode.bold));
+                    cwriteln(("I: "~machine.registers.i.to!string()).color(mode.bold));
+                    cwriteln(("J: "~machine.registers.j.to!string()).color(mode.bold));
+                    machine.running=false;
+                }
 }
 bool debugPrompt(ref Machine m,string line){
     switch (line){

@@ -1,13 +1,15 @@
 #include "syscalls.h";
 #define titleStr "GameTest";
 #define errStr "Error";
+#define palatte [4,0x000000FF,0xFF0000FF,0xFF00FFFF,0x0000FFFF];
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;
 sys gfx.new &titleStr,%C;
+sys gfx.setPalette &palatte;
 
 push %C;
 sys mem.malloc 256,%E,%B;
-sys mem.fill %E,255,4;
+sys mem.fill %E,255,3;
 sys gfx.sprite.new %B,1,1,0,%E;
 mov %B,%E;
 pop %C;
@@ -26,7 +28,7 @@ sys mem.fill %A,32,3;
 add 1,%C;
 write %D,%A;
 call fillScreen;
-sys gfx.tilemap.new %A,0,0,%B,%C;
+sys gfx.tilemap.new %A,0,0,%B,%C,80,60;
 sys gfx.tilemap.render %A;
 mov %A,%I;
 pop %D;
@@ -39,7 +41,7 @@ GameLoop:
 sys gfx.windowClosed %A;
 cmp 1,%A;
 jz CleanUp;
-sys mem.fill %C,76800,5;
+sys mem.fill %C,76800,1;
 //bp;
 push %F;
 addf %G,0.08;
@@ -61,10 +63,6 @@ jg subF;
 glr:
 push %F;
 read %E,%A;
-/*sys sys.printNum %A;
-sys sys.printAscii 32;
-sys sys.printNum %F;
-sys sys.printAscii 10;*/
 addf %A,%F;
 mov %F,%H;
 write %H,%E;
@@ -79,10 +77,15 @@ write %D,%A;
 
 sys gfx.getPressedKeys %B;
 call HandleKeys;
+push %F;
+read %I,%F;
+subf %F,1;
+write %F,%I;
+sys gfx.tilemap.render %I;
+pop %F;
 sys gfx.tilemap.blit %I;
 sys gfx.sprite.render %E;
 sys gfx.render;
-//exit;
 jmp GameLoop;
 
 Error:
@@ -164,7 +167,6 @@ push %C;
 push %D;
 push %E;
 push %F;
-/*
 mov -1,%C;
 Loop:
 //bp;
@@ -180,10 +182,11 @@ jg Loop;
 //bp;
 add %B,%C;
 write 1,%A;
-jmp Loop;*/
-add %B,2000;
-sys mem.fill %A,400,1;
+jmp Loop;
+/*add %B,2005;
+sys mem.fill %A,400,1;*/
 EoLFS:
+//bp;
 pop %F;
 pop %E;
 pop %D;

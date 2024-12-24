@@ -186,10 +186,10 @@ class Tokenizer
                     s ~= advance();
                 }
                 addToken(TokenType.PTR,s);
-            }else if(std.ascii.isDigit(cast(char)c)&&(peek()=='x')&&std.ascii.isDigit(cast(char)peekNext())){
+            }else if((c=='0')&&(peek()=='x')&&isAlphanum(cast(char)peekNext())){
                 string n;
                 advance();
-                while ((std.ascii.isDigit(cast(char)peek()) || (peek() == '.' && isDigit(cast(char)peekNext())))&&(!isAtEnd()))
+                while ((isAlphanum(cast(char)peek()) || (peek() == '.' && isAlphanum(cast(char)peekNext())))&&(!isAtEnd()))
                 {
                     n ~= advance();
                 }
@@ -543,7 +543,6 @@ class Compiler{
         void parsePostPass(){
             //error handling fix;
             addBytecode(27);
-            dataPtr=bcpos;
             foreach(real[] c;dataSec){addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){
                 if(labels[name]!=0){
@@ -557,6 +556,7 @@ class Compiler{
                 } 
                 bytecode[pos]=realPos+dataPtr;
             }
+            
         }
         void resolveLabel(string name){
             labels[name]=bcpos;
