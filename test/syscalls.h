@@ -74,3 +74,6 @@
 #define gfx.tilemap.blit 67;
 #define gfx.tileset.setTile 68;
 #define gfx.tilemap.free 69;
+#define array.new 70;
+#define array.dynamic.new 71;
+#define array.getData 72;

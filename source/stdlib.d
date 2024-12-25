@@ -13,6 +13,7 @@ import mem;
 import time;
 import random;
 import gfx;
+import array;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
@@ -41,7 +42,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &renderGFX,&setPalette,&getKeys,&windowClosed,
     &initSprite,&resizeSprite,&scaleSprite,&drawSprite,
     &freeSprite,&initTilemap,&rerenderTilemap,&renderTilemap,
-    &setTileInTileset,&freeTilemap 
+    &setTileInTileset,&freeTilemap,&newStaticArray,&newDynamicArray,
+    &getArrayBody 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
