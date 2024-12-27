@@ -26,6 +26,8 @@ class Tokenizer
         registers["H"]=TokenType.REG_H;
         registers["I"]=TokenType.REG_I;
         registers["J"]=TokenType.REG_J;
+        registers["SP"]=TokenType.REG_SP;
+        registers["SBP"]=TokenType.REG_SBP;
         keywords["nop"]=TokenType.NOP;
         keywords["add"]=TokenType.ADD;
         keywords["addf"]=TokenType.ADDF;
@@ -174,6 +176,10 @@ class Tokenizer
         case '%':
             if(cast(string)[peek()] in registers){
                 addToken(registers[cast(string)[peek()]],cast(string)[c,advance()]);
+            }else if(cast(string)[peek(),peekNext()] in registers){
+                addToken(registers[cast(string)[peek(),peekNext()]],cast(string)[c,advance(),advance()]);
+            }else if(cast(string)[peek(),peekNext(),peek2()] in registers){
+                addToken(registers[cast(string)[peek(),peekNext(),peek2()]],cast(string)[c,advance(),advance(),advance()]);
             }else{
                 error("Unexpected character, "~c~" is not a valid register");
             }
@@ -322,7 +328,12 @@ class Tokenizer
                 return cast(char)0;
             return source[pos + 1];
         }
-
+        char peek2()
+        {
+            if (pos + 2 >= source.length)
+                return cast(char)0;
+            return source[pos + 2];
+        }
         bool match(char c)
         {
             if (isAtEnd())
@@ -498,7 +509,7 @@ class Compiler{
         string[] dataSecMap;
         int dataPtr;
         int[TokenType] commands=[TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29,TokenType.BREAKPOINT:30,TokenType.JG:31,TokenType.JNG:32];
-        real[TokenType] regs=[TokenType.REG_A:4294967296 - 9,TokenType.REG_B:4294967296 - 8,TokenType.REG_C:4294967296 - 7,TokenType.REG_D:4294967296 - 6,TokenType.REG_E:4294967296 - 5,TokenType.REG_F:4294967296 - 4,TokenType.REG_G:4294967296 - 3,TokenType.REG_H:4294967296 - 2,TokenType.REG_I:4294967296 - 1,TokenType.REG_J:4294967296 - 0];
+        real[TokenType] regs=[TokenType.REG_SBP:4294967296 - 11,TokenType.REG_SP:4294967296 - 10,TokenType.REG_A:4294967296 - 9,TokenType.REG_B:4294967296 - 8,TokenType.REG_C:4294967296 - 7,TokenType.REG_D:4294967296 - 6,TokenType.REG_E:4294967296 - 5,TokenType.REG_F:4294967296 - 4,TokenType.REG_G:4294967296 - 3,TokenType.REG_H:4294967296 - 2,TokenType.REG_I:4294967296 - 1,TokenType.REG_J:4294967296 - 0];
 
         real[] resolveData(string name){
             if(!(dataSecMap.canFind(name))){
@@ -543,6 +554,7 @@ class Compiler{
         void parsePostPass(){
             //error handling fix;
             addBytecode(27);
+            dataPtr=bcpos;
             foreach(real[] c;dataSec){addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){
                 if(labels[name]!=0){

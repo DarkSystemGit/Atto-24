@@ -57,7 +57,7 @@ class machineHeap{
     }else{
         this.objs[obj.id].free=false;
         //if(true){writeln("[DEBUG] heap getObj;");obj.print();}
-        return obj;
+        return this.objs[obj.id];
     }
     }
     int getDataPtr(heapObj obj){return obj.start;}

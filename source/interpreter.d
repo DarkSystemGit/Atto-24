@@ -10,7 +10,8 @@ import core.sys.posix.signal;
 int function(ref Machine machine, real[] params)[33] commands;
 bool running;
 void handleOpcode(ref Machine machine, real opcode, real[] params)
-{
+{   
+    machine.registers.sp=machine.stack.length;
     if (isNaN(opcode))
         opcode = 0;
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
@@ -101,6 +102,8 @@ void handleError(ref Machine machine){
                     cwriteln(("An Error occured at this address: "~machine.ip.to!string).color(mode.bold));
                     cwriteln("Stack:".color(mode.bold));
                     cwriteln(machine.stack.to!string().color(mode.bold));
+                    cwriteln(("SBP: "~machine.registers.sbp.to!string()).color(mode.bold));
+                    cwriteln(("SP: "~machine.registers.sp.to!string()).color(mode.bold));
                     cwriteln("Call Stack:".color(mode.bold));
                     cwriteln(machine.raddr.to!string().color(mode.bold));
                     cwriteln(("Registers:").color(mode.bold));
@@ -161,6 +164,12 @@ bool debugPrompt(ref Machine m,string line){
         case "%J":
             writeln(m.registers.j);
             break;
+        case "%SP":
+            writeln(m.registers.sp);
+            break;   
+        case "%SBP":
+            writeln(m.registers.sbp);
+            break;     
         case "flags":
             writeln(m.flags);
             break;    

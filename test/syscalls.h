@@ -76,4 +76,8 @@
 #define gfx.tilemap.free 69;
 #define array.new 70;
 #define array.dynamic.new 71;
-#define array.getData 72;
+#define array.getBody 72;
+#define array.capacity 73;
+#define array.data 74;
+#define array.length 75;
+#define array.push 76;

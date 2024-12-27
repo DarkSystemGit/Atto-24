@@ -10,12 +10,10 @@ struct Machine {
     Flags flags;
     int ip=0;
     int[] raddr;
-    int sp;
     int p;
     bool _debug;
     bool running;
     int errAddr;
-    real bp;
     Objects objs;
     machineHeap heap;
     real[] stack = new real[0];
@@ -33,6 +31,8 @@ struct Machine {
         writeln("   H: ", machine.registers.h);
         writeln("   I: ", machine.registers.i);
         writeln("   J: ", machine.registers.j);
+        writeln("   Stack Base Pointer: ",machine.registers.sbp);
+        writeln("   Stack Pointer: ",machine.registers.sp);
         writeln("   Stack:");
         writeln("       ", machine.stack);
         writeln("   Heap:");
@@ -59,6 +59,8 @@ struct Registers {
     real h=0;
     real i=0;
     real j=0;
+    real sp=0;//top of stack frame
+    real sbp=0;//top of stack
 }
 
 struct Flags {
@@ -146,6 +148,8 @@ enum TokenType
     REG_H,
     REG_I,
     REG_J,
+    REG_SBP,
+    REG_SP,
     NOP,
     ADD,
     ADDF,

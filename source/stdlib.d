@@ -43,7 +43,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &initSprite,&resizeSprite,&scaleSprite,&drawSprite,
     &freeSprite,&initTilemap,&rerenderTilemap,&renderTilemap,
     &setTileInTileset,&freeTilemap,&newStaticArray,&newDynamicArray,
-    &getArrayBody 
+    &getArrayBody,&getArrayCapacity,&getArrayData,&getArrayLength,
+    &arrayPush 
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

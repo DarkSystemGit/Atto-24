@@ -116,6 +116,10 @@ string printParams(real[] params) {
 
 string printRegister(real id) {
     switch (cast(int)id) {
+        case 11:
+        return "SBP";
+        case 10:
+        return "SP";
         case 9:
         return "A";
         break;

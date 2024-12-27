@@ -19,50 +19,57 @@ real[] handleRegisters(ref Machine machine, real[] paramRaw, int count) {
     real[] paramList = new real[c+1];
     for (int i = 0; i < c; i++) {
         //writeln("[DEBUG] Handling register ",printRegister(paramList[i])," ",(4294967296 - paramList[i])<(10)," ",cast(real)4294967296 - paramList[i] );
-        if((4294967296 - paramRaw[i])<(10)){paramList[i]=getRegister(machine,cast(real)4294967296 - paramRaw[i] );}else{paramList[i]=paramRaw[i];}
+        if((4294967296 - paramRaw[i])<(12)){paramList[i]=getRegister(machine,cast(real)4294967296 - paramRaw[i] );}else{paramList[i]=paramRaw[i];}
     }
     
     return paramList;
 }
 
 real getRegister(ref Machine machine, real id) {
-    if(machine._debug)writeln("[DEBUG] Getting register ",printRegister(id));
+    real value;
     switch (cast(int)id) {
     default:
-        return 0;
+        value=0;
+        break;
+    case (11):
+        value=machine.registers.sbp;
+        break;
+    case (10):
+        value=machine.registers.sp;
         break;
     case (9):
-        return cast(real)machine.registers.a;
+        value=cast(real)machine.registers.a;
         break;
     case (8):
-        return cast(real)machine.registers.b;
+        value=cast(real)machine.registers.b;
         break;
     case (7):
-        return cast(real)machine.registers.c;
+        value=cast(real)machine.registers.c;
         break;
     case (6):
-        return cast(real)machine.registers.d;
+        value=cast(real)machine.registers.d;
         break;
     case (5):
-        return cast(real)machine.registers.e;
+        value=cast(real)machine.registers.e;
         break;
     case (4):
-        return cast(real)machine.registers.f;
+        value=cast(real)machine.registers.f;
         break;
     case (3):
-        return cast(real)machine.registers.g;
+        value=cast(real)machine.registers.g;
         break;
     case (2):
-        return cast(real)machine.registers.h;
+        value=cast(real)machine.registers.h;
         break;
     case (1):
-        return cast(real)machine.registers.i;
+        value=cast(real)machine.registers.i;
         break;
     case (0):
-        return cast(real)machine.registers.j;
+        value=cast(real)machine.registers.j;
         break;
     }
-    return 0;
+    if(machine._debug)writeln("[DEBUG] Getting register ",printRegister(id), ", value: ",value);
+    return value;
 
 }
 
@@ -70,6 +77,12 @@ void setRegister(ref Machine machine, real id, real value) {
     if(machine._debug)writeln("[DEBUG] Setting register ", printRegister(id)," to ", value);
     switch (cast(int)id) {
     default:
+        break;
+    case(11):
+        machine.registers.sbp=cast(real)value;
+        break;
+    case(10):
+        machine.registers.sp=cast(real)value;
         break;
     case (9):
         machine.registers.a = cast(int)value;
