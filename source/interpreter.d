@@ -80,10 +80,10 @@ Machine execBytecode(real[] prgm, bool d)
             try{
                 try{
                 real[] params = machine.memory[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);}
+                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);writeln(e);}
             }catch (Exception e)
             {   
-               
+                writeln(e);
                 handleError(machine);
             }
        

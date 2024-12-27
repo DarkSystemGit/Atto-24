@@ -81,3 +81,6 @@
 #define array.data 74;
 #define array.length 75;
 #define array.push 76;
+#define array.pop 77;
+#define array.slice 78;
+#define array.splice 79;

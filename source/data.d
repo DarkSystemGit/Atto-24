@@ -113,6 +113,12 @@ struct UserSprite{
     ubyte[] pixels;
     float[] scaledDims;
 }
+struct UserArray{
+    bool dynamic;
+    real* capacity;
+    real* length;
+    real[] body;
+}
 struct UserTilemap{
     int x;
     int y;

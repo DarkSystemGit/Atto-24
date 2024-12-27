@@ -1,4 +1,4 @@
-#include "syscalls.h";
+#include "../syscalls.h";
 #define array1 [1,2,3];
 #define array2 [17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1];
 sys array.dynamic.new 3,%B;
