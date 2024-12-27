@@ -136,6 +136,23 @@ int arrayPush(ref Machine machine,real[] p){
 }
 //arrayPop(array* arr, reg register)
 int arrayPop(ref Machine machine,real[] p){
-
+    real[] params=handleRegisters(machine,p,1);
+    real[] bodyptr;
+    real ptr;
+    bool dynamic;
+    real* capacity=&machine.memory[cast(ulong)params[0]+1];
+    real* length;
+    if(machine.memory[cast(ulong)params[0]]==0){
+        ptr=params[0]+2;
+        bodyptr=machine.memory[cast(ulong)(params[0]+2)..cast(ulong)(params[0]+3+*capacity)];
+        length=&(machine.memory[cast(ulong)params[0]+2]);
+    }else{
+        dynamic=true;
+        ptr=machine.memory[cast(ulong)(params[0]+2)];
+        bodyptr=machine.memory[cast(ulong)(ptr)..cast(ulong)(ptr+1+*capacity)];
+        length=&(machine.memory[cast(ulong)ptr]);
+    }
+    setRegister(machine,(cast(real)4294967296)-p[1],bodyptr[cast(ulong)(*length)-1]);
+    bodyptr[cast(ulong)(*length)-1]=NaN(0);
     return 2;
 }

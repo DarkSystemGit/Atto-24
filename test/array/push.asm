@@ -42,8 +42,8 @@ exit;
 
 printNum:
 pop %A;
-//sys sys.printNum %A;
-//sys sys.printAscii 10;
+sys sys.printNum %A;
+sys sys.printAscii 10;
 ret;
 
 pushLoop:
