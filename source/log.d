@@ -118,7 +118,7 @@ string printParams(real[] params) {
 
 string printRegister(real id) {
     id=id.getNaNPayload();
-    switch (id) {
+    switch (cast(int)id) {
         case 11:
         return "SBP";
         case 10:

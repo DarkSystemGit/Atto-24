@@ -87,7 +87,7 @@ int xor(ref Machine machine, real[] p) {
 int cp(ref Machine machine, real[] p) {
 
     real[] params=handleRegisters(machine, p, 1);
-    if((p[1])<12)setRegister(machine, p[1], params[0]);
+    if(isRegister(p[1]))setRegister(machine, p[1], params[0]);
     return 2;
 }
 

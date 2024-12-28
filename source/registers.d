@@ -30,7 +30,7 @@ bool isRegister(real id) {
 real getRegister(ref Machine machine, real id) {
     real value;
     id=id.getNaNPayload();
-    writeln("get: ",id);
+    //writeln("get: ",id);
     switch (cast(int)id) {
     default:
         value=0;
@@ -80,7 +80,7 @@ real getRegister(ref Machine machine, real id) {
 void setRegister(ref Machine machine, real id, real value) {
     if(machine._debug)writeln("[DEBUG] Setting register ", printRegister(id)," to ", value);
     id=id.getNaNPayload();
-     writeln("set: ",id);
+    //writeln("set: ",id);
     switch (cast(int)id) {
     default:
         break;
