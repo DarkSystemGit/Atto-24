@@ -3,17 +3,25 @@ import interpreter;
 import data;
 import compiler;
 import colorize;
+import test;
 void main(string[] argv) { 
+    try{
         writeln("UASM Interpreter v1.0.0");
     string[string] args;
     args["--src"]="";
     args["--debug"]="false";
     args["--compiler-debug"]="false";
     args["--bcoffset"]="0";
-    for(int i=1;i<argv.length-1;i+=2) {
-        args[argv[i]]=argv[i+1];
+    args["--run-tests"]="";
+    for(int i=0;i<argv.length;i++) {
+        if(["--debug","--run-tests","--compiler-debug"].canFind(argv[i])){args[argv[i]]="true";}
+        else if("--bcoffset"==argv[i]){args[argv[i]]=argv[i+1];}else if(i>0){args["--src"]=argv[i];}
     }
-    if(args["--src"]=="") {writefln("Usage: ./uasm --src <source file> [--debug <true/false>] [--compiler-debug <true/false>]");return;}
+    if(args["--run-tests"]!=""){
+        test.test();
+        return;
+    }
+    if(args["--src"]=="") {writefln("Usage: ./uasm <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");return;}
         writeln("Compiling...");
 
     Compiler c=new Compiler();
@@ -56,6 +64,8 @@ void main(string[] argv) {
         cwriteln(("No such file, "~args["--src"]).color(mode.bold));
         return;
     }
-    
+    }catch(Throwable){
+        writefln("Usage: ./uasm <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
+    } 
 
 }

@@ -182,9 +182,10 @@ bool debugPrompt(ref Machine m,string line){
         return false;
 }
 void dbgloop(ref Machine machine){
+    try{
     write(machine.ip,">");
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();
-                if(!debugPrompt(machine,line))dbgloop(machine);
+                if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){writeln("Invalid Command");dbgloop(machine);}
 }

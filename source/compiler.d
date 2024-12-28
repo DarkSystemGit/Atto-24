@@ -588,7 +588,7 @@ class Compiler{
                     if((stmt.props.cd.cmd==TokenType.JMP||stmt.props.cd.cmd==TokenType.JNZ||stmt.props.cd.cmd==TokenType.JZ)&&(stmt.props.cd.oprands[0].type==TokenType.NUMBER)){
                         cwrite((file~"("~stmt.props.cd.oprands[0].line.to!string()~","~stmt.props.cd.oprands[0].col.to!string()~"): ").color(mode.bold));
                         cwrite(("Warning: ").color(fg.yellow).color(mode.bold));
-                        cwriteln("Using fixed jump addresses with includes is not recommended, as inculded files could break them".color(mode.bold));
+                        cwriteln("Using fixed jump addresses with includes is not recommended, as included files could break them".color(mode.bold));
                     }
                     foreach(Token tk;stmt.props.cd.oprands){
                         addBytecode(compileToken(tk));
