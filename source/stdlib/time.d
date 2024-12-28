@@ -82,7 +82,7 @@ class Time
     return m.objs.times[id];
 }
 int newTime(ref Machine m,real[] p){
-    setRegister(m,(cast(real)4294967296)-p[0],m.objs.addTime());
+    setRegister(m,p[0],m.objs.addTime());
     return 1;
 }
 int setTime(ref Machine m,real[] p){
@@ -106,13 +106,13 @@ int setTimeStd(ref Machine m,real[] p){
 int getStdTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
-    setRegister(m,(cast(real)4294967296)-p[1],t.getStdTime());
+    setRegister(m,p[1],t.getStdTime());
     return 2;
 } 
 int getUnixTime(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
-    setRegister(m,(cast(real)4294967296)-p[1],t.getUnixTime());
+    setRegister(m,p[1],t.getUnixTime());
     return 2;
 }
 int getDateTime(ref Machine m,real[] p){
@@ -139,7 +139,7 @@ int setUTCOffset(ref Machine m,real[] p){
 int getUTCOffset(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
-    setRegister(m,(cast(real)4294967296)-p[1],t.getUTCOffset());
+    setRegister(m,p[1],t.getUTCOffset());
     return 2;
 }
 int addTime(ref Machine m,real[] p){

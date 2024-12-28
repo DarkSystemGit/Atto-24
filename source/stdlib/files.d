@@ -60,7 +60,7 @@ int getFileLength(ref Machine machine,real[] p) {
             path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
         }else{eol=true;}}
         path.length--;
-    setRegister(machine,(cast(real)4294967296) -p[1],getSize(path));
+    setRegister(machine,p[1],getSize(path));
     return 2;
 }
 //syscall 6;getFileLastModified(string* path,register ret)
@@ -68,7 +68,7 @@ int getFileLastModified(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     char[] path=readString(machine,cast(int)params[0]);
     long time=path.timeLastModified(SysTime.min).toUnixTime();
-    setRegister(machine,(cast(real)4294967296) -p[1],time);
+    setRegister(machine,p[1],time);
     return 2;
 }
 //syscall 7;removeFile(string* path)
@@ -84,7 +84,7 @@ int isFile(ref Machine machine,real[] p){
     char[] path=readString(machine,cast(int)params[0]);
     bool ex;
     if(exists(path)){ex=std.file.isFile(path);}
-    setRegister(machine,(cast(real)4294967296) -p[1],ex);
+    setRegister(machine,p[1],ex);
     return 2;
 }
 //syscall 15; rename(string* path,string* name)

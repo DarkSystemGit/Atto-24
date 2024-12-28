@@ -117,6 +117,7 @@ struct UserArray{
     bool dynamic;
     real* capacity;
     real* length;
+    real* ptr;
     real[] body;
 }
 struct UserTilemap{

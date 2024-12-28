@@ -40,7 +40,12 @@ void main(string[] argv) {
         writeln("Labels: ");
         writeln(c.labels);
         writeln("Bytecode:");
-        writeln(c.bytecode[args["--bcoffset"].to!int..$]);
+        foreach (real b; c.bytecode[args["--bcoffset"].to!int..$])
+        {
+            if(b.isNaN()&&(b.getNaNPayload()!=0))write(b.getNaNPayload(),",");
+            else write(b,",");
+        }
+        writeln();
         writeln("Data Refences:");
         writeln(c.unResolvedData);
     }else{

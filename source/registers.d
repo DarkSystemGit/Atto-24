@@ -19,14 +19,18 @@ real[] handleRegisters(ref Machine machine, real[] paramRaw, int count) {
     real[] paramList = new real[c+1];
     for (int i = 0; i < c; i++) {
         //writeln("[DEBUG] Handling register ",printRegister(paramList[i])," ",(4294967296 - paramList[i])<(10)," ",cast(real)4294967296 - paramList[i] );
-        if((4294967296 - paramRaw[i])<(12)){paramList[i]=getRegister(machine,cast(real)4294967296 - paramRaw[i] );}else{paramList[i]=paramRaw[i];}
+        if(isRegister(paramRaw[i])){paramList[i]=getRegister(machine,paramRaw[i] );}else{paramList[i]=paramRaw[i];}
     }
     
     return paramList;
 }
-
+bool isRegister(real id) {
+    return id.isNaN()&&(id.getNaNPayload()!=0);
+}
 real getRegister(ref Machine machine, real id) {
     real value;
+    id=id.getNaNPayload();
+    writeln("get: ",id);
     switch (cast(int)id) {
     default:
         value=0;
@@ -64,7 +68,7 @@ real getRegister(ref Machine machine, real id) {
     case (1):
         value=cast(real)machine.registers.i;
         break;
-    case (0):
+    case (12):
         value=cast(real)machine.registers.j;
         break;
     }
@@ -75,6 +79,8 @@ real getRegister(ref Machine machine, real id) {
 
 void setRegister(ref Machine machine, real id, real value) {
     if(machine._debug)writeln("[DEBUG] Setting register ", printRegister(id)," to ", value);
+    id=id.getNaNPayload();
+     writeln("set: ",id);
     switch (cast(int)id) {
     default:
         break;
@@ -111,7 +117,7 @@ void setRegister(ref Machine machine, real id, real value) {
     case (1):
         machine.registers.i = value;
         break;
-    case (0):
+    case (12):
         machine.registers.j = value;
         break;
 

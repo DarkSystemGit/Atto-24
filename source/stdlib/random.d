@@ -66,11 +66,11 @@ int newRandom(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,1);
     int id=m.objs.addRandom();
     m.objs.rands[id].initMain(cast(int)params[0]);
-    setRegister(m,(cast(real)4294967296)-p[1],id);
+    setRegister(m,p[1],id);
     return 2;
 }
 int newDistrubution(ref Machine m,real[] p){
-    setRegister(m,(cast(real)4294967296)-p[0],m.objs.addDist());
+    setRegister(m,p[0],m.objs.addDist());
     return 1;
 }
 int setRandSeed(ref Machine m,real[] p){
@@ -82,7 +82,7 @@ int setRandSeed(ref Machine m,real[] p){
 int sampleRand(ref Machine m,real[] p){
     real[] params=handleRegisters(m,p,2);
     Random* rand=getRandom(cast(int)params[0],m);
-    setRegister(m,(cast(real)4294967296)-p[1],(*rand).sample());
+    setRegister(m,p[1],(*rand).sample());
     return 2;
 }
 int setDistrubution(ref Machine m,real[] p){

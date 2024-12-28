@@ -87,7 +87,7 @@ int xor(ref Machine machine, real[] p) {
 int cp(ref Machine machine, real[] p) {
 
     real[] params=handleRegisters(machine, p, 1);
-    if((cast(real)4294967296-p[1])<12)setRegister(machine, (cast(real)4294967296-p[1]), params[0]);
+    if((p[1])<12)setRegister(machine, p[1], params[0]);
     return 2;
 }
 
@@ -128,8 +128,7 @@ int jnz(ref Machine machine, real[] p) {
 
 int read(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
-    setRegister(machine, (cast(real)4294967296) - p[1],
-            machine.memory[cast(ulong)params[0]]);
+    setRegister(machine,p[1],machine.memory[cast(ulong)params[0]]);
     return 2;
 }
 
@@ -153,14 +152,14 @@ int push(ref Machine machine, real[] p) {
 }
 
 int pop(ref Machine machine, real[] params) {
-    setRegister(machine, (cast(real)4294967296) - params[0],machine.stack[cast(ulong)(machine.registers.sbp-1)]);
+    setRegister(machine,  params[0],machine.stack[cast(ulong)(machine.registers.sbp-1)]);
     machine.stack = machine.stack.remove(cast(ulong)(machine.registers.sbp-1));
     machine.registers.sbp--;
     return 1;
 }
 
 int mov(ref Machine machine, real[] params) {
-    real clear = (cast(real)4294967296) - params[0];
+    real clear =  params[0];
         
     cp(machine, params);
 
@@ -183,14 +182,14 @@ int ret(ref Machine machine, real[] p) {
 }
 
 int inc(ref Machine machine, real[] params) {
-    real reg = cast(real)4294967296 - params[0];
+    real reg =  params[0];
     setRegister(machine, reg, getRegister(machine, reg) + 1);
 
     return 1;
 }
 
 int dec(ref Machine machine, real[] params) {
-    real reg = cast(real)4294967296 - params[0];
+    real reg =  params[0];
 
     setRegister(machine, reg, getRegister(machine, reg) - 1);
 

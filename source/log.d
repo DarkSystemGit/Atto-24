@@ -1,5 +1,7 @@
 import std;
 import data;
+import registers;
+
 string printOpcode(real opcode) {
     switch (cast(int)opcode) {
         case 0:
@@ -103,8 +105,8 @@ string printParams(real[] params) {
     string[] res = new string[params.length];
     for (int i = 0; i < params.length; i++) {
 
-        if((-1*(params[i]-(cast(real)4294967296)))>0) {
-            res[i] = printRegister(-1*(params[i]-(cast(real)4294967296)));
+        if(isRegister(params[i])) {
+            res[i] = printRegister(params[i]);
             if(res[i]=="UNKNOWN") res[i] = params[i].to!string;
         }else{
             res[i] = params[i].to!string;
@@ -115,7 +117,8 @@ string printParams(real[] params) {
 
 
 string printRegister(real id) {
-    switch (cast(int)id) {
+    id=id.getNaNPayload();
+    switch (id) {
         case 11:
         return "SBP";
         case 10:
@@ -147,7 +150,7 @@ string printRegister(real id) {
             case 1:
             return "I";
             break;
-            case 0:
+            case 12:
             return "J";
             break;
             default:

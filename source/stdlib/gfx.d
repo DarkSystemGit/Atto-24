@@ -16,8 +16,8 @@ int getVRAMBuffer(ref Machine machine,real[] params){
     heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
     obj.free=false;
     machine.objs.vramAddr=machine.heap.getDataPtr(obj);
-    setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(obj));
-    setRegister(machine,(cast(real)4294967296)-params[1],obj.id);
+    setRegister(machine,params[0],machine.heap.getDataPtr(obj));
+    setRegister(machine,params[1],obj.id);
     return 2;
 }
 int freeGFX(ref Machine machine,real[] params){
@@ -80,11 +80,11 @@ int getKeys(ref Machine machine,real[] params){
         machine.objs.gfxInputAddr=machine.heap.getDataPtr(machine.objs.inputs);
     }
     utils.write(machine,machine.heap.getDataPtr(machine.objs.inputs),keys);
-     setRegister(machine,(cast(real)4294967296)-params[0],machine.heap.getDataPtr(machine.objs.inputs));
+     setRegister(machine,params[0],machine.heap.getDataPtr(machine.objs.inputs));
     return 1;
 }
 int windowClosed(ref Machine m,real[] p){
-    real register=(cast(real)4294967296)-p[0];
+    real register=p[0];
     setRegister(m,register,0);
     if(m.objs.gfx is null)setRegister(m,register,1);
     return 1;
@@ -136,10 +136,10 @@ int initSprite(ref Machine machine,real[] p){
     //writeln(machine.heap.objs);
     heapObj obj=machine.heap.getObj(6);
     sprites[machine.heap.getDataPtr(obj)]=obj.id;
-    //writeln((cast(real)4294967296)-p[0]," ",p[0]);
+    //writeln(p[0]," ",p[0]);
     utils.write(machine,machine.heap.getDataPtr(obj),sp);
     //writeln(machine.memory[machine.heap.getDataPtr(obj)..machine.heap.getDataPtr(obj)+6],machine.heap.getDataPtr(obj));
-    setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
+    setRegister(machine,p[0],machine.heap.getDataPtr(obj));
     return 5;
 }
 int resizeSprite(ref Machine machine,real[] p){
@@ -236,7 +236,7 @@ int initTilemap(ref Machine machine,real[] p){
     machine.objs.tilemaps~=tminfo;
     toTilemap(tm,machine);
     utils.write(machine,machine.heap.getDataPtr(obj),tm);
-    setRegister(machine,(cast(real)4294967296)-p[0],machine.heap.getDataPtr(obj));
+    setRegister(machine,p[0],machine.heap.getDataPtr(obj));
     return 7;
 }
 int rerenderTilemap(ref Machine machine,real[] p){
