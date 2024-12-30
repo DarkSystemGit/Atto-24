@@ -14,6 +14,7 @@ import time;
 import random;
 import gfx;
 import array;
+import math;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
@@ -46,7 +47,12 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &getArrayBody,&getArrayCapacity,&getArrayData,&getArrayLength,
     &arrayPush,&arrayPop,&arraySlice,&arraySplice,
     &arrayInsert,&printArray,&arraySet,&arrayGet,
-    &arrayConcat,&arrayFreeDynamic,&arrayFreeStatic 
+    &arrayConcat,&arrayFreeDynamic,&arrayFreeStatic,
+    &mabs,&msqrt,&mcbrt,&mhypot,
+    &msin,&mcos,&mtan,&masin,
+    &macos,&matan,&mceil,&mfloor,
+    &mround,&mint,&mpow,&mlog,
+    &mfinite
 ];
 int syscall(ref Machine m, real sys,real[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
