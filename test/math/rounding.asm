@@ -1,0 +1,47 @@
+#include "../syscalls.h";
+#include "numberprinter.asm";
+#define number -325.463;
+#define infinity 99999999999999999999999999999999999;
+#define str1 "Starting Number: ";
+#define str2 "Abs: ";
+#define str3 "Int: ";
+#define str4 "Floor: ";
+#define str5 "Ceil: ";
+#define str6 "Rounded: ";
+#define str7 "Finite? ";
+#define str8 "Infinity finite? ";
+push &str1;
+push number;
+call print;
+push &str2;
+sys math.abs number,%F;
+push %F;
+call print;
+push &str3;
+sys math.int number,%F;
+push %F;
+call print;
+push &str4;
+sys math.floor number,%F;
+push %F;
+call print;
+push &str5;
+sys math.ceil number,%F;
+push %F;
+call print;
+push &str6;
+sys math.round number,%F;
+push %F;
+call print;
+push &str7;
+sys math.finite number,%F;
+push %F;
+call print;
+push &str8;
+sys math.finite infinity,%F;
+push %F;
+call print;
+exit;
+
+
+

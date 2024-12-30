@@ -56,6 +56,8 @@ void main(string[] argv) {
         writeln();
         writeln("Data Refences:");
         writeln(c.unResolvedData);
+        writeln("Imports");
+        writeln(c.importedFiles);
     }else{
         if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
     }

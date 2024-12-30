@@ -13,6 +13,7 @@ class Tokenizer
     bool imports;
     Token[] tokens;
     string file;
+    Token[][string] ifiles;
     TokenType[string] keywords;
     TokenType[string] registers;
     this(){
@@ -164,7 +165,7 @@ class Tokenizer
                     t.scanTokens(file,f);
                     if(t.err)this.err=true;
                     t.tokens.length--;
-                    this.tokens=t.tokens~this.tokens;
+                    ifiles[f]=t.tokens;
                     imports=true;
                 }else{
                     error("Could not find include "~f);
@@ -260,8 +261,9 @@ class Tokenizer
                
                 scanToken(this.source);
             }
-            TokenType eof = TokenType.EOF;
-            addToken(eof);
+            if(tokens[tokens.length-1].type!=TokenType.EXIT){addToken(TokenType.EXIT);addToken(TokenType.SEMICOLON);}
+            foreach(Token[] ts;ifiles)addTokens(ts);
+            addToken(TokenType.EOF);
         }
 
         void addToken(Token t)
@@ -271,7 +273,11 @@ class Tokenizer
             tokens.length++;
             tokens[tokens.length - 1] = t;
         }
-
+        void addTokens(Token[] t){
+            foreach(tok;t){
+                addToken(tok);
+            }
+        }
         void addToken(TokenType type)
         {
             Token t;
@@ -510,7 +516,7 @@ class Compiler{
         int dataPtr;
         int[TokenType] commands=[TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29,TokenType.BREAKPOINT:30,TokenType.JG:31,TokenType.JNG:32];
         real[TokenType] regs=[TokenType.REG_SBP:NaN(11),TokenType.REG_SP:NaN(10),TokenType.REG_A:NaN(9),TokenType.REG_B:NaN(8),TokenType.REG_C:NaN(7),TokenType.REG_D:NaN(6),TokenType.REG_E:NaN(5),TokenType.REG_F:NaN(4),TokenType.REG_G:NaN(3),TokenType.REG_H:NaN(2),TokenType.REG_I:NaN(1),TokenType.REG_J:NaN(12)];
-
+        string[] importedFiles;
         real[] resolveData(string name){
             if(!(dataSecMap.canFind(name))){
                 dataSecMap~=name;
@@ -530,6 +536,7 @@ class Compiler{
             Parser p=new Parser();
             t.scanTokens(source,file);
             if(t.err)return;
+            this.importedFiles=t.ifiles.keys;
             this.imports=t.imports;
             if(d)writeln("Tokens: ",t.tokens);
             p.parse(t.tokens,file);
@@ -552,8 +559,6 @@ class Compiler{
             }
         }
         void parsePostPass(){
-            //error handling fix;
-            addBytecode(27);
             dataPtr=bcpos;
             foreach(real[] c;dataSec){addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){

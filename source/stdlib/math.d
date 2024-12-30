@@ -103,6 +103,6 @@ int mlog(ref Machine machine,real[] p){
 //isFinite(int val,reg r)
 int mfinite(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine,p,1);
-    setRegister(machine,p[1],isFinite(params[0]));
+    if(params[0]<4294967296){setRegister(machine,p[1],isFinite(params[0]));}else{setRegister(machine,p[1],0);}
     return 2;
 }

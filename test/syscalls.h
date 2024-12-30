@@ -109,4 +109,4 @@
 #define math.int 100;
 #define math.pow 101;
 #define math.log 102;
-#define math.isFinite 103;
+#define math.finite 103;
