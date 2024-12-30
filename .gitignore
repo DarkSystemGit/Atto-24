@@ -1,7 +1,6 @@
 su.dub
 docs.json
 __dummy.html
-docs/
 /uasm
 uasm.so
 uasm.dylib
