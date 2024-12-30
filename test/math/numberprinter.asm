@@ -1,4 +1,4 @@
-#include "../syscalls.h";
+#include <stdlib>;
 print:
 push %F;
 push %A;

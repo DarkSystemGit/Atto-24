@@ -1,4 +1,4 @@
-#include "../syscalls.h";
+#include <stdlib>;
 #include "numberprinter.asm";
 #define number 25;
 #define str1 "Starting Number: ";

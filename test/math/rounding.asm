@@ -1,4 +1,4 @@
-#include "../syscalls.h";
+#include <stdlib>;
 #include "numberprinter.asm";
 #define number -325.463;
 #define infinity 99999999999999999999999999999999999;

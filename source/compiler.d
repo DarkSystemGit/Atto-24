@@ -2,6 +2,7 @@ import std;
 import colorize;
 import data;
 import thepath;
+import stdimports;
 class Tokenizer
 {
     string source;
@@ -16,6 +17,7 @@ class Tokenizer
     Token[][string] ifiles;
     TokenType[string] keywords;
     TokenType[string] registers;
+    bool mainFile;
     this(){
         registers["A"] = TokenType.REG_A;
         registers["B"] = TokenType.REG_B;
@@ -153,6 +155,21 @@ class Tokenizer
             }else if(n=="#include"){
                 string f=Path(this.file).toAbsolute.parent.toString()~"/";
                 advance();
+                if(peek()=='<'){
+                    string stdImport;
+                    advance();
+                    while((peek()!='>')&&(!isAtEnd())){
+                        stdImport~=advance();
+                    }
+                    advance();
+                    Tokenizer t=new Tokenizer();
+                    t.scanTokens(stdImports(stdImport),stdImport);
+                    if(t.err)this.err=true;
+                    t.tokens.length--;
+                    ifiles[stdImport]=t.tokens;
+                    imports=true;
+                    return;
+                }
                 consume('"', "Expected quote");
                 while((peek()!='"')&&(!isAtEnd())){
                     f~=advance();
@@ -261,7 +278,7 @@ class Tokenizer
                
                 scanToken(this.source);
             }
-            if(tokens[tokens.length-1].type!=TokenType.EXIT){addToken(TokenType.EXIT);addToken(TokenType.SEMICOLON);}
+            if(mainFile&&(tokens[tokens.length-1].type!=TokenType.EXIT)){addToken(TokenType.EXIT);addToken(TokenType.SEMICOLON);}
             foreach(Token[] ts;ifiles)addTokens(ts);
             addToken(TokenType.EOF);
         }
@@ -534,6 +551,7 @@ class Compiler{
             this.file=file;
             Tokenizer t=new Tokenizer();
             Parser p=new Parser();
+            t.mainFile=true;
             t.scanTokens(source,file);
             if(t.err)return;
             this.importedFiles=t.ifiles.keys;

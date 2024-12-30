@@ -5,6 +5,9 @@ import compiler;
 import std;
 void test(){
 string[] files=[
+    "math/exp",
+    "math/rounding",
+    "math/trig",
     "array/pop",
     "array/push",
     "array/slice",

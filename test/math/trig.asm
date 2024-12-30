@@ -1,4 +1,4 @@
-#include "../syscalls.h";
+#include <stdlib>;
 #include "numberprinter.asm";
 #define angle 42;
 #define ar 0.733038;
