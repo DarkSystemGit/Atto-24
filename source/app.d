@@ -64,7 +64,8 @@ void main(string[] argv) {
         cwriteln(("No such file, "~args["--src"]).color(mode.bold));
         return;
     }
-    }catch(Throwable){
+    }catch(Throwable t){
+        writeln(t);
         writefln("Usage: ./uasm <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
     } 
 

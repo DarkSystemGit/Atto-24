@@ -147,7 +147,7 @@ int push(ref Machine machine, real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     machine.stack.length++;
     machine.registers.sbp++;
-    machine.stack[cast(ulong)(machine.registers.sbp-1)] = params[0];
+    machine.stack.insertInPlace(cast(ulong)machine.registers.sbp-1, params[0]);
     return 1;
 }
 

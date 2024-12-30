@@ -84,3 +84,10 @@
 #define array.pop 77;
 #define array.slice 78;
 #define array.splice 79;
+#define array.insert 80;
+#define array.print 81;
+#define array.set 82;
+#define array.get 83;
+#define array.concat 84;
+#define array.dynamic.free 85;
+#define array.free 86;

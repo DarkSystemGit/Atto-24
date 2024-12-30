@@ -8,10 +8,13 @@ string[] files=[
     "array/pop",
     "array/push",
     "array/slice",
+    "array/insert",
+    "array/setget",
+    "array/concat",
+    "array/free",
     "dirs/mkdir",
     "dirs/isDir",
     "dirs/getcwd",
-    "dirs/rmdir",
     "files/writefile",
     "files/isFile",
     "files/fileLength",
@@ -37,9 +40,9 @@ string[] files=[
     "sleep",
     "test",
     "time",
-    "dirs/cd"
+    "dirs/cd",
+    "dirs/rmdir",
 ];
-rmdirRecurse("testdir");
 foreach(string file;files){
     string path="test/"~file~".asm";
     writeln("--------------------------------------------------------------------------");
@@ -51,4 +54,5 @@ foreach(string file;files){
     writeln();
     cwriteln("Test Done".color(mode.bold));
 }
+return;
 }

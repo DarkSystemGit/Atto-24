@@ -78,12 +78,10 @@ Machine execBytecode(real[] prgm, bool d)
                 dbgloop(machine);
             }
             try{
-                try{
                 real[] params = machine.memory[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.memory[machine.ip], params);}catch(Error e){handleError(machine);writeln(e);}
-            }catch (Exception e)
+                handleOpcode(machine, machine.memory[machine.ip], params);
+            }catch (Throwable)
             {   
-                writeln(e);
                 handleError(machine);
             }
        

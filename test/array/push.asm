@@ -37,7 +37,8 @@ push &array1;
 push %C;
 push 3;
 call pushLoop;
-bp;
+sys array.print %B;
+sys array.print %C;
 exit;
 
 printNum:

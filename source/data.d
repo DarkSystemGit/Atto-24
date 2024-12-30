@@ -80,6 +80,7 @@ struct Objects{
     heapObj inputs;
     Sprite[] sprites;
     TileMap[] maps;
+    arrayObj[] arrayObjs;
     int addSprite(){
         Sprite sprite;
         sprites~=sprite;
@@ -105,6 +106,10 @@ struct Objects{
         times ~= t;
         return t.id;
     }
+}
+struct arrayObj{
+    int id;
+    real addr;
 }
 struct UserSprite{
     int x;

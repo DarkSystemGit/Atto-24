@@ -5,6 +5,7 @@ import mem;
 import std.math;
 import std.stdio;
 import std.array;
+import std.algorithm;
 /*
 struct Array{
     bool dynamic;
@@ -27,6 +28,7 @@ int newStaticArray(ref Machine machine,real[] p){
     arrstruct.length+=cast(long)params[0];
     heapObj obj=machine.heap.getObj(cast(int)arrstruct.length);
     real objaddr=machine.heap.getDataPtr(obj);
+    machine.objs.arrayObjs~=arrayObj(obj.id,objaddr);
     setRegister(machine,p[1],objaddr);
     utils.write(machine,objaddr,arrstruct);
     return 2;
@@ -42,9 +44,12 @@ int newDynamicArray(ref Machine machine,real[] p){
     arr.length=cast(long)capacity;
     arr[0]=0;
     heapObj arrobj=machine.heap.getObj(cast(int)arr.length);
+    machine.objs.arrayObjs~=arrayObj(arrobj.id,machine.heap.getDataPtr(arrobj));
     real bodyptr=machine.heap.getDataPtr(arrobj);
     arrstruct=[true,capacity,bodyptr];
-    real arrptr=machine.heap.getDataPtr(machine.heap.getObj(cast(int)arrstruct.length));
+    heapObj structObj=machine.heap.getObj(cast(int)arrstruct.length);
+    real arrptr=machine.heap.getDataPtr(structObj);
+    machine.objs.arrayObjs~=arrayObj(structObj.id,arrptr);
     utils.write(machine,bodyptr,arr);
     utils.write(machine,arrptr,arrstruct);
     setRegister(machine,p[1],arrptr);
@@ -115,7 +120,7 @@ UserArray getArray(ref Machine machine,real addr){
 }
 
 void growArray(ref Machine machine,ref UserArray arr,real newlength){
-    if(newlength>=*arr.capacity){
+    if((newlength>=*arr.capacity)&&arr.dynamic){
         //writeln(arr,[*arr.length,*arr.capacity,*arr.ptr],arr.body);
         real oldlength=*arr.length;
         int newCapacity=cast(int)exp2(ceil(log2(newlength+*arr.capacity)));
@@ -131,7 +136,7 @@ void growArray(ref Machine machine,ref UserArray arr,real newlength){
         arr.body=machine.memory[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+*arr.capacity)];
         *arr.length=oldlength;
         //writeln([*arr.length,*arr.capacity,*arr.ptr],arr.body);
-    }
+    }else if(!arr.dynamic)throw new Exception("Cannot grow static array");
 }
 //arrayPush(array* arr,real data)
 int arrayPush(ref Machine machine,real[] p){
@@ -178,9 +183,12 @@ int arraySplice(ref Machine machine,real[] p){
     real objaddr=machine.heap.getDataPtr(obj);
     utils.write(machine,objaddr,newarrstruct);
     setRegister(machine,p[3],objaddr);
-    real[] newbody=arr.body.replaceSlice(arr.body[cast(ulong)start..cast(ulong)end],arr.body[cast(ulong)end..$]);
+    real[] newbody=arr.body.replaceSlice(arr.body[cast(ulong)start..$],arr.body[cast(ulong)end..$]);
+    real newlength=newbody.length;
     newbody.length=arr.body.length;
     arr.body[0..$]=newbody;
+    *arr.length-=end-start;
+    //*arr.length=newlength;
     return 4;
 }
 //arrayInsert(array* arr,int pos, array* data)
@@ -188,9 +196,72 @@ int arrayInsert(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine,p,3);
     UserArray arr=getArray(machine,params[0]);
     UserArray data=getArray(machine,params[2]);
-    real[] newbody=arr.body.dup;
-    newbody.insertInPlace(cast(int)params[1],data.body[1..$]);
-    
+    growArray(machine,arr,*data.length+*arr.length);
+    *arr.length=*data.length+*arr.length;
+    real[] newbody=arr.body.replaceSlice(arr.body[cast(ulong)params[1]..$],data.body~arr.body[cast(ulong)params[1]..cast(ulong)*arr.length]);
+    newbody.length=arr.body.length;
     arr.body[0..$]=newbody;
     return 3;
+}
+//printArray(array* arr)
+int printArray(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,1);
+    UserArray arr=getArray(machine,params[0]);
+    writeln(arr.body[0..cast(ulong)(*arr.length)]);
+    return 1;
+}
+//arrayGet(array* arr,int i,reg res)
+int arrayGet(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,2);
+    UserArray arr=getArray(machine,params[0]);
+    setRegister(machine,p[2],arr.body[cast(ulong)params[1]]);
+    return 3;
+}
+//arraySet(array* arr,int i,int val)
+int arraySet(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,3);
+    UserArray arr=getArray(machine,params[0]);
+    arr.body[cast(ulong)params[1]]=params[2];
+    return 3;
+}
+//arrayConcat(array* orig, array* joined)
+int arrayConcat(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,2);
+    UserArray arr=getArray(machine,params[0]);
+    UserArray arr2=getArray(machine,params[1]);
+    growArray(machine,arr,*arr.length+*arr2.length);
+    real[] newbody=arr.body[0..cast(ulong)*arr.length]~arr2.body;
+    *arr.length+=*arr2.length;
+    newbody.length=arr.body.length;
+    arr.body[0..$]=newbody;
+    return 2;
+}
+//arrayFreeDynamic(array* arr)
+int arrayFreeDynamic(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,1); 
+    real bodyaddr=machine.memory[cast(ulong)(params[0]+2)];
+    arrayObj[] newObjList;
+    foreach(int i,arrayObj obj;machine.objs.arrayObjs){
+        if([params[0],bodyaddr].canFind(obj.addr)){
+            machine.heap.free(obj.id);
+        }else{
+            newObjList~=obj;
+        }
+    }
+    machine.objs.arrayObjs=newObjList;
+    return 1;
+}
+//arrayFreeStatic(array* arr)
+int arrayFreeStatic(ref Machine machine,real[] p){
+    real[] params=handleRegisters(machine,p,1); 
+    arrayObj[] newObjList;
+    foreach(int i,arrayObj obj;machine.objs.arrayObjs){
+        if(params[0]==obj.addr){
+            machine.heap.free(obj.id);
+        }else{
+            newObjList~=obj;
+        }
+    }
+    machine.objs.arrayObjs=newObjList;
+    return 1;
 }
