@@ -8,7 +8,6 @@ The graphics module provides functions for graphical operations and handling. Th
 
   - Description: Initializes the graphics system by creating a new window with the specified title and setting up the VRAM address.
   - Parameters:
-    - `string title` - The title of the window.
     - `int vramAddr` - The VRAM address where the graphics data will be stored.
 
 - **gfx.getVRAMBuffer**
