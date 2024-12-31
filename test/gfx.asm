@@ -1,9 +1,8 @@
 #include "syscalls.h";
-#define titleStr "Test";
 #define errStr "Error";
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;
-sys gfx.new &titleStr,%C;
+sys gfx.new %C;
 push %C;
 push %B;
 sys mem.malloc 256,%E,%B;

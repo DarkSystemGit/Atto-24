@@ -6,7 +6,11 @@ import colorize;
 import test;
 void main(string[] argv) { 
     try{
-        writeln("UASM Interpreter v1.0.0");
+        cwrite("Atto-24 ".color(mode.bold));
+        cwrite("█".color(mode.bold).color(fg.red));
+        cwrite("█".color(mode.bold).color(fg.green));
+        cwrite("█".color(mode.bold).color(fg.blue));
+        cwriteln(" v1.0.0".color(mode.bold));
     string[string] args;
     args["--src"]="";
     args["--debug"]="false";
@@ -21,8 +25,7 @@ void main(string[] argv) {
         test.test();
         return;
     }
-    if(args["--src"]=="") {writefln("Usage: ./uasm <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");return;}
-        writeln("Compiling...");
+    if(args["--src"]=="") {writefln("Usage: atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");return;}
 
     Compiler c=new Compiler();
     if(exists(args["--src"])){
@@ -68,7 +71,7 @@ void main(string[] argv) {
     }
     }catch(Throwable t){
         writeln(t);
-        writefln("Usage: ./uasm <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
+        writefln("Usage: ./atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
     } 
 
 }

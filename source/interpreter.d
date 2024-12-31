@@ -170,7 +170,31 @@ bool debugPrompt(ref Machine m,string line){
             break;     
         case "flags":
             writeln(m.flags);
-            break;    
+            break; 
+        case "stack":
+            writeln(m.stack);
+            break;
+        case "help":
+            cwriteln("Debugger Commands:".color(mode.bold));
+            writeln("continue: Continue Execution");
+            writeln("dump: Dump Machine State");
+            writeln("kill: Kill Machine");
+            writeln("isRunning: Check if machine is running");
+            writeln("%A: Print Register A");
+            writeln("%B: Print Register B");
+            writeln("%C: Print Register C");
+            writeln("%D: Print Register D");
+            writeln("%E: Print Register E");
+            writeln("%F: Print Register F");
+            writeln("%G: Print Register G");
+            writeln("%H: Print Register H");
+            writeln("%I: Print Register I");
+            writeln("%J: Print Register J");
+            writeln("%SP: Print Stack Pointer");
+            writeln("%SBP: Print Stack Base Pointer");
+            writeln("flags: Print Flags");
+            writeln("stack: Print Stack");
+            break;   
         default: 
             if(line.canFind("dump")){
                 string[] parts=line.split(" ");
@@ -181,9 +205,9 @@ bool debugPrompt(ref Machine m,string line){
 }
 void dbgloop(ref Machine machine){
     try{
-    write(machine.ip,">");
+    cwrite((machine.ip.to!string~">").color(mode.bold));
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();
-                if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){writeln("Invalid Command");dbgloop(machine);}
+                if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){cwriteln("Invalid Command".color(mode.bold).color(fg.red));dbgloop(machine);}
 }

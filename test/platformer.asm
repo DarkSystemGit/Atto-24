@@ -1,10 +1,9 @@
 #include "syscalls.h";
-#define titleStr "GameTest";
 #define errStr "Error";
 #define palatte [4,0x000000FF,0xFF0000FF,0xFF00FFFF,0x0000FFFF];
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;
-sys gfx.new &titleStr,%C;
+sys gfx.new %C;
 sys gfx.setPalette &palatte;
 
 push %C;

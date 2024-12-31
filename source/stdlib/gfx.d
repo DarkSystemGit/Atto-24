@@ -6,11 +6,11 @@ import mem;
 import registers;
 int[] screenDims=[320,240];
 int initGFX(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 2);
-    string title=readString(machine,cast(int)params[0]).to!string;
-    machine.objs.gfx=new GFX(title,screenDims);
-    machine.objs.vramAddr=cast(int)params[1];
-    return 2;
+    real[] params=handleRegisters(machine, p, 1);
+    //string title=readString(machine,cast(int)params[0]).to!string;
+    machine.objs.gfx=new GFX("Atto-24",screenDims);
+    machine.objs.vramAddr=cast(int)params[0];
+    return 1;
 }
 int getVRAMBuffer(ref Machine machine,real[] params){
     heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
