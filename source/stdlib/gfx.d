@@ -92,7 +92,7 @@ int windowClosed(ref Machine m,real[] p){
 int setPalette(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     uint[] colors=new uint[256];
-    for(int i=1;i<machine.memory[cast(ulong)params[0]];i++){
+    for(int i=1;i<(machine.memory[cast(ulong)params[0]]+1);i++){
         colors[i]=cast(uint)machine.memory[cast(int)params[0]+i];
     }
     machine.objs.gfx.palette=colors;
