@@ -175,7 +175,7 @@ bool debugPrompt(ref Machine m,string line){
         case "stack":
             writeln(m.stack);
             break;
-        case "disPrompt":
+        case "disprompt":
             m.dprompt=false;
             break;
         case "help":

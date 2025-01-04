@@ -6,7 +6,7 @@
 		"bindbc-sdl": "1.5.1",
 		"colorize": "1.0.5",
 		"dgfx": "1.3.3",
-		"dsdl": "~main",
+		"dsdl": "1.0.0",
 		"dshould": "1.7.2",
 		"prettyprint": "1.0.9",
 		"profiled": "0.0.2",

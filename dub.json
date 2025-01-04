@@ -5,8 +5,8 @@
 	"buildTypes": {
 		"release": {
 			"buildOptions": [
-				"inline",
-				"optimize"
+				"inline"
+				
 			]
 		}
 	},
