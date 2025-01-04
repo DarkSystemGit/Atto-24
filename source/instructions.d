@@ -228,5 +228,6 @@ int exit(ref Machine m, real[] p) {
 }
 int breakpoint(ref Machine m, real[] p) {
     m._debug=true;
+    m.dprompt=true;
     return 0;
 }

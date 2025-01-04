@@ -16,6 +16,7 @@ struct Machine {
     int errAddr;
     Objects objs;
     machineHeap heap;
+    bool dprompt;
     real[] stack = new real[0];
     void print() {
         Machine machine = this;

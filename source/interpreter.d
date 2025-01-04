@@ -64,6 +64,7 @@ Machine execBytecode(real[] prgm, bool d)
     commands[32] = &jng;
     Machine machine = Machine();
     machine._debug = d;
+    machine.dprompt=true;
     machine.memory_size = (cast(real) prgm.length + 50);
     machine.memory = prgm;
     machine.memory.length = cast(ulong) machine.memory_size;
@@ -174,6 +175,9 @@ bool debugPrompt(ref Machine m,string line){
         case "stack":
             writeln(m.stack);
             break;
+        case "disPrompt":
+            m.dprompt=false;
+            break;
         case "help":
             cwriteln("Debugger Commands:".color(mode.bold));
             writeln("continue: Continue Execution");
@@ -204,6 +208,7 @@ bool debugPrompt(ref Machine m,string line){
         return false;
 }
 void dbgloop(ref Machine machine){
+    if(!machine.dprompt)return;
     try{
     cwrite((machine.ip.to!string~">").color(mode.bold));
                 string line;
