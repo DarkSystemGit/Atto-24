@@ -128,7 +128,7 @@ struct UserArray{
 struct UserTilemap{
     int x;
     int y;
-    ubyte[] tilelist=new ubyte[80*60];
+    ubyte[] tilelist;
     ubyte[64][512] tileset;
     int id;
     int width;
