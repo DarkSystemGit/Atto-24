@@ -114,7 +114,7 @@ The graphics module provides functions for graphical operations and handling. Th
     - `int addr` - The address of the tilemap data.
     - `int x` - The x-coordinate of the tilemap.
     - `int y` - The y-coordinate of the tilemap.
-    - `ubyte[80*60]* tilelist` - The list of tiles in the tilemap.
+    - `ubyte[width*height]* tilelist` - The list of tiles in the tilemap.
     - `(ubyte[512]*)[64]* tileset` - The tileset used for the tilemap.
     - `int width` - The width of the tilemap.
     - `int height` - The height of the tilemap.
@@ -182,11 +182,10 @@ Represents a tilemap in the graphics system.
 class Tilemap {
     int x; // X-coordinate of the tilemap
     int y; // Y-coordinate of the tilemap
-    ubyte[80*60]* tilelist; // List of tiles in the tilemap
+    ubyte[width*height]* tilelist; // List of tiles in the tilemap
     (ubyte[512]*)[64] tileset; // Tileset used for the tilemap
     int width; // Width of the tilemap
     int height; // Height of the tilemap
 }
 ```
 
-This document provides a comprehensive overview of the graphics module, including functions and data structures used for graphical operations.
