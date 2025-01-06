@@ -5,6 +5,7 @@ import std.algorithm.iteration : map, filter;
 import data;
 import registers;
 import std;
+import thepath;
 string[] listdir(string pathname)
 {
     return dirEntries(pathname, SpanMode.shallow)
@@ -49,4 +50,10 @@ void write(ref Machine m,real mempos,real[] data){
         m.memory[pos]=data[i];
         m.memory_size=m.memory.length;
     }    
+}
+string getSandboxedPath(ref Machine machine,char[] path){
+    return Path(cast(string)machine.basepath).join(Path(cast(string)path).normalize.toString).toAbsolute.toString;
+}
+Path getBasePath(string src){
+    return Path(src).parent().toAbsolute;
 }

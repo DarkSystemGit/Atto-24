@@ -3,6 +3,7 @@ import colorize;
 import data;
 import compiler;
 import std;
+import utils;
 void test(){
 string[] files=[
     "math/exp",
@@ -46,14 +47,16 @@ string[] files=[
     "dirs/cd",
     "dirs/rmdir",
 ];
+string startcwd=std.file.getcwd();
 foreach(string file;files){
+    chdir(startcwd);
     string path="test/"~file~".asm";
     writeln("--------------------------------------------------------------------------");
     cwrite("Running test: ".color(fg.light_green));
     cwriteln(file.color(mode.bold));
     Compiler c=new Compiler();
     c.comp(readText(path),path,false);
-    if(!c.err) execBytecode(c.bytecode, false);
+    if(!c.err) execBytecode(c.bytecode, false,getBasePath(path));
     writeln();
     cwriteln("Test Done".color(mode.bold));
 }

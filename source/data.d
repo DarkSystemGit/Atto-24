@@ -18,6 +18,7 @@ struct Machine {
     machineHeap heap;
     bool dprompt;
     real[] stack = new real[0];
+    string basepath;
     void print() {
         Machine machine = this;
         writeln("Machine:");

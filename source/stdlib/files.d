@@ -4,6 +4,7 @@ import registers;
 import std;
 import utils;
 import std.file;
+import thepath;
 //syscall 3;readFile(string* path,char[]* mempos,int size)
 int readFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 3);
@@ -18,13 +19,14 @@ int readFile(ref Machine machine,real[] p) {
         }else{eol=true;}
     }
     path.length--;
-    file=cast(byte[])read(path);
+    file=cast(byte[])read(getSandboxedPath(machine,path));
     for(int i=0;i<file.length;i++){
         int pos=i+mempos;
         if(pos>machine.memory.length-1)machine.memory.length=pos+1;
         machine.memory[pos]=cast(real)file[i];
          machine.memory_size=machine.memory.length;
     }
+   
     return 3;
 }
 //syscall 4;writeFile(string* path,string* str,int size)
@@ -46,7 +48,8 @@ int writeFile(ref Machine machine,real[] p) {
         }else{eol=true;}
     }
     path.length--;
-    std.file.write(path,file);
+    
+    std.file.write(getSandboxedPath(machine,path),file);
     return 3;
 }
 //syscall 5;getFileLength(string* path,register ret)
@@ -60,7 +63,8 @@ int getFileLength(ref Machine machine,real[] p) {
             path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
         }else{eol=true;}}
         path.length--;
-    setRegister(machine,p[1],getSize(path));
+        
+    setRegister(machine,p[1],getSize(getSandboxedPath(machine,path)));
     return 2;
 }
 //syscall 6;getFileLastModified(string* path,register ret)
@@ -75,7 +79,9 @@ int getFileLastModified(ref Machine machine,real[] p) {
 int removeFile(ref Machine machine,real[] p) {
     real[] params=handleRegisters(machine, p, 1);
     char[] path=readString(machine,cast(int)params[0]);
-    remove(path);
+    
+    remove(getSandboxedPath(machine,path));
+    
     return 1;
 }
 //syscall 14; isFile(string* path,register ret)
@@ -83,7 +89,8 @@ int isFile(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 1);
     char[] path=readString(machine,cast(int)params[0]);
     bool ex;
-    if(exists(path)){ex=std.file.isFile(path);}
+    if(exists(getSandboxedPath(machine,path))){ex=std.file.isFile(getSandboxedPath(machine,path));}
+    
     setRegister(machine,p[1],ex);
     return 2;
 }
@@ -92,6 +99,7 @@ int rename(ref Machine machine,real[] p){
     real[] params=handleRegisters(machine, p, 2);
     char[] path=readString(machine,cast(int)params[0]);
     char[] name=readString(machine,cast(int)params[1]);
-    std.file.rename(path,name);
+    
+    std.file.rename(getSandboxedPath(machine,path),name);
     return 2;
-    }
+}

@@ -4,8 +4,10 @@ import data;
 import compiler;
 import colorize;
 import test;
+import utils;
 void main(string[] argv) { 
     try{
+        
         cwrite("Atto-24 ".color(mode.bold));
         cwrite("█".color(mode.bold).color(fg.red));
         cwrite("█".color(mode.bold).color(fg.green));
@@ -62,7 +64,7 @@ void main(string[] argv) {
         writeln("Imports");
         writeln(c.importedFiles);
     }else{
-        if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool);
+        if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool,getBasePath(args["--src"]));
     }
     }else{
         cwrite(("Error: ").color(fg.red).color(mode.bold));

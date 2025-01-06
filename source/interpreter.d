@@ -6,6 +6,7 @@ import registers;
 import compiler;
 import mem;
 import colorize;
+import thepath;
 import core.sys.posix.signal;
 int function(ref Machine machine, real[] params)[33] commands;
 bool running;
@@ -26,8 +27,9 @@ extern(C) void sighandler(int num) nothrow @nogc @system{
     //writeln("SIGINT");
     running=false;
 }
-Machine execBytecode(real[] prgm, bool d)
+Machine execBytecode(real[] prgm, bool d,Path bp)
 {   
+    chdir(bp.toString);
     signal(SIGINT, &sighandler);
     commands[0] = &nop;
     commands[1] = &add;
@@ -64,6 +66,7 @@ Machine execBytecode(real[] prgm, bool d)
     commands[32] = &jng;
     Machine machine = Machine();
     machine._debug = d;
+    machine.basepath=bp.toString;
     machine.dprompt=true;
     machine.memory_size = (cast(real) prgm.length + 50);
     machine.memory = prgm;
@@ -92,8 +95,9 @@ Machine execBytecode(real[] prgm, bool d)
 }
 void handleError(ref Machine machine){
                 if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.ip);
-                machine.stack.length++;
-                machine.stack[machine.stack.length - 1] =machine.ip;
+               machine.stack.length++;
+    machine.registers.sbp++;
+    machine.stack.insertInPlace(cast(ulong)machine.registers.sbp-1, machine.ip);
                 if(machine.errAddr!=0){
                 machine.ip = machine.errAddr;}else{
                     machine.stack.length--;
