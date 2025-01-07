@@ -402,6 +402,7 @@ class Tokenizer
             bool label=check(TokenType.LABEL);
             bool num=check(TokenType.NUMBER);
             bool str=check(TokenType.STRING);
+            bool array=check(TokenType.ARRAY);
             //writeln(peek(),cmd,define,label,num,str);
             if(cmd!=TokenType.NONE){
                 advance();
@@ -431,16 +432,19 @@ class Tokenizer
                 consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(num){
                 Token[] tvalues=consumeUntil(TokenType.SEMICOLON);
-                real[] values;
+                Token[] values;
                 for(int i=0;i<tvalues.length;i++){
                     try{
                         if(tvalues[i].type!=TokenType.COMMA){
-                    values ~= cast(real)tvalues[i].literal.to!real();}
+                    values ~= tvalues[i];}
                     }catch(Exception e){
                         error("Expected number, got "~tvalues[i].literal);
                     }
                 }
-                addStmt(makeNumStmt(values));
+                addStmt(makeExpStmt(values));
+                consume(TokenType.SEMICOLON,"Expected semicolon");
+            }else if(array){
+                addStmt(makeExpStmt([advance()]));
                 consume(TokenType.SEMICOLON,"Expected semicolon");
             }else if(str){
                 addStmt(makeStringStmt(advance().literal));
@@ -514,6 +518,10 @@ class Tokenizer
             cwrite((file~"("~line.to!string()~","~col.to!string()~"): ").color(mode.bold));
             cwrite(("Error: ").color(fg.red).color(mode.bold));
             cwriteln(msg.color(mode.bold));
+            while(peek().type!=TokenType.SEMICOLON){
+                advance();
+            }
+            advance();
         }
     }
 class Compiler{
@@ -630,6 +638,11 @@ class Compiler{
                 case StmtType.STRING:
                     addBytecode(handleString(stmt.props.sd.value));
                     break;    
+                case StmtType.EXP:
+                    foreach(Token tk;stmt.props.exp){
+                        addBytecode(compileToken(tk));
+                    }
+                    break;
             }
             advance();
             

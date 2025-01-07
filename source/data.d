@@ -223,7 +223,8 @@ enum StmtType{
     LABEL_DEF,
     DEFINE,
     NUM,
-    STRING
+    STRING,
+    EXP
 }
 struct Statement{
     StmtType type;
@@ -263,11 +264,18 @@ Statement makeStringStmt(string value){
     s.props.sd.value=value;
     return s;
 }
+Statement makeExpStmt(Token[] data){
+    Statement s;
+    s.type=StmtType.EXP;
+    s.props.exp=data;
+    return s;
+}
 union StmtData{
     CommandData cd;
     LabelData ld;
     DefineData dd;
     NumData nd;
+    Token[] exp;
     StringData sd;
 }
 struct CommandData{

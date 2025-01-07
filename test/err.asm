@@ -5,7 +5,6 @@ setErrAddr Error;
 sys 64747,39;
 nop;
 exit;
-
 Error:
 sys sys.printString, &errString;
 pop %A;
