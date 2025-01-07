@@ -547,8 +547,7 @@ class Compiler{
                 dataSecMap~=name;
                 dataSec~=compileTokens(defines[name]);
             }
-            unResolvedData[bcpos]=cast(int)dataSecMap.countUntil(name);
-            return [-1];
+            return [NaN(64+cast(int)dataSecMap.countUntil(name))];
         }
         real[] compileTokens(Token[] tks){
             real[] res;
@@ -592,14 +591,16 @@ class Compiler{
                     bytecode[pos]=labels[name];
                 }
             }
-            foreach(int pos,int dataPos;unResolvedData){
-                int realPos=0;
-                for(int i=0;i<dataPos;i++){
-                    realPos+=dataSec[i].length;
-                } 
-                bytecode[pos]=realPos+dataPtr;
-            }
-            
+            foreach(int pos,real b;bytecode){
+                if(isNaN(b)&&getNaNPayload(b)>63){
+                    real ptr=getNaNPayload(b)-64;
+                    int realPos=0;
+                    for(int i=0;i<ptr;i++){
+                        realPos+=dataSec[i].length;
+                    } 
+                    bytecode[pos]=realPos+dataPtr;
+                }
+            }          
         }
         void resolveLabel(string name){
             labels[name]=bcpos;
