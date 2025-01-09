@@ -14,3 +14,5 @@ atto24-test-*
 *.obj
 *.lst
 gitpod.sh
+atto24
+dub.selections.json

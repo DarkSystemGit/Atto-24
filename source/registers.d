@@ -29,6 +29,7 @@ bool isRegister(real id) {
 }
 real getRegister(ref Machine machine, real id) {
     real value;
+     if(machine._debug)std.stdio.write("[DEBUG] Getting register ",printRegister(id));
     id=id.getNaNPayload();
     //writeln("get: ",id);
     switch (cast(int)id) {
@@ -72,7 +73,7 @@ real getRegister(ref Machine machine, real id) {
         value=cast(real)machine.registers.j;
         break;
     }
-    if(machine._debug)writeln("[DEBUG] Getting register ",printRegister(id), ", value: ",value);
+    if(machine._debug)writeln( ", value: ",value);
     return value;
 
 }
