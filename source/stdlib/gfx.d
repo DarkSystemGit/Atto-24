@@ -164,8 +164,8 @@ int drawSprite(ref Machine machine,real[] p){
     sp.scaledDims=usp.scaledDims;
     sp.move(usp.x,usp.y);
     foreach(i,ubyte pix;sp.mpixels){
-        int x=cast(int)(floor(cast(float)(i/sp.dims[0]))+sp.x);
-        int y=cast(int)((i%sp.dims[1])+sp.y);
+        int y=cast(int)(floor(cast(float)(i/sp.dims[0]))+sp.y);
+        int x=cast(int)((i%sp.dims[1])+sp.x);
         if((pix!=0)&&(x<(screenDims[0]))&&(y<(screenDims[1]))&&(x>=0)&&(y>=0)){
             ulong index=cast(ulong)((y*(screenDims[0]))+x);
             machine.memory[machine.objs.vramAddr+index]=pix;    
