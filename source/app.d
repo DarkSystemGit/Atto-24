@@ -61,10 +61,12 @@ void main(string[] argv) {
         writeln();
         writeln("Data Refences:");
         writeln(c.unResolvedData);
-        writeln("Imports");
+        writeln("Imports:");
         writeln(c.importedFiles);
+        writeln("Data Section Map:");
+        writeln(getDataMap(c));
     }else{
-        if(!c.err)Machine machine = execBytecode(c.bytecode, args["--debug"].to!bool,getBasePath(args["--src"]));
+        if(!c.err)execBytecode(c.bytecode, args["--debug"].to!bool,getBasePath(args["--src"]));
     }
     }else{
         cwrite(("Error: ").color(fg.red).color(mode.bold));
@@ -76,4 +78,14 @@ void main(string[] argv) {
         writefln("Usage: ./atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
     } 
 
+}
+int[string] getDataMap(Compiler c){
+    int[string] map;
+    ulong sum=c.dataPtr;
+    foreach (int i,real[] bytes;c.dataSec)
+    {
+        map[c.dataSecMap[i]]=cast(int)sum;
+        sum+=bytes.length;
+    }
+    return map;
 }
