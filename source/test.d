@@ -23,6 +23,8 @@ string[] files=[
     "files/isFile",
     "files/fileLength",
     "files/readfile",
+    "files/writeBin",
+    "files/readBin",
     "files/fileLastMod",
     "files/rename",
     "files/removeFile",
@@ -50,7 +52,7 @@ string[] files=[
 string startcwd=std.file.getcwd();
 foreach(string file;files){
     chdir(startcwd);
-    string path="test/"~file~".asm";
+    string path=installLoc~"/test/"~file~".asm";
     writeln("--------------------------------------------------------------------------");
     cwrite("Running test: ".color(fg.light_green));
     cwriteln(file.color(mode.bold));

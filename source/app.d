@@ -53,7 +53,7 @@ void main(string[] argv) {
         writeln("Labels: ");
         writeln(c.labels);
         writeln("Bytecode:");
-        foreach (real b; c.bytecode[args["--bcoffset"].to!int..$])
+        foreach (double b; c.bytecode[args["--bcoffset"].to!int..$])
         {
             if(b.isNaN()&&(b.getNaNPayload()!=0))write(b.getNaNPayload(),",");
             else write(b,",");
@@ -82,7 +82,7 @@ void main(string[] argv) {
 int[string] getDataMap(Compiler c){
     int[string] map;
     ulong sum=c.dataPtr;
-    foreach (int i,real[] bytes;c.dataSec)
+    foreach (int i,double[] bytes;c.dataSec)
     {
         map[c.dataSecMap[i]]=cast(int)sum;
         sum+=bytes.length;

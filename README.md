@@ -6,7 +6,7 @@ For examples on the standard library, see `/test/`. But an example program is pr
 
 Example:
 ```
-#include "syscalls.h";
+#include <stdlib>;
 #define helloString "Hello there, ";
 #define NAME "John Doe";
 sys mem.malloc 22,%B,%C;
@@ -22,5 +22,5 @@ More docs can be found within the `/docs/` folder.
 
 ## Building
 
-Atto-24 is written in D, and as such, if you don't have one, install a D compiler from [www.dlang.org](https://www.dlang.org/install). Then, if it's not bundled with your D compiler, install DUB, and run `dub build`, to generate a executable. Then simply run `atto24 --src ./path/to/your/file/here`, and voila, it's built!
+Atto-24 is written in D, and as such, if you don't have one, install a D compiler from [www.dlang.org](https://www.dlang.org/install). Then, if it's not bundled with your D compiler, install DUB, and run one of the install scripts, based on your platform.
 

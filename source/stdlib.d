@@ -16,18 +16,18 @@ import gfx;
 import array;
 import math;
 //syscall 8; sleep(int time)
-int sleep(ref Machine machine,real[] p) {
-    real[] params=handleRegisters(machine, p, 1);
+int sleep(ref Machine machine,double[] p) {
+    double[] params=handleRegisters(machine, p, 1);
     Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
 }
-int nutin(ref Machine machine,real[] p){
+int nutin(ref Machine machine,double[] p){
     return 0;
 }
 class sysManager{
-int function(ref Machine machine, real[] params)[] syscalls=[
-    &print.print,&printASCII,&printStr,&readFile,
-    &writeFile,&getFileLength,&getFileLastModified,&removeFile,
+int function(ref Machine machine, double[] params)[] syscalls=[
+    &print.print,&printASCII,&printStr,&readTextFile,
+    &writeTextFile,&getFileLength,&getFileLastModified,&removeFile,
     &sleep,&mkdir,&rmdir,&getcwd,
     &cd,&isDir,&isFile,&rename,
     &ls,&strlen,&strcat,&strcpy,
@@ -52,8 +52,8 @@ int function(ref Machine machine, real[] params)[] syscalls=[
     &msin,&mcos,&mtan,&masin,
     &macos,&matan,&mceil,&mfloor,
     &mround,&mint,&mpow,&mlog,
-    &mfinite
+    &mfinite,&readFile,&writeFile
 ];
-int syscall(ref Machine m, real sys,real[] params) {
+int syscall(ref Machine m, double sys,double[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;
 }}

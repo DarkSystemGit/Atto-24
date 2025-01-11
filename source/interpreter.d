@@ -8,9 +8,9 @@ import mem;
 import colorize;
 import thepath;
 import core.sys.posix.signal;
-int function(ref Machine machine, real[] params)[33] commands;
+int function(ref Machine machine, double[] params)[33] commands;
 bool running;
-void handleOpcode(ref Machine machine, real opcode, real[] params)
+void handleOpcode(ref Machine machine, double opcode, double[] params)
 {   
     machine.registers.sp=machine.stack.length;
     if (isNaN(opcode))
@@ -20,14 +20,14 @@ void handleOpcode(ref Machine machine, real opcode, real[] params)
     machine.ip += pcount;
     if (machine._debug)
         writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
-                params[0 .. pcount - 1]), "); | Bytecode: ",machine.memory[machine.ip-pcount..machine.ip-1]);
+                params[0 .. pcount - 1]), "); | Bytecode: ",machine.memory[machine.ip-pcount..machine.ip]);
 
 }
 extern(C) void sighandler(int num) nothrow @nogc @system{
     //writeln("SIGINT");
     running=false;
 }
-Machine execBytecode(real[] prgm, bool d,Path bp)
+Machine execBytecode(double[] prgm, bool d,Path bp)
 {   
     chdir(bp.toString);
     signal(SIGINT, &sighandler);
@@ -68,7 +68,7 @@ Machine execBytecode(real[] prgm, bool d,Path bp)
     machine._debug = d;
     machine.basepath=bp.toString;
     machine.dprompt=true;
-    machine.memory_size = (cast(real) prgm.length + 50);
+    machine.memory_size = (cast(double) prgm.length + 50);
     machine.memory = prgm;
     machine.memory.length = cast(ulong) machine.memory_size;
     machine.heap = new machineHeap(cast(int) machine.memory_size, &machine);
@@ -82,7 +82,7 @@ Machine execBytecode(real[] prgm, bool d,Path bp)
                 dbgloop(machine);
             }
             try{
-                real[] params = machine.memory[machine.ip + 1 .. $];
+                double[] params = machine.memory[machine.ip + 1 .. $];
                 handleOpcode(machine, machine.memory[machine.ip], params);
             }catch (Throwable t)
             {   
@@ -202,11 +202,19 @@ bool debugPrompt(ref Machine m,string line){
             writeln("%SBP: Print Stack Base Pointer");
             writeln("flags: Print Flags");
             writeln("stack: Print Stack");
+            writeln("write: Write to memory");
             break;   
         default: 
             if(line.canFind("dump")){
                 string[] parts=line.split(" ");
+                if(parts.length==1)writeln(m.memory[parts[0].to!ulong]);
                 writeln(m.memory[parts[1].to!int..parts[2].to!int]);
+            }else if(line.canFind("write")){
+                string[] parts=line.split(" ");
+                m.memory[parts[1].to!ulong]=parts[2].to!double;
+            }else if(line.canFind("bp")){
+                string[] parts=line.split(" ");
+
             }else{return true;}  
         }
         return false;

@@ -8,6 +8,7 @@
 				"inline"
 				
 			]
+			
 		}
 	},
 	"copyright": "Copyright © 2024, darksystem",
@@ -18,6 +19,6 @@
 	},
 	"description": "Atto-24",
 	"license": "GPL-3.0-or-later",
-	"name": "atto24"
-
+	"name": "atto24",
+	"targetPath": "bin"
 }

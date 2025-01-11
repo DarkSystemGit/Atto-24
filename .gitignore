@@ -16,3 +16,4 @@ atto24-test-*
 gitpod.sh
 atto24
 dub.selections.json
+bin

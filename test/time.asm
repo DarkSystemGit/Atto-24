@@ -1,4 +1,4 @@
-#include "syscalls.h";
+#include <stdlib>;
 #define printStr1 "The time is: ";
 //#define printStr2 "UTC offset: ";
 sys time.new %B;

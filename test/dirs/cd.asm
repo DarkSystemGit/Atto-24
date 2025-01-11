@@ -1,6 +1,6 @@
 #define cddir "./testdir";
 #define original "./../";
-#include "./../syscalls.h";
+#include <stdlib>;
 sys sys.cd &cddir;
 sys 11,30;
 sys 2,30;

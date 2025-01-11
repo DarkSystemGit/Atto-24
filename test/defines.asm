@@ -1,4 +1,4 @@
-#include "syscalls.h";
+#include <stdlib>;
 #define TEST_STR "Hello world";
 #define TEST_NUM 1234;
 sys sys.printNum, TEST_NUM;

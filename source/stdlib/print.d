@@ -3,21 +3,21 @@ import registers;
 import std;
 import utils;
 //syscall 0;print(int a)
-int print(ref Machine machine, real[] p) {
-       real[] params=handleRegisters(machine, p, 1);
+int print(ref Machine machine, double[] p) {
+       double[] params=handleRegisters(machine, p, 1);
         write(params[0]);
         return 1;
 }
 //syscall 1;print(char a)
-int printASCII(ref Machine machine,real[] p) {
-     real[] params=handleRegisters(machine, p, 1);
+int printASCII(ref Machine machine,double[] p) {
+     double[] params=handleRegisters(machine, p, 1);
      
         write(params[0].to!char);
         return 1;
     }
 //syscall 2;print(string* str)
-int printStr(ref Machine machine,real[] p) {
-    real[] params=handleRegisters(machine, p, 1);
+int printStr(ref Machine machine,double[] p) {
+    double[] params=handleRegisters(machine, p, 1);
     int mempos=cast(int)params[0];
     bool eol;
     for(int i=0;!eol;i++){

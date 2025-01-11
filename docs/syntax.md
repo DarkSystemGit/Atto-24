@@ -16,6 +16,7 @@ The syntax is as following:
 
 Atto's assembly language also allows for imports in two different forms.
 Local files, `#include "path/to/file"`, or global imports, in the form of `#include <importName>`. Currently, the only supported global import is for the standard library, which can be referred to as `stdlib`.
+Atto works off `doubles` being the smallest individual unit, unlike bytes.
 
 ## Commands
 

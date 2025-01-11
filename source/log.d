@@ -2,7 +2,7 @@ import std;
 import data;
 import registers;
 
-string printOpcode(real opcode) {
+string printOpcode(double opcode) {
     switch (cast(int)opcode) {
         case 0:
     return "NOP";
@@ -101,7 +101,7 @@ string printOpcode(real opcode) {
         break;}
 
 }
-string printParams(real[] params) {
+string printParams(double[] params) {
     string[] res = new string[params.length];
     for (int i = 0; i < params.length; i++) {
 
@@ -116,7 +116,7 @@ string printParams(real[] params) {
 }
 
 
-string printRegister(real id) {
+string printRegister(double id) {
     id=id.getNaNPayload();
     switch (cast(int)id) {
         case 11:

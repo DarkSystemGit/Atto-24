@@ -25,16 +25,25 @@ The file module provides functions for file I/O operations.
   - Description: Reads a file.
   - Parameters: 
     - `string path` - The path of the file to read.
-    - `register addr` - The register to store the file content.
+    - `char[]* addr` - The address to store to.
 
 - **file.write**
   - Description: Writes to a file.
   - Parameters: 
     - `string path` - The path of the file to write to.
-    - `string content` - The content to write.
-
+    - `double[]* data` - The data to write.
+- **file.writeText**
+  - Description: Writes to a text file.
+  - Parameters: 
+    - `string path` - The path of the file to write to.
+    - `double[]* data` - The data to write.
+- **file.readText**
+  - Description: Reads a text file.
+  - Parameters: 
+    - `string path` - The path of the file to read.
+    - `char[]* addr` - The address to store to.
 - **file.getLength**
-  - Description: Gets the length of a file.
+  - Description: Gets the length of a file in bytes. If the file was written to by `file.write`, devide the result by 8 to convert bytes to doubles.
   - Parameters: 
     - `string path` - The path of the file.
     - `register length` - The register to store the file length.
@@ -287,7 +296,7 @@ The random module provides functions to handle random number generation and dist
   - Description: Sets the probabilities for a distribution.
   - Parameters: 
     - `int id` - The ID of the distribution.
-    - `real[] probs` - The probabilities.
+    - `double[] probs` - The probabilities.
 
 - **randomDistrubution.setUniform**
   - Description: Sets a uniform distribution.
@@ -471,7 +480,7 @@ The array module provides functions to manage and manipulate arrays.
   - Description: Pushes an element to an array.
   - Parameters: 
     - `array* arr` - The array.
-    - `real data` - The data to push.
+    - `double data` - The data to push.
 
 - **array.pop**
   - Description: Pops an element from an array.
@@ -513,7 +522,7 @@ The array module provides functions to manage and manipulate arrays.
   - Parameters: 
     - `array* arr` - The array.
     - `int pos` - The position to set.
-    - `real val` - The value to set.
+    - `double val` - The value to set.
 
 - **array.get**
   - Description: The register to store the retrieved element.

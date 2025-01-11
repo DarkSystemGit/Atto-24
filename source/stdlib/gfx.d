@@ -5,14 +5,14 @@ import utils;
 import mem;
 import registers;
 int[] screenDims=[320,240];
-int initGFX(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int initGFX(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     //string title=readString(machine,cast(int)params[0]).to!string;
     machine.objs.gfx=new GFX("Atto-24",screenDims);
     machine.objs.vramAddr=cast(int)params[0];
     return 1;
 }
-int getVRAMBuffer(ref Machine machine,real[] params){
+int getVRAMBuffer(ref Machine machine,double[] params){
     heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
     obj.free=false;
     machine.objs.vramAddr=machine.heap.getDataPtr(obj);
@@ -20,12 +20,12 @@ int getVRAMBuffer(ref Machine machine,real[] params){
     setRegister(machine,params[1],obj.id);
     return 2;
 }
-int freeGFX(ref Machine machine,real[] params){
+int freeGFX(ref Machine machine,double[] params){
     machine.objs.gfx.kill();
     machine.objs.vramAddr=0;
     return 0;
 }
-int renderGFX(ref Machine machine,real[] params){
+int renderGFX(ref Machine machine,double[] params){
     for(int i=0;i<(screenDims[0]*screenDims[1]);i++){
         machine.objs.gfx.pixels[i]=cast(ubyte)(machine.memory[machine.objs.vramAddr+i]);
     }
@@ -37,7 +37,7 @@ int renderGFX(ref Machine machine,real[] params){
         //writeln(machine.objs.gfx.pixels);
     return 0;
 }
-int getKeys(ref Machine machine,real[] params){
+int getKeys(ref Machine machine,double[] params){
     //controller:
     // 1
     //2 4 5 6
@@ -83,14 +83,14 @@ int getKeys(ref Machine machine,real[] params){
      setRegister(machine,params[0],machine.heap.getDataPtr(machine.objs.inputs));
     return 1;
 }
-int windowClosed(ref Machine m,real[] p){
-    real register=p[0];
+int windowClosed(ref Machine m,double[] p){
+    double register=p[0];
     setRegister(m,register,0);
     if(m.objs.gfx is null)setRegister(m,register,1);
     return 1;
 }
-int setPalette(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int setPalette(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     uint[] colors=new uint[256];
     for(int i=1;i<(machine.memory[cast(ulong)params[0]]+1);i++){
         colors[i]=cast(uint)machine.memory[cast(int)params[0]+i];
@@ -99,7 +99,7 @@ int setPalette(ref Machine machine,real[] p){
     return 1;
 }
 //Sprites
-UserSprite toSprite(real[] data,ref Machine m){
+UserSprite toSprite(double[] data,ref Machine m){
     UserSprite sp;
     /*Struct Sprite{
         int x; 
@@ -122,10 +122,10 @@ UserSprite toSprite(real[] data,ref Machine m){
 }
 int[int] sprites;
 //initSprite(reg addr,int x,int y,int angle,ubyte[64]* pixels)
-int initSprite(ref Machine machine,real[] p){
+int initSprite(ref Machine machine,double[] p){
     
-    real[] params=handleRegisters(machine, p[1..5], 4);
-    real[] sp=new real[6];
+    double[] params=handleRegisters(machine, p[1..5], 4);
+    double[] sp=new double[6];
    
     sp[0]=params[0];
     sp[1]=params[1];
@@ -142,20 +142,20 @@ int initSprite(ref Machine machine,real[] p){
     setRegister(machine,p[0],machine.heap.getDataPtr(obj));
     return 5;
 }
-int resizeSprite(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 3);
+int resizeSprite(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 3);
     machine.memory[cast(ulong)params[0]+4]=params[1];
     machine.memory[cast(ulong)params[0]+5]=params[2];
     return 3;
 }
-int scaleSprite(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 3);
+int scaleSprite(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 3);
     machine.memory[cast(ulong)params[0]+4]=machine.memory[cast(ulong)params[0]+4]*params[1];
     machine.memory[cast(ulong)params[0]+5]=machine.memory[cast(ulong)params[0]+4]*params[2];
     return 3;
 }
-int drawSprite(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int drawSprite(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     //writeln(machine.memory[cast(int)params[0]..cast(int)params[0]+6]);
     UserSprite usp=toSprite(machine.memory[cast(int)params[0]..cast(int)params[0]+6],machine);
     Sprite sp;
@@ -174,8 +174,8 @@ int drawSprite(ref Machine machine,real[] p){
     }
     return 1;
 }
-int freeSprite(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int freeSprite(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     machine.heap.free(sprites[cast(int)params[0]]);
     return 1;
 }
@@ -192,7 +192,7 @@ Struct Tilemap{
     void blit();
 }
 */
-UserTilemap toTilemap(real[] data,Machine machine){
+UserTilemap toTilemap(double[] data,Machine machine){
     UserTilemap tm;
     ubyte[] tilelist=new ubyte[cast(ulong)(data[5]*data[6])];
     ubyte[64][512] tileset;
@@ -204,7 +204,7 @@ UserTilemap toTilemap(real[] data,Machine machine){
     }
     
     for(int i=0;i<64*512;i++){
-        int tileid=cast(int)floor(cast(real)i/64);
+        int tileid=cast(int)floor(cast(double)i/64);
         if(machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64].isNaN)continue;
         if(machine.memory[cast(ulong)data[3]+cast(ulong)tileid]==0)continue;
         tileset[tileid][i%64]=cast(ubyte)machine.memory[cast(ulong)machine.memory[cast(ulong)data[3]+cast(ulong)tileid]+cast(ulong)i%64];
@@ -217,15 +217,15 @@ UserTilemap toTilemap(real[] data,Machine machine){
     return tm;
 }
 //initTilemap(reg addr,int x,int y, ubyte[80*60]* tilelist,(ubyte[512]*)[64])* tileset, int width, int height)
-int initTilemap(ref Machine machine,real[] p){
+int initTilemap(ref Machine machine,double[] p){
     tmInfo tminfo;
-    real[] params=handleRegisters(machine, p[1..7], 6);
+    double[] params=handleRegisters(machine, p[1..7], 6);
     heapObj obj=machine.heap.getObj(6);
     tminfo.addr=machine.heap.getDataPtr(obj);
     tminfo.heapId=obj.id;
     tminfo.rerender=true;
     tminfo.tm=new TileMap([],[cast(uint)params[4],cast(uint)params[5]],0,0);
-    real[] tm=new real[7];
+    double[] tm=new double[7];
     tm[0]=params[0];
     tm[1]=params[1];
     tm[2]=params[2];
@@ -239,13 +239,13 @@ int initTilemap(ref Machine machine,real[] p){
     setRegister(machine,p[0],machine.heap.getDataPtr(obj));
     return 7;
 }
-int rerenderTilemap(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int rerenderTilemap(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].rerender=true;
     return 1;
 }
-int renderTilemap(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int renderTilemap(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     tmInfo tmi=machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]];
     if(tmi.rerender==true){
         UserTilemap utm=toTilemap(machine.memory[cast(int)params[0]..cast(int)params[0]+7],machine);
@@ -264,21 +264,21 @@ int renderTilemap(ref Machine machine,real[] p){
     return 1;
 }
 //setTile(tilemap* tm, int x, int y, int id)
-int setTile(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine,p,4);
+int setTile(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine,p,4);
     machine.memory[cast(ulong)(machine.memory[cast(int)params[0]+2]+(params[2]*machine.memory[cast(int)params[0]+5]+params[1]))]=params[3];
     return 4;
 }
 //setTileInTileset(tilemap* tm, int id, ubyte[64]* tile)
-int setTileInTileset(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 3);
+int setTileInTileset(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 3);
     machine.memory[cast(ulong)params[0]+cast(ulong)params[1]]=params[2];
     return 3;
 }
 
 //freeTilemap(tilemap* tm)
-int freeTilemap(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int freeTilemap(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     machine.heap.free(machine.objs.tilemaps[cast(int)machine.memory[cast(ulong)params[0]+4]].heapId);
     return 1;
 }

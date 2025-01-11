@@ -81,42 +81,42 @@ class Time
  Time getTime(int id,ref Machine m){
     return m.objs.times[id];
 }
-int newTime(ref Machine m,real[] p){
+int newTime(ref Machine m,double[] p){
     setRegister(m,p[0],m.objs.addTime());
     return 1;
 }
-int setTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,4);
+int setTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,4);
      Time t=getTime(cast(int)params[0],m);
     t.setTime(cast(int)params[1],cast(int)params[2],cast(int)params[3]);
     return 4;
 }
-int setTimeUnix(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
+int setTimeUnix(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
      Time t=getTime(cast(int)params[0],m);
     t.setUnixTime(cast(int)params[1]);
     return 2;
 }
-int setTimeStd(ref Machine m,real[] p){
-     real[] params=handleRegisters(m,p,2);
+int setTimeStd(ref Machine m,double[] p){
+     double[] params=handleRegisters(m,p,2);
      Time t=getTime(cast(int)params[0],m);
     t.setStdTime(cast(int)params[1]);
     return 2;
 }
-int getStdTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int getStdTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     setRegister(m,p[1],t.getStdTime());
     return 2;
 } 
-int getUnixTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int getUnixTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     setRegister(m,p[1],t.getUnixTime());
     return 2;
 }
-int getDateTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
+int getDateTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
 
      Time t=getTime(cast(int)params[0],m); 
     int[] dt=t.getDate();
@@ -124,52 +124,52 @@ int getDateTime(ref Machine m,real[] p){
     utils.write(m,params[1],dt);
     return 2;
 }    
-int setDate(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,4);
+int setDate(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,4);
      Time t=getTime(cast(int)params[0],m);
     t.setDate([cast(int)params[1],cast(int)params[2],cast(int)params[3]]);
     return 4;
 }
-int setUTCOffset(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
+int setUTCOffset(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
      Time t=getTime(cast(int)params[0],m);
     t.setUTCoffset(cast(int)params[1]);
     return 2;
 }
-int getUTCOffset(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int getUTCOffset(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     setRegister(m,p[1],t.getUTCOffset());
     return 2;
 }
-int addTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
+int addTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
      Time t=getTime(cast(int)params[0],m);
      Time t2=getTime(cast(int)params[1],m); 
     t.addTime(t2);
     return 2;
 }
-int subTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,2);
+int subTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
      Time t=getTime(cast(int)params[0],m);
      Time t2=getTime(cast(int)params[1],m);
     t.subTime(t2);
     return 2;
 }
-int setTimeToCurrTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int setTimeToCurrTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     t.setCurrTime();
     return 1;
 }    
-int setTimeToGMT(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int setTimeToGMT(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
      Time t=getTime(cast(int)params[0],m);
     t.setGMTtime();
     return 1;
 }    
-int freeTime(ref Machine m,real[] p){
-    real[] params=handleRegisters(m,p,1);
+int freeTime(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
     m.objs.times[cast(int)params[0]]=null;
     return 1;
 }

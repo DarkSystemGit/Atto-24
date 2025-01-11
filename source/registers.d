@@ -1,7 +1,7 @@
 import std;
 import data;
 import log;
-void handleFlags(ref Machine machine, real res) {
+void handleFlags(ref Machine machine, double res) {
     machine.flags.zero = false;
     machine.flags.negative = false;
     //writeln(res,res<0);
@@ -11,24 +11,24 @@ void handleFlags(ref Machine machine, real res) {
         machine.flags.negative = true;
 
 }
-real[] handleRegisters(ref Machine machine, real[] paramRaw, int count) {
+double[] handleRegisters(ref Machine machine, double[] paramRaw, int count) {
     int c = count;
     if (count == 0){
         c = cast(int)paramRaw.length - 1;
     }
-    real[] paramList = new real[c+1];
+    double[] paramList = new double[c+1];
     for (int i = 0; i < c; i++) {
-        //writeln("[DEBUG] Handling register ",printRegister(paramList[i])," ",(4294967296 - paramList[i])<(10)," ",cast(real)4294967296 - paramList[i] );
+        //writeln("[DEBUG] Handling register ",printRegister(paramList[i])," ",(4294967296 - paramList[i])<(10)," ",cast(double)4294967296 - paramList[i] );
         if(isRegister(paramRaw[i])){paramList[i]=getRegister(machine,paramRaw[i] );}else{paramList[i]=paramRaw[i];}
     }
     
     return paramList;
 }
-bool isRegister(real id) {
+bool isRegister(double id) {
     return id.isNaN()&&(id.getNaNPayload()!=0);
 }
-real getRegister(ref Machine machine, real id) {
-    real value;
+double getRegister(ref Machine machine, double id) {
+    double value;
      if(machine._debug)std.stdio.write("[DEBUG] Getting register ",printRegister(id));
     id=id.getNaNPayload();
     //writeln("get: ",id);
@@ -43,34 +43,34 @@ real getRegister(ref Machine machine, real id) {
         value=machine.registers.sp;
         break;
     case (9):
-        value=cast(real)machine.registers.a;
+        value=cast(double)machine.registers.a;
         break;
     case (8):
-        value=cast(real)machine.registers.b;
+        value=cast(double)machine.registers.b;
         break;
     case (7):
-        value=cast(real)machine.registers.c;
+        value=cast(double)machine.registers.c;
         break;
     case (6):
-        value=cast(real)machine.registers.d;
+        value=cast(double)machine.registers.d;
         break;
     case (5):
-        value=cast(real)machine.registers.e;
+        value=cast(double)machine.registers.e;
         break;
     case (4):
-        value=cast(real)machine.registers.f;
+        value=cast(double)machine.registers.f;
         break;
     case (3):
-        value=cast(real)machine.registers.g;
+        value=cast(double)machine.registers.g;
         break;
     case (2):
-        value=cast(real)machine.registers.h;
+        value=cast(double)machine.registers.h;
         break;
     case (1):
-        value=cast(real)machine.registers.i;
+        value=cast(double)machine.registers.i;
         break;
     case (12):
-        value=cast(real)machine.registers.j;
+        value=cast(double)machine.registers.j;
         break;
     }
     if(machine._debug)writeln( ", value: ",value);
@@ -78,7 +78,7 @@ real getRegister(ref Machine machine, real id) {
 
 }
 
-void setRegister(ref Machine machine, real id, real value) {
+void setRegister(ref Machine machine, double id, double value) {
     if(machine._debug)writeln("[DEBUG] Setting register ", printRegister(id)," to ", value);
     id=id.getNaNPayload();
     //writeln("set: ",id);
@@ -86,10 +86,10 @@ void setRegister(ref Machine machine, real id, real value) {
     default:
         break;
     case(11):
-        machine.registers.sbp=cast(real)value;
+        machine.registers.sbp=cast(double)value;
         break;
     case(10):
-        machine.registers.sp=cast(real)value;
+        machine.registers.sp=cast(double)value;
         break;
     case (9):
         machine.registers.a = cast(int)value;
@@ -113,7 +113,7 @@ void setRegister(ref Machine machine, real id, real value) {
         machine.registers.g = cast(float)value;
         break;
     case (2):
-        machine.registers.h = cast(real)value;
+        machine.registers.h = cast(double)value;
         break;
     case (1):
         machine.registers.i = value;

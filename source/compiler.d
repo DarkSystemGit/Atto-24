@@ -105,7 +105,7 @@ class Tokenizer
         return;
         case '\'':
         char chars=advance();
-        addToken(TokenType.NUMBER,(cast(real)chars).to!string());
+        addToken(TokenType.NUMBER,(cast(double)chars).to!string());
         consume('\'',"No closing quote found");
         return;
         case '=':
@@ -530,27 +530,27 @@ class Compiler{
         int pos;
         bool err;
         bool imports;
-        real[] bytecode;
+        double[] bytecode;
         int bcpos;
         Token[][string] defines;
         int[string] labels;
         string[int] unresolvedRefs;
         int[int] unResolvedData;
-        real[][] dataSec;
+        double[][] dataSec;
         string[] dataSecMap;
         int dataPtr;
         int[TokenType] commands=[TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29,TokenType.BREAKPOINT:30,TokenType.JG:31,TokenType.JNG:32];
-        real[TokenType] regs=[TokenType.REG_SBP:NaN(11),TokenType.REG_SP:NaN(10),TokenType.REG_A:NaN(9),TokenType.REG_B:NaN(8),TokenType.REG_C:NaN(7),TokenType.REG_D:NaN(6),TokenType.REG_E:NaN(5),TokenType.REG_F:NaN(4),TokenType.REG_G:NaN(3),TokenType.REG_H:NaN(2),TokenType.REG_I:NaN(1),TokenType.REG_J:NaN(12)];
+        double[TokenType] regs=[TokenType.REG_SBP:NaN(11),TokenType.REG_SP:NaN(10),TokenType.REG_A:NaN(9),TokenType.REG_B:NaN(8),TokenType.REG_C:NaN(7),TokenType.REG_D:NaN(6),TokenType.REG_E:NaN(5),TokenType.REG_F:NaN(4),TokenType.REG_G:NaN(3),TokenType.REG_H:NaN(2),TokenType.REG_I:NaN(1),TokenType.REG_J:NaN(12)];
         string[] importedFiles;
-        real[] resolveData(string name){
+        double[] resolveData(string name){
             if(!(dataSecMap.canFind(name))){
                 dataSecMap~=name;
                 dataSec~=compileTokens(defines[name]);
             }
             return [NaN(64+cast(int)dataSecMap.countUntil(name))];
         }
-        real[] compileTokens(Token[] tks){
-            real[] res;
+        double[] compileTokens(Token[] tks){
+            double[] res;
             foreach(Token tk;tks){res~=compileToken(tk);};
             return res;
         }
@@ -585,33 +585,33 @@ class Compiler{
         }
         void parsePostPass(){
             dataPtr=bcpos;
-            foreach(real[] c;dataSec){addBytecode(c);}
+            foreach(double[] c;dataSec){addBytecode(c);}
             foreach(int pos,string name;unresolvedRefs){
                 if(labels[name]!=0){
                     bytecode[pos]=labels[name];
                 }
             }
-            foreach(int pos,real b;bytecode){
+            foreach(int pos,double b;bytecode){
                 if(isNaN(b)&&getNaNPayload(b)>63){
-                    real ptr=getNaNPayload(b)-64;
-                    int realPos=0;
+                    double ptr=getNaNPayload(b)-64;
+                    int doublePos=0;
                     for(int i=0;i<ptr;i++){
-                        realPos+=dataSec[i].length;
+                        doublePos+=dataSec[i].length;
                     } 
-                    bytecode[pos]=realPos+dataPtr;
+                    bytecode[pos]=doublePos+dataPtr;
                 }
             }          
         }
         void resolveLabel(string name){
             labels[name]=bcpos;
         }
-        void addBytecode(real val){
+        void addBytecode(double val){
             bytecode.length++;
             bcpos++;
             bytecode[bytecode.length-1]=val;
         }
-        void addBytecode(real[] val){
-            foreach(real value;val){addBytecode(value);}
+        void addBytecode(double[] val){
+            foreach(double value;val){addBytecode(value);}
         }
         void compileStmt(Statement stmt){
             switch(stmt.type){
@@ -627,7 +627,7 @@ class Compiler{
                     }
                     break;
                 case StmtType.NUM:  
-                foreach(real val;stmt.props.nd.values){
+                foreach(double val;stmt.props.nd.values){
                     addBytecode(val);
                 }
                 break;
@@ -655,19 +655,19 @@ class Compiler{
 
             return -1;
         }
-        real getRegValue(TokenType reg){
+        double getRegValue(TokenType reg){
             if(regs.keys().canFind(reg)){
                 return regs[reg];
             }
             return -1;
         }
         
-        real[] compileToken(Token token){
+        double[] compileToken(Token token){
             if(getCmdValue(token.type)!=-1){return [getCmdValue(token.type)];}
             if(getRegValue(token.type)!=-1){return [getRegValue(token.type)];}
             switch(token.type){
                 case TokenType.NUMBER:
-                return [token.literal.to!real()];
+                return [token.literal.to!double()];
                 case TokenType.COMMA:
                 return [];
                 case TokenType.ARRAY:
@@ -700,10 +700,10 @@ class Compiler{
                   return [0];
             }
         }
-        real[] handleString(string raw){
-            real[] str;
+        double[] handleString(string raw){
+            double[] str;
                     foreach(char c;raw){
-                        str~=cast(real)c;
+                        str~=cast(double)c;
                     }
                     str~=0;
                     return str;

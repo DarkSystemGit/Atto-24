@@ -1,4 +1,4 @@
-#include "syscalls.h";
+#include <stdlib>;
 #define str1 "RandInt: ";
 #define weights [0.117,0.404,0.2,0.3];
 jmp Init;

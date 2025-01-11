@@ -1,4 +1,4 @@
-#include "syscalls.h";
+#include <stdlib>;
 #define errStr "Error";
 setErrAddr Error;
 sys gfx.getVRAMBuffer %C,%B;

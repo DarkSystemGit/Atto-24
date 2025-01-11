@@ -4,8 +4,8 @@ import time;
 import random;
 import dgfx;
 struct Machine {
-    real memory_size = 0;
-    real[] memory = new real[0];
+    double memory_size = 0;
+    double[] memory = new double[0];
     Registers registers;
     Flags flags;
     int ip=0;
@@ -17,7 +17,7 @@ struct Machine {
     Objects objs;
     machineHeap heap;
     bool dprompt;
-    real[] stack = new real[0];
+    double[] stack = new double[0];
     string basepath;
     void print() {
         Machine machine = this;
@@ -58,11 +58,11 @@ struct Registers {
     int e;
     float f=0;
     float g=0;
-    real h=0;
-    real i=0;
-    real j=0;
-    real sp=0;//top of stack frame
-    real sbp=0;//top of stack
+    double h=0;
+    double i=0;
+    double j=0;
+    double sp=0;//top of stack frame
+    double sbp=0;//top of stack
 }
 
 struct Flags {
@@ -111,7 +111,7 @@ struct Objects{
 }
 struct arrayObj{
     int id;
-    real addr;
+    double addr;
 }
 struct UserSprite{
     int x;
@@ -122,10 +122,10 @@ struct UserSprite{
 }
 struct UserArray{
     bool dynamic;
-    real* capacity;
-    real* length;
-    real* ptr;
-    real[] body;
+    double* capacity;
+    double* length;
+    double* ptr;
+    double[] body;
 }
 struct UserTilemap{
     int x;
@@ -252,7 +252,7 @@ Statement makeDefineStmt(string name,Token[] value){
     s.props.dd.value=value;
     return s;
 }
-Statement makeNumStmt(real[] values){
+Statement makeNumStmt(double[] values){
     Statement s;
     s.type=StmtType.NUM;
     s.props.nd.values=values;
@@ -291,7 +291,7 @@ struct DefineData{
     Token[] value;
 }
 struct NumData{
-    real[] values;
+    double[] values;
 }
 struct Token
 {

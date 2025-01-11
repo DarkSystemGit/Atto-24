@@ -84,27 +84,27 @@ class machineHeap{
     }
 }
 //syscall 23;memdump()
-int memdump(ref Machine machine,real[] p) {
+int memdump(ref Machine machine,double[] p) {
     machine.print();
     return 0;
 }
 //syscall 24; malloc(int size,register addr,register id)
-int malloc(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int malloc(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     heapObj obj=machine.heap.getObj(cast(int)params[0]);
     setRegister(machine,p[1],machine.heap.getDataPtr(obj));
     setRegister(machine,p[2],obj.id);
     return 3;
 }
 //syscall 25; free(int id)
-int free(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 1);
+int free(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
     machine.heap.free(cast(int)params[0]);
     return 1;
 }    
 //syscall 26; memcpy(int src,int dest,int size)
-int memcopy(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 3);
+int memcopy(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 3);
     int src=cast(int)params[0];
     int dest=cast(int)params[1];
     int size=cast(int)params[2];
@@ -115,8 +115,8 @@ int memcopy(ref Machine machine,real[] p){
     return 3;
 }
 //syscall 27; memfill(int addr,int len,int value)
-int memfill(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 3);
+int memfill(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 3);
     int addr=cast(int)params[0];
     int len=cast(int)params[1]; 
     int value=cast(int)params[2];
@@ -127,9 +127,9 @@ int memfill(ref Machine machine,real[] p){
     return 3;
 }
 //syscall 28; cast(value,type)
-int castval(ref Machine machine,real[] p){
-    real[] params=handleRegisters(machine, p, 2);
-    real value=params[0];
+int castval(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 2);
+    double value=params[0];
     int type=cast(int)params[1];
     switch(type){
         case 0:
