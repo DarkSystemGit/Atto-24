@@ -2,7 +2,7 @@
 A small, pico-8 inspired fantasy console, with a burning desire to make you regret using it.
 
 ## Usage
-For examples on the standard library, see `/test/`. But an example program is presented below.You are recommended to use the `syscalls.h` file in the `/test/` directory, to be able to use named functions for the syscalls.
+For examples on the standard library, see `/test/`. But an example program is presented below. You are recommended to import the `stdlib`, to be able to use named functions for the syscalls.
 
 Example:
 ```
