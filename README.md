@@ -1,10 +1,13 @@
 # Atto-24
+
 A small, pico-8 inspired fantasy console, with a burning desire to make you regret using it.
 
 ## Usage
+
 For examples on the standard library, see `/test/`. But an example program is presented below. You are recommended to import the `stdlib`, to be able to use named functions for the syscalls.
 
 Example:
+
 ```
 #include <stdlib>;
 #define helloString "Hello there, ";
@@ -22,5 +25,4 @@ More docs can be found within the `/docs/` folder.
 
 ## Building
 
-Atto-24 is written in D, and as such, if you don't have one, install a D compiler from [www.dlang.org](https://www.dlang.org/install). Then, if it's not bundled with your D compiler, install DUB, and run one of the install scripts, based on your platform.
-
+Atto-24 is written in D, and as such, if you don't have one, install a D compiler from [www.dlang.org](https://www.dlang.org/install). Then, if it's not bundled with your D compiler, install DUB, and run one of the install scripts, based on your platform. SDL2 is also a required dependency, install it from [libsdl.org](https://www.libsdl.org).
