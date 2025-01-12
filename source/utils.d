@@ -10,7 +10,7 @@ version(linux){
 string installLoc="/etc/atto24";
 }
 version(OSX){
-string installLoc="/Library/atto24";    
+string installLoc="/etc/atto24";    
 }
 string[] listdir(string pathname)
 {
