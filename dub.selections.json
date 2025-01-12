@@ -1,11 +1,11 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"bindbc-common": "1.0.3",
+		"bindbc-common": "1.0.4",
 		"bindbc-loader": "1.1.5",
 		"bindbc-sdl": "1.5.1",
 		"colorize": "1.0.5",
-		"dgfx": "1.3.5",
+		"dgfx": "1.3.6",
 		"dsdl": "1.0.0",
 		"dshould": "1.7.2",
 		"prettyprint": "1.0.9",
