@@ -128,17 +128,17 @@ int jnz(ref Machine machine, double[] p) {
 
 int read(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    setRegister(machine,p[1],machine.memory[cast(ulong)params[0]]);
+    setRegister(machine,p[1],machine.vmem[cast(ulong)params[0]]);
     return 2;
 }
 
 int write(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    /*if(params[1]>machine.memory.length) {
-        machine.memory.length = cast(ulong)params[1];
-        machine.memory_size=cast(int)machine.memory.length;
+    /*if(params[1]>machine.vmem.length) {
+        machine.vmem.length = cast(ulong)params[1];
+        machine.vmem_size=cast(int)machine.vmem.length;
     }*/
-    machine.memory[cast(ulong)params[1]] = params[0];
+    machine.vmem[cast(ulong)params[1]] = params[0];
     return 2;
 
 }

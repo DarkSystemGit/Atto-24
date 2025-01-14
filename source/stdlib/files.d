@@ -12,18 +12,18 @@ int readFile(ref Machine machine,double[] p) {
     int mempos=cast(int)params[1];
     bool eol;
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
+        if(cast(int)machine.vmem[cast(ulong)params[0]+i]!=0){
         path.length++;
-        path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
+        path[i]=cast(char)cast(int)machine.vmem[cast(ulong)params[0]+i];
         }else{eol=true;}
     }
     path.length--;
     file=cast(double[])read(getSandboxedPath(machine,path));
     for(int i=0;i<file.length;i++){
         int pos=i+mempos;
-        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
-        machine.memory[pos]=cast(double)file[i];
-         machine.memory_size=machine.memory.length;
+        if(pos>machine.vmem.length-1)machine.vmem.length=pos+1;
+        machine.vmem[pos]=cast(double)file[i];
+         machine.vmem_size=machine.vmem.length;
     }
    
     return 3;
@@ -37,12 +37,12 @@ int writeFile(ref Machine machine,double[] p) {
     char[] path=new char[1];
     double[] file=new double[fileLength];
     for(int i=0;i<fileLength;i++){
-        file[i]=machine.memory[i+filePos];
+        file[i]=machine.vmem[i+filePos];
     }
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[cast(ulong)filePath+i]!=0){
+        if(cast(int)machine.vmem[cast(ulong)filePath+i]!=0){
             path.length++;
-            path[i]=cast(char)cast(int)machine.memory[filePath+i];
+            path[i]=cast(char)cast(int)machine.vmem[filePath+i];
         }else{eol=true;}
     }
     path.length--;
@@ -59,12 +59,12 @@ int writeTextFile(ref Machine machine,double[] p){
     char[] path=new char[1];
     byte[] file=new byte[fileLength];
     for(int i=0;i<fileLength;i++){
-        file[i]=cast(byte)machine.memory[i+filePos];
+        file[i]=cast(byte)machine.vmem[i+filePos];
     }
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[cast(ulong)filePath+i]!=0){
+        if(cast(int)machine.vmem[cast(ulong)filePath+i]!=0){
             path.length++;
-            path[i]=cast(char)cast(int)machine.memory[filePath+i];
+            path[i]=cast(char)cast(int)machine.vmem[filePath+i];
         }else{eol=true;}
     }
     path.length--;
@@ -80,18 +80,18 @@ int readTextFile(ref Machine machine,double[] p) {
     int mempos=cast(int)params[1];
     bool eol;
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
+        if(cast(int)machine.vmem[cast(ulong)params[0]+i]!=0){
         path.length++;
-        path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
+        path[i]=cast(char)cast(int)machine.vmem[cast(ulong)params[0]+i];
         }else{eol=true;}
     }
     path.length--;
     file=cast(byte[])read(getSandboxedPath(machine,path));
     for(int i=0;i<file.length;i++){
         int pos=i+mempos;
-        if(pos>machine.memory.length-1)machine.memory.length=pos+1;
-        machine.memory[pos]=cast(double)file[i];
-         machine.memory_size=machine.memory.length;
+        if(pos>machine.vmem.length-1)machine.vmem.length=pos+1;
+        machine.vmem[pos]=cast(double)file[i];
+         machine.vmem_size=machine.vmem.length;
     }
    
     return 3;
@@ -102,9 +102,9 @@ int getFileLength(ref Machine machine,double[] p) {
     char[] path=new char[1];
     bool eol;
     for(int i=0;!eol;i++){
-        if(cast(int)machine.memory[cast(ulong)params[0]+i]!=0){
+        if(cast(int)machine.vmem[cast(ulong)params[0]+i]!=0){
             path.length++;
-            path[i]=cast(char)cast(int)machine.memory[cast(ulong)params[0]+i];
+            path[i]=cast(char)cast(int)machine.vmem[cast(ulong)params[0]+i];
         }else{eol=true;}}
         path.length--;
         

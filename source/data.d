@@ -4,8 +4,8 @@ import time;
 import random;
 import dgfx;
 struct Machine {
-    double memory_size = 0;
-    double[] memory = new double[0];
+    double vmem_size = 0;
+    double[] vmem;
     Registers registers;
     Flags flags;
     int ip=0;
@@ -19,6 +19,7 @@ struct Machine {
     bool dprompt;
     double[] stack = new double[0];
     string basepath;
+    Thread* currThread;
     void print() {
         Machine machine = this;
         writeln("Machine:");
@@ -40,7 +41,7 @@ struct Machine {
         writeln("   Heap:");
        foreach(heap; machine.heap.objs) {heap.print();writeln("");}
         writeln("   Memory:");
-        writeln("       ", machine.memory);
+        writeln("       ", machine.vmem);
         writeln("   Instruction Pointer: ", machine.ip);
         writeln("   Flags:");
         writeln("   Zero: ", machine.flags.zero);
@@ -49,7 +50,14 @@ struct Machine {
         writeln("   Carry: ", machine.flags.carry);
     }
 }
-
+struct Thread{
+    Registers registers;
+    Flags flags;
+    int errAddr;
+    double[] mem;
+    int id;
+    Thread *next;
+}
 struct Registers {
     int a;
     int b;

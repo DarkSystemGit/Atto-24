@@ -71,16 +71,16 @@ class machineHeap{
         obj.end=obj.start+size;
         obj.id=cast(int)objs.length;
         for(int i=obj.start;i<obj.end;i++){
-            if((*m).memory.length<=i){(*m).memory.length=i+1;}
-            (*m).memory[i]=0;
+            if((*m).vmem.length<=i){(*m).vmem.length=i+1;}
+            (*m).vmem[i]=0;
         }
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
-        (*m).memory.length=ptr+obj.end+1;
+        (*m).vmem.length=ptr+obj.end+1;
     }
     void free(int id){
         objs[id].free=true;
-        for(int i=objs[id].start;i<objs[id].end;i++){(*m).memory[i]=0;}
+        for(int i=objs[id].start;i<objs[id].end;i++){(*m).vmem[i]=0;}
     }
 }
 //syscall 23;memdump()
@@ -109,8 +109,8 @@ int memcopy(ref Machine machine,double[] p){
     int dest=cast(int)params[1];
     int size=cast(int)params[2];
     for(int i=0;i<size;i++){
-        if(dest+i>machine.memory.length-1)machine.memory.length=dest+i+1;
-        machine.memory[dest+i]=machine.memory[src+i];
+        if(dest+i>machine.vmem.length-1)machine.vmem.length=dest+i+1;
+        machine.vmem[dest+i]=machine.vmem[src+i];
     }
     return 3;
 }
@@ -121,8 +121,8 @@ int memfill(ref Machine machine,double[] p){
     int len=cast(int)params[1]; 
     int value=cast(int)params[2];
     for(int i=0;i<len;i++){
-        if(addr+i>machine.memory.length-1)machine.memory.length=addr+i+1;
-        machine.memory[addr+i]=value;
+        if(addr+i>machine.vmem.length-1)machine.vmem.length=addr+i+1;
+        machine.vmem[addr+i]=value;
     }
     return 3;
 }

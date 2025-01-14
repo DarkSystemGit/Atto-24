@@ -20,7 +20,7 @@ void handleOpcode(ref Machine machine, double opcode, double[] params)
     machine.ip += pcount;
     if (machine._debug)
         writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
-                params[0 .. pcount - 1]), "); | Bytecode: ",machine.memory[machine.ip-pcount..machine.ip]);
+                params[0 .. pcount - 1]), "); | Bytecode: ",machine.vmem[machine.ip-pcount..machine.ip]);
 
 }
 extern(C) void sighandler(int num) nothrow @nogc @system{
@@ -68,22 +68,22 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     machine._debug = d;
     machine.basepath=bp.toString;
     machine.dprompt=true;
-    machine.memory_size = (cast(double) prgm.length + 50);
-    machine.memory = prgm;
-    machine.memory.length = cast(ulong) machine.memory_size;
-    machine.heap = new machineHeap(cast(int) machine.memory_size, &machine);
-    machine.memory.length = machine.heap.ptr;
-    machine.memory_size = machine.memory.length;
+    machine.vmem_size = (cast(double) prgm.length + 50);
+    machine.vmem.length = cast(ulong) machine.vmem_size;
+    machine.vmem[0..prgm.length] = prgm[];
+    machine.heap = new machineHeap(cast(int) machine.vmem_size, &machine);
+    machine.vmem.length = machine.heap.ptr;
+    machine.vmem_size = machine.vmem.length;
     machine.running=true;
     running=machine.running;
-    while ((machine.ip < machine.memory.length)&&machine.running&&running)
+    while ((machine.ip < machine.vmem.length)&&machine.running&&running)
     {
             if(machine._debug){
                 dbgloop(machine);
             }
             try{
-                double[] params = machine.memory[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.memory[machine.ip], params);
+                double[] params = machine.vmem[machine.ip + 1 .. $];
+                handleOpcode(machine, machine.vmem[machine.ip], params);
             }catch (Throwable t)
             {   
                 handleError(machine);
@@ -130,6 +130,12 @@ bool debugPrompt(ref Machine m,string line){
             break;
         case "dump":
             m.print(); 
+            break;
+        case "dumprmem":
+            writeln(m.realmem);
+            break;
+        case "memusage":
+            writeln(m.vmem.length/1024);
             break;
         case "kill":
             running=false;   
@@ -207,11 +213,11 @@ bool debugPrompt(ref Machine m,string line){
         default: 
             if(line.canFind("dump")){
                 string[] parts=line.split(" ");
-                if(parts.length==1)writeln(m.memory[parts[0].to!ulong]);
-                writeln(m.memory[parts[1].to!int..parts[2].to!int]);
+                if(parts.length==1)writeln(m.vmem[parts[0].to!ulong]);
+                writeln(m.vmem[parts[1].to!int..parts[2].to!int]);
             }else if(line.canFind("write")){
                 string[] parts=line.split(" ");
-                m.memory[parts[1].to!ulong]=parts[2].to!double;
+                m.vmem[parts[1].to!ulong]=parts[2].to!double;
             }else if(line.canFind("bp")){
                 string[] parts=line.split(" ");
 
