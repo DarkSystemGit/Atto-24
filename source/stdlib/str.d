@@ -26,11 +26,10 @@ int strcpy(ref Machine machine,double[] p){
     int len=cast(int)params[2];
     for(int i=0;i<len;i++){
         int pos=i+mempos;
-        if(pos>machine.vmem.length-1)machine.vmem.length=pos+1;
-        machine.vmem[pos]=cast(double)str[i];
-        machine.vmem_size=machine.vmem.length;
+        if(pos>machine.currThread.mem.length-1)machine.currThread.mem.length=pos+1;
+        machine.currThread.mem[pos]=cast(double)str[i];
     }
-    machine.registers.a=cast(int)params[2];
+    machine.currThread.registers.a=cast(int)params[2];
     return 3;
 }
 //syscall 20; strcmp(string* str,string* cmp)

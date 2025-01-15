@@ -59,10 +59,10 @@ int newDynamicArray(ref Machine machine,double[] p){
 int getArrayBody(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine,p,1);
     double bodyptr;
-    if(machine.vmem[cast(ulong)params[0]]==0){
+    if(machine.currThread.mem[cast(ulong)params[0]]==0){
         bodyptr=params[0]+2;
     }else{
-        bodyptr=machine.vmem[cast(ulong)(params[0]+2)];
+        bodyptr=machine.currThread.mem[cast(ulong)(params[0]+2)];
     }
     setRegister(machine,p[1],bodyptr);
     return 2;
@@ -71,10 +71,10 @@ int getArrayBody(ref Machine machine,double[] p){
 int getArrayCapacity(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine,p,1);
     double length;
-    if(machine.vmem[cast(ulong)params[0]]==0){
-        length=machine.vmem[cast(ulong)params[0]+1];
+    if(machine.currThread.mem[cast(ulong)params[0]]==0){
+        length=machine.currThread.mem[cast(ulong)params[0]+1];
     }else{
-        length=cast(ulong)machine.vmem[cast(ulong)(params[0]+1)];
+        length=cast(ulong)machine.currThread.mem[cast(ulong)(params[0]+1)];
     }
     setRegister(machine,p[1],length);
     return 2;
@@ -83,10 +83,10 @@ int getArrayCapacity(ref Machine machine,double[] p){
 int getArrayLength(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine,p,1);
     double length;
-    if(machine.vmem[cast(ulong)params[0]]==0){
-        length=machine.vmem[cast(ulong)params[0]+2];
+    if(machine.currThread.mem[cast(ulong)params[0]]==0){
+        length=machine.currThread.mem[cast(ulong)params[0]+2];
     }else{
-        length=machine.vmem[cast(ulong)machine.vmem[cast(ulong)(params[0]+2)]];
+        length=machine.currThread.mem[cast(ulong)machine.currThread.mem[cast(ulong)(params[0]+2)]];
     }
     setRegister(machine,p[1],length);
     return 2;
@@ -95,26 +95,26 @@ int getArrayLength(ref Machine machine,double[] p){
 int getArrayData(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine,p,1);
     double bodyptr;
-    if(machine.vmem[cast(ulong)params[0]]==0){
+    if(machine.currThread.mem[cast(ulong)params[0]]==0){
         bodyptr=params[0]+3;
     }else{
-        bodyptr=machine.vmem[cast(ulong)(params[0]+2)]+1;
+        bodyptr=machine.currThread.mem[cast(ulong)(params[0]+2)]+1;
     }
     setRegister(machine,p[1],bodyptr);
     return 2;
 }
 UserArray getArray(ref Machine machine,double addr){
     UserArray arr;
-    arr.capacity=&machine.vmem[cast(ulong)addr+1];
-    if(machine.vmem[cast(ulong)addr]==0){
-        arr.ptr=&machine.vmem[cast(ulong)addr+2];
-        arr.body=machine.vmem[cast(ulong)(addr+3)..cast(ulong)(addr+3+*arr.capacity)];
-        arr.length=&(machine.vmem[cast(ulong)addr+2]);
+    arr.capacity=&machine.currThread.mem[cast(ulong)addr+1];
+    if(machine.currThread.mem[cast(ulong)addr]==0){
+        arr.ptr=&machine.currThread.mem[cast(ulong)addr+2];
+        arr.body=machine.currThread.mem[cast(ulong)(addr+3)..cast(ulong)(addr+3+*arr.capacity)];
+        arr.length=&(machine.currThread.mem[cast(ulong)addr+2]);
     }else{
         arr.dynamic=true;
-        arr.ptr=&machine.vmem[cast(ulong)(addr+2)];
-        arr.body=machine.vmem[cast(ulong)(*arr.ptr+1)..cast(ulong)(*arr.ptr+1+*arr.capacity)];
-        arr.length=&(machine.vmem[cast(ulong)*arr.ptr]);
+        arr.ptr=&machine.currThread.mem[cast(ulong)(addr+2)];
+        arr.body=machine.currThread.mem[cast(ulong)(*arr.ptr+1)..cast(ulong)(*arr.ptr+1+*arr.capacity)];
+        arr.length=&(machine.currThread.mem[cast(ulong)*arr.ptr]);
     }
     return arr;
 }
@@ -126,14 +126,14 @@ void growArray(ref Machine machine,ref UserArray arr,double newlength){
         int newCapacity=cast(int)exp2(ceil(log2(newlength+*arr.capacity)));
         heapObj currObj;
         heapObj newObj=machine.heap.getObj(newCapacity);
-        utils.write(machine,newObj.start,machine.vmem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+1+*arr.capacity)]);
+        utils.write(machine,newObj.start,machine.currThread.mem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+1+*arr.capacity)]);
         foreach(heapObj obj;machine.heap.objs){
             if(obj.start==*arr.ptr){currObj=obj;break;}
         }
         machine.heap.free(currObj.id);
         *arr.capacity=cast(double)newCapacity;
         *arr.ptr=cast(double)newObj.start;
-        arr.body=machine.vmem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+*arr.capacity)];
+        arr.body=machine.currThread.mem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+*arr.capacity)];
         *arr.length=oldlength;
         //writeln([*arr.length,*arr.capacity,*arr.ptr],arr.body);
     }else if(!arr.dynamic)throw new Exception("Cannot grow static array");
@@ -239,7 +239,7 @@ int arrayConcat(ref Machine machine,double[] p){
 //arrayFreeDynamic(array* arr)
 int arrayFreeDynamic(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine,p,1); 
-    double bodyaddr=machine.vmem[cast(ulong)(params[0]+2)];
+    double bodyaddr=machine.currThread.mem[cast(ulong)(params[0]+2)];
     arrayObj[] newObjList;
     foreach(int i,arrayObj obj;machine.objs.arrayObjs){
         if([params[0],bodyaddr].canFind(obj.addr)){

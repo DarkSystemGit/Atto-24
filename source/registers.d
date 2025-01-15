@@ -37,40 +37,40 @@ double getRegister(ref Machine machine, double id) {
         value=0;
         break;
     case (11):
-        value=machine.registers.sbp;
+        value=machine.currThread.registers.sbp;
         break;
     case (10):
-        value=machine.registers.sp;
+        value=machine.currThread.registers.sp;
         break;
     case (9):
-        value=cast(double)machine.registers.a;
+        value=cast(double)machine.currThread.registers.a;
         break;
     case (8):
-        value=cast(double)machine.registers.b;
+        value=cast(double)machine.currThread.registers.b;
         break;
     case (7):
-        value=cast(double)machine.registers.c;
+        value=cast(double)machine.currThread.registers.c;
         break;
     case (6):
-        value=cast(double)machine.registers.d;
+        value=cast(double)machine.currThread.registers.d;
         break;
     case (5):
-        value=cast(double)machine.registers.e;
+        value=cast(double)machine.currThread.registers.e;
         break;
     case (4):
-        value=cast(double)machine.registers.f;
+        value=cast(double)machine.currThread.registers.f;
         break;
     case (3):
-        value=cast(double)machine.registers.g;
+        value=cast(double)machine.currThread.registers.g;
         break;
     case (2):
-        value=cast(double)machine.registers.h;
+        value=cast(double)machine.currThread.registers.h;
         break;
     case (1):
-        value=cast(double)machine.registers.i;
+        value=cast(double)machine.currThread.registers.i;
         break;
     case (12):
-        value=cast(double)machine.registers.j;
+        value=cast(double)machine.currThread.registers.j;
         break;
     }
     if(machine._debug)writeln( ", value: ",value);
@@ -86,40 +86,40 @@ void setRegister(ref Machine machine, double id, double value) {
     default:
         break;
     case(11):
-        machine.registers.sbp=cast(double)value;
+        machine.currThread.registers.sbp=cast(double)value;
         break;
     case(10):
-        machine.registers.sp=cast(double)value;
+        machine.currThread.registers.sp=cast(double)value;
         break;
     case (9):
-        machine.registers.a = cast(int)value;
+        machine.currThread.registers.a = cast(int)value;
         break;
     case (8):
-        machine.registers.b = cast(int)value;
+        machine.currThread.registers.b = cast(int)value;
         break;
     case (7):
-        machine.registers.c = cast(int)value;
+        machine.currThread.registers.c = cast(int)value;
         break;
     case (6):
-        machine.registers.d = cast(int)value;
+        machine.currThread.registers.d = cast(int)value;
         break;
         case (5):
-        machine.registers.e = cast(int)value;
+        machine.currThread.registers.e = cast(int)value;
         break;
     case (4):
-        machine.registers.f = cast(float)value;
+        machine.currThread.registers.f = cast(float)value;
         break;
     case (3):
-        machine.registers.g = cast(float)value;
+        machine.currThread.registers.g = cast(float)value;
         break;
     case (2):
-        machine.registers.h = cast(double)value;
+        machine.currThread.registers.h = cast(double)value;
         break;
     case (1):
-        machine.registers.i = value;
+        machine.currThread.registers.i = value;
         break;
     case (12):
-        machine.registers.j = value;
+        machine.currThread.registers.j = value;
         break;
 
     }

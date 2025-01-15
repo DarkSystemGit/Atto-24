@@ -71,16 +71,16 @@ class machineHeap{
         obj.end=obj.start+size;
         obj.id=cast(int)objs.length;
         for(int i=obj.start;i<obj.end;i++){
-            if((*m).vmem.length<=i){(*m).vmem.length=i+1;}
-            (*m).vmem[i]=0;
+            if((*m).currThread.mem.length<=i){(*m).currThread.mem.length=i+1;}
+            (*m).currThread.mem[i]=0;
         }
         objs~=obj;
         sizes~=[cast(int)size,cast(int)objs.length-1];
-        (*m).vmem.length=ptr+obj.end+1;
+        (*m).currThread.mem.length=ptr+obj.end+1;
     }
     void free(int id){
         objs[id].free=true;
-        for(int i=objs[id].start;i<objs[id].end;i++){(*m).vmem[i]=0;}
+        for(int i=objs[id].start;i<objs[id].end;i++){(*m).currThread.mem[i]=0;}
     }
 }
 //syscall 23;memdump()
@@ -109,8 +109,8 @@ int memcopy(ref Machine machine,double[] p){
     int dest=cast(int)params[1];
     int size=cast(int)params[2];
     for(int i=0;i<size;i++){
-        if(dest+i>machine.vmem.length-1)machine.vmem.length=dest+i+1;
-        machine.vmem[dest+i]=machine.vmem[src+i];
+        if(dest+i>machine.currThread.mem.length-1)machine.currThread.mem.length=dest+i+1;
+        machine.currThread.mem[dest+i]=machine.currThread.mem[src+i];
     }
     return 3;
 }
@@ -121,8 +121,8 @@ int memfill(ref Machine machine,double[] p){
     int len=cast(int)params[1]; 
     int value=cast(int)params[2];
     for(int i=0;i<len;i++){
-        if(addr+i>machine.vmem.length-1)machine.vmem.length=addr+i+1;
-        machine.vmem[addr+i]=value;
+        if(addr+i>machine.currThread.mem.length-1)machine.currThread.mem.length=addr+i+1;
+        machine.currThread.mem[addr+i]=value;
     }
     return 3;
 }
@@ -133,25 +133,25 @@ int castval(ref Machine machine,double[] p){
     int type=cast(int)params[1];
     switch(type){
         case 0:
-        machine.registers.a=cast(int)cast(bool)value;
+        machine.currThread.registers.a=cast(int)cast(bool)value;
         break;
         case 1:
-        machine.registers.a=cast(int)cast(char)value;
+        machine.currThread.registers.a=cast(int)cast(char)value;
         break;
         case 2:
-        machine.registers.a=cast(int)cast(short)value;  
+        machine.currThread.registers.a=cast(int)cast(short)value;  
         break;
         case 3:
-        machine.registers.a=cast(int)value;
+        machine.currThread.registers.a=cast(int)value;
         break;
         case 4:
-        machine.registers.a=cast(int)cast(long)value;
+        machine.currThread.registers.a=cast(int)cast(long)value;
         break;
         case 5:
-        machine.registers.f=cast(float)value;
+        machine.currThread.registers.f=cast(float)value;
         break;
         case 6:
-        machine.registers.a=cast(int)cast(byte)value;
+        machine.currThread.registers.a=cast(int)cast(byte)value;
         break;
         default: break;
     }

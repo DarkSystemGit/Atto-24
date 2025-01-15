@@ -23,9 +23,9 @@ char[] readString(ref Machine machine, int mempos) {
     char[] str = new char[0];
     bool eol;
     for(int i=0;!eol;i++){
-        if(cast(int)machine.vmem[mempos+i]!=0){
+        if(cast(int)machine.currThread.mem[mempos+i]!=0){
             str.length++;
-            str[i]=cast(char)cast(int)machine.vmem[mempos+i];
+            str[i]=cast(char)cast(int)machine.currThread.mem[mempos+i];
         }else{eol=true;}} 
         if(str[str.length-1]==0)str.length--;  
     return str;
@@ -35,26 +35,23 @@ void writeString(ref Machine machine, int mempos, char[] str) {
     str[str.length-1]=cast(char)0;
      for(int i=0;i<str.length;i++){
         int pos=i+mempos;
-        if(pos>machine.vmem.length-1)machine.vmem.length=pos+1;
-        machine.vmem[pos]=cast(double)str[i];
-        machine.vmem_size=machine.vmem.length;
+        if(pos>machine.currThread.mem.length-1)machine.currThread.mem.length=pos+1;
+        machine.currThread.mem[pos]=cast(double)str[i];
     }
-    machine.registers.a=cast(int)str.length;
+    machine.currThread.registers.a=cast(int)str.length;
 }
 void write(ref Machine m,double mempos,int[] data){   
     for(int i=0;i<data.length;i++){
         int pos=i+cast(int)mempos;
-        if(pos>m.vmem.length-1)m.vmem.length=pos+1;
-        m.vmem[pos]=cast(double)data[i];
-        m.vmem_size=m.vmem.length;
+        if(pos>m.currThread.mem.length-1)m.currThread.mem.length=pos+1;
+        m.currThread.mem[pos]=cast(double)data[i];
     }    
 }
 void write(ref Machine m,double mempos,double[] data){   
     for(int i=0;i<data.length;i++){
         int pos=i+cast(int)mempos;
-        if(pos>m.vmem.length-1)m.vmem.length=pos+1;
-        m.vmem[pos]=data[i];
-        m.vmem_size=m.vmem.length;
+        if(pos>m.currThread.mem.length-1)m.currThread.mem.length=pos+1;
+        m.currThread.mem[pos]=data[i];
     }    
 }
 string getSandboxedPath(ref Machine machine,char[] path){

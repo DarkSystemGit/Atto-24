@@ -12,7 +12,7 @@ int function(ref Machine machine, double[] params)[33] commands;
 bool running;
 void handleOpcode(ref Machine machine, double opcode, double[] params)
 {   
-    machine.registers.sp=machine.stack.length;
+    machine.currThread.registers.sp=machine.stack.length;
     if (isNaN(opcode))
         opcode = 0;
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
@@ -20,7 +20,7 @@ void handleOpcode(ref Machine machine, double opcode, double[] params)
     machine.ip += pcount;
     if (machine._debug)
         writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
-                params[0 .. pcount - 1]), "); | Bytecode: ",machine.vmem[machine.ip-pcount..machine.ip]);
+                params[0 .. pcount - 1]), "); | Bytecode: ",machine.currThread.mem[machine.ip-pcount..machine.ip]);
 
 }
 extern(C) void sighandler(int num) nothrow @nogc @system{
@@ -64,26 +64,26 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     commands[30]=  &breakpoint;
     commands[31] = &jg;
     commands[32] = &jng;
-    Machine machine = Machine();
+    Machine machine;
     machine._debug = d;
     machine.basepath=bp.toString;
     machine.dprompt=true;
-    machine.vmem_size = (cast(double) prgm.length + 50);
-    machine.vmem.length = cast(ulong) machine.vmem_size;
-    machine.vmem[0..prgm.length] = prgm[];
-    machine.heap = new machineHeap(cast(int) machine.vmem_size, &machine);
-    machine.vmem.length = machine.heap.ptr;
-    machine.vmem_size = machine.vmem.length;
+    machine.threads=new ThreadList();
+    machine.currThread=machine.threads.head;
+    machine.currThread.mem.length = cast(ulong) prgm.length+64;
+    machine.currThread.mem[0..prgm.length] = prgm[];
+    machine.heap = new machineHeap(cast(int)machine.currThread.mem.length, &machine);
+    machine.currThread.mem.length = machine.heap.ptr;
     machine.running=true;
     running=machine.running;
-    while ((machine.ip < machine.vmem.length)&&machine.running&&running)
+    while ((machine.ip < machine.currThread.mem.length)&&machine.running&&running)
     {
             if(machine._debug){
                 dbgloop(machine);
             }
             try{
-                double[] params = machine.vmem[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.vmem[machine.ip], params);
+                double[] params = machine.currThread.mem[machine.ip + 1 .. $];
+                handleOpcode(machine, machine.currThread.mem[machine.ip], params);
             }catch (Throwable t)
             {   
                 handleError(machine);
@@ -96,8 +96,8 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
 void handleError(ref Machine machine){
                 if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.ip);
                machine.stack.length++;
-    machine.registers.sbp++;
-    machine.stack.insertInPlace(cast(ulong)machine.registers.sbp-1, machine.ip);
+    machine.currThread.registers.sbp++;
+    machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, machine.ip);
                 if(machine.errAddr!=0){
                 machine.ip = machine.errAddr;}else{
                     machine.stack.length--;
@@ -105,22 +105,23 @@ void handleError(ref Machine machine){
                     cwriteln(("An Error occured at this address: "~machine.ip.to!string).color(mode.bold));
                     cwriteln("Stack:".color(mode.bold));
                     cwriteln(machine.stack.to!string().color(mode.bold));
-                    cwriteln(("SBP: "~machine.registers.sbp.to!string()).color(mode.bold));
-                    cwriteln(("SP: "~machine.registers.sp.to!string()).color(mode.bold));
+                    cwriteln(("SBP: "~machine.currThread.registers.sbp.to!string()).color(mode.bold));
+                    cwriteln(("SP: "~machine.currThread.registers.sp.to!string()).color(mode.bold));
                     cwriteln("Call Stack:".color(mode.bold));
                     cwriteln(machine.raddr.to!string().color(mode.bold));
                     cwriteln(("Registers:").color(mode.bold));
-                    cwriteln(("A: "~machine.registers.a.to!string()).color(mode.bold));
-                    cwriteln(("B: "~machine.registers.b.to!string()).color(mode.bold));
-                    cwriteln(("C: "~machine.registers.c.to!string()).color(mode.bold));
-                    cwriteln(("D: "~machine.registers.d.to!string()).color(mode.bold));
-                    cwriteln(("E: "~machine.registers.e.to!string()).color(mode.bold));
-                    cwriteln(("F: "~machine.registers.f.to!string()).color(mode.bold));
-                    cwriteln(("G: "~machine.registers.g.to!string()).color(mode.bold));
-                    cwriteln(("H: "~machine.registers.h.to!string()).color(mode.bold));
-                    cwriteln(("I: "~machine.registers.i.to!string()).color(mode.bold));
-                    cwriteln(("J: "~machine.registers.j.to!string()).color(mode.bold));
+                    cwriteln(("A: "~machine.currThread.registers.a.to!string()).color(mode.bold));
+                    cwriteln(("B: "~machine.currThread.registers.b.to!string()).color(mode.bold));
+                    cwriteln(("C: "~machine.currThread.registers.c.to!string()).color(mode.bold));
+                    cwriteln(("D: "~machine.currThread.registers.d.to!string()).color(mode.bold));
+                    cwriteln(("E: "~machine.currThread.registers.e.to!string()).color(mode.bold));
+                    cwriteln(("F: "~machine.currThread.registers.f.to!string()).color(mode.bold));
+                    cwriteln(("G: "~machine.currThread.registers.g.to!string()).color(mode.bold));
+                    cwriteln(("H: "~machine.currThread.registers.h.to!string()).color(mode.bold));
+                    cwriteln(("I: "~machine.currThread.registers.i.to!string()).color(mode.bold));
+                    cwriteln(("J: "~machine.currThread.registers.j.to!string()).color(mode.bold));
                     machine.running=false;
+                    machine.unhandledErr=true;
                 }
 }
 bool debugPrompt(ref Machine m,string line){
@@ -131,11 +132,11 @@ bool debugPrompt(ref Machine m,string line){
         case "dump":
             m.print(); 
             break;
-        case "dumprmem":
-            writeln(m.realmem);
+        case "dumptmem":
+            writeln(m.currThread.mem);
             break;
         case "memusage":
-            writeln(m.vmem.length/1024);
+            writeln(m.currThread.mem.length/1024);
             break;
         case "kill":
             running=false;   
@@ -144,40 +145,40 @@ bool debugPrompt(ref Machine m,string line){
             writeln("Run State:  ",m.running);
             break;
         case "%A":
-            writeln(m.registers.a);
+            writeln(m.currThread.registers.a);
             break;
         case "%B":
-            writeln(m.registers.b);
+            writeln(m.currThread.registers.b);
             break;
         case "%C":
-            writeln(m.registers.c);
+            writeln(m.currThread.registers.c);
             break;
         case "%D":
-            writeln(m.registers.d);
+            writeln(m.currThread.registers.d);
             break;
         case "%E":
-            writeln(m.registers.e);
+            writeln(m.currThread.registers.e);
             break;
         case "%F":
-            writeln(m.registers.f);
+            writeln(m.currThread.registers.f);
             break;
         case "%G":
-            writeln(m.registers.g);
+            writeln(m.currThread.registers.g);
             break;
         case "%H":
-            writeln(m.registers.h);
+            writeln(m.currThread.registers.h);
             break;
         case "%I":
-            writeln(m.registers.i);
+            writeln(m.currThread.registers.i);
             break;
         case "%J":
-            writeln(m.registers.j);
+            writeln(m.currThread.registers.j);
             break;
         case "%SP":
-            writeln(m.registers.sp);
+            writeln(m.currThread.registers.sp);
             break;   
         case "%SBP":
-            writeln(m.registers.sbp);
+            writeln(m.currThread.registers.sbp);
             break;     
         case "flags":
             writeln(m.flags);
@@ -213,11 +214,11 @@ bool debugPrompt(ref Machine m,string line){
         default: 
             if(line.canFind("dump")){
                 string[] parts=line.split(" ");
-                if(parts.length==1)writeln(m.vmem[parts[0].to!ulong]);
-                writeln(m.vmem[parts[1].to!int..parts[2].to!int]);
+                if(parts.length==1)writeln(m.currThread.mem[parts[0].to!ulong]);
+                writeln(m.currThread.mem[parts[1].to!int..parts[2].to!int]);
             }else if(line.canFind("write")){
                 string[] parts=line.split(" ");
-                m.vmem[parts[1].to!ulong]=parts[2].to!double;
+                m.currThread.mem[parts[1].to!ulong]=parts[2].to!double;
             }else if(line.canFind("bp")){
                 string[] parts=line.split(" ");
 

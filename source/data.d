@@ -4,8 +4,6 @@ import time;
 import random;
 import dgfx;
 struct Machine {
-    double vmem_size = 0;
-    double[] vmem;
     Registers registers;
     Flags flags;
     int ip=0;
@@ -19,29 +17,31 @@ struct Machine {
     bool dprompt;
     double[] stack = new double[0];
     string basepath;
-    Thread* currThread;
+    bool unhandledErr;
+    Thread currThread;
+    ThreadList threads;
     void print() {
         Machine machine = this;
         writeln("Machine:");
         writeln("   Registers:");
-        writeln("   A: ", machine.registers.a);
-        writeln("   B: ", machine.registers.b);
-        writeln("   C: ", machine.registers.c);
-        writeln("   D: ", machine.registers.d);
-        writeln("   E: ", machine.registers.e);
-        writeln("   F: ", machine.registers.f);
-        writeln("   G: ", machine.registers.g);
-        writeln("   H: ", machine.registers.h);
-        writeln("   I: ", machine.registers.i);
-        writeln("   J: ", machine.registers.j);
-        writeln("   Stack Base Pointer: ",machine.registers.sbp);
-        writeln("   Stack Pointer: ",machine.registers.sp);
+        writeln("   A: ", machine.currThread.registers.a);
+        writeln("   B: ", machine.currThread.registers.b);
+        writeln("   C: ", machine.currThread.registers.c);
+        writeln("   D: ", machine.currThread.registers.d);
+        writeln("   E: ", machine.currThread.registers.e);
+        writeln("   F: ", machine.currThread.registers.f);
+        writeln("   G: ", machine.currThread.registers.g);
+        writeln("   H: ", machine.currThread.registers.h);
+        writeln("   I: ", machine.currThread.registers.i);
+        writeln("   J: ", machine.currThread.registers.j);
+        writeln("   Stack Base Pointer: ",machine.currThread.registers.sbp);
+        writeln("   Stack Pointer: ",machine.currThread.registers.sp);
         writeln("   Stack:");
         writeln("       ", machine.stack);
         writeln("   Heap:");
        foreach(heap; machine.heap.objs) {heap.print();writeln("");}
         writeln("   Memory:");
-        writeln("       ", machine.vmem);
+        writeln("       ", machine.currThread.mem);
         writeln("   Instruction Pointer: ", machine.ip);
         writeln("   Flags:");
         writeln("   Zero: ", machine.flags.zero);
@@ -50,13 +50,40 @@ struct Machine {
         writeln("   Carry: ", machine.flags.carry);
     }
 }
-struct Thread{
+class Thread{
     Registers registers;
     Flags flags;
     int errAddr;
     double[] mem;
     int id;
-    Thread *next;
+    Thread next;
+}
+class ThreadList{
+    Thread head;
+    Thread tail;
+
+    this(){
+        Thread t=new Thread;
+        t.id=0;
+        this.head=t;
+        this.tail=t;
+    }
+    void addThread(Thread t){
+        t.id=tail.id+1;
+        t.next=head;
+        this.tail.next=t;
+        this.tail=t;
+    }
+    void removeThread(int id){
+        if(id==0)return;
+        Thread t=head;
+        Thread prev;
+        while(t.id!=id){
+            prev=t;
+            t=t.next;
+        }
+        prev.next=t.next;
+    }
 }
 struct Registers {
     int a;

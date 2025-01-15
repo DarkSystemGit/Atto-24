@@ -22,8 +22,8 @@ int printStr(ref Machine machine,double[] p) {
     bool eol;
     for(int i=0;!eol;i++){
 
-        if((machine.vmem.length>mempos+i)&&(cast(int)machine.vmem[mempos+i]!=0)){
-            write(cast(char)cast(int)machine.vmem[mempos+i]);
+        if((machine.currThread.mem.length>mempos+i)&&(cast(int)machine.currThread.mem[mempos+i]!=0)){
+            write(cast(char)cast(int)machine.currThread.mem[mempos+i]);
         }else{eol=true;}}    
     return 1;
 }

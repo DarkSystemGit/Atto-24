@@ -49,6 +49,7 @@ string[] files=[
     "dirs/cd",
     "dirs/rmdir",
 ];
+string[] fails=[];
 string startcwd=std.file.getcwd();
 foreach(string file;files){
     chdir(startcwd);
@@ -58,9 +59,24 @@ foreach(string file;files){
     cwriteln(file.color(mode.bold));
     Compiler c=new Compiler();
     c.comp(readText(path),path,false);
-    if(!c.err) execBytecode(c.bytecode, false,getBasePath(path));
+    Machine m;
+    if(!c.err) m=execBytecode(c.bytecode, false,getBasePath(path));
     writeln();
+    if(!m.unhandledErr){
+        cwriteln("Test Passed".color(fg.light_green).color(mode.bold));
+    }else{
+        fails~=file;
+        cwriteln("Test Failed".color(fg.red).color(mode.bold));
+    }
     cwriteln("Test Done".color(mode.bold));
+}
+if(fails.length==0){
+    cwriteln("All Tests Passed".color(fg.light_green).color(mode.bold));
+}else{
+    cwriteln("Failed Tests:".color(fg.red).color(mode.bold));
+    foreach(string test;fails){
+        cwriteln(("  "~test).color(mode.bold));
+    }
 }
 return;
 }

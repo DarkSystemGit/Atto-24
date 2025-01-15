@@ -18,7 +18,7 @@ import math;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    Thread.sleep(dur!("msecs")(cast(int)params[0]));
+    core.thread.osthread.Thread.sleep(dur!("msecs")(cast(int)params[0]));
     return 1;
 }
 int nutin(ref Machine machine,double[] p){

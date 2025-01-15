@@ -4,82 +4,82 @@ import data;
 import stdlib;
 int add(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(params[0] + params[1]);
+    machine.currThread.registers.a = cast(int)(params[0] + params[1]);
     
     return 2;
 }
 
 int sub(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(params[0] - params[1]);
+    machine.currThread.registers.a = cast(int)(params[0] - params[1]);
     
     return 2;
 }
 
 int mul(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(params[0] * params[1]);
+    machine.currThread.registers.a = cast(int)(params[0] * params[1]);
     
     return 2;
 }
 
 int div(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.f = cast(float)(params[0] / params[1]);
+    machine.currThread.registers.f = cast(float)(params[0] / params[1]);
     
     return 2;
 }
 int mod(ref Machine machine, double[] p) {
      double[] params=handleRegisters(machine, p, 2);
-    machine.registers.f = params[0] % params[1];
+    machine.currThread.registers.f = params[0] % params[1];
     
     return 2;
 }
 int addf(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.f = cast(float)params[0] + cast(float)params[1];
+    machine.currThread.registers.f = cast(float)params[0] + cast(float)params[1];
     
     return 2;
 }
 
 int subf(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.f = cast(float)params[0] - cast(float)params[1];
+    machine.currThread.registers.f = cast(float)params[0] - cast(float)params[1];
     
     return 2;
 }
 
 int mulf(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.f = cast(float)params[0] * cast(float)params[1];
+    machine.currThread.registers.f = cast(float)params[0] * cast(float)params[1];
     
     return 2;
 }
 
 int and(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] & cast(int)params[1]);
+    machine.currThread.registers.a = cast(int)(cast(int)params[0] & cast(int)params[1]);
     
     return 2;
 }
 
 int not(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    machine.registers.a = cast(int)(~cast(int)params[0]);
+    machine.currThread.registers.a = cast(int)(~cast(int)params[0]);
     
     return 1;
 }
 
 int or(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] | cast(int)params[1]);
+    machine.currThread.registers.a = cast(int)(cast(int)params[0] | cast(int)params[1]);
     
     return 2;
 }
 
 int xor(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.registers.a = cast(int)(cast(int)params[0] ^ cast(int)params[1]);
+    machine.currThread.registers.a = cast(int)(cast(int)params[0] ^ cast(int)params[1]);
     
     return 2;
 }
@@ -128,17 +128,16 @@ int jnz(ref Machine machine, double[] p) {
 
 int read(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    setRegister(machine,p[1],machine.vmem[cast(ulong)params[0]]);
+    setRegister(machine,p[1],machine.currThread.mem[cast(ulong)params[0]]);
     return 2;
 }
 
 int write(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    /*if(params[1]>machine.vmem.length) {
-        machine.vmem.length = cast(ulong)params[1];
-        machine.vmem_size=cast(int)machine.vmem.length;
+    /*if(params[1]>machine.currThread.mem.length) {
+        machine.currThread.mem.length = cast(ulong)params[1];
     }*/
-    machine.vmem[cast(ulong)params[1]] = params[0];
+    machine.currThread.mem[cast(ulong)params[1]] = params[0];
     return 2;
 
 }
@@ -146,15 +145,15 @@ int write(ref Machine machine, double[] p) {
 int push(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     machine.stack.length++;
-    machine.registers.sbp++;
-    machine.stack.insertInPlace(cast(ulong)machine.registers.sbp-1, params[0]);
+    machine.currThread.registers.sbp++;
+    machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, params[0]);
     return 1;
 }
 
 int pop(ref Machine machine, double[] params) {
-    setRegister(machine,  params[0],machine.stack[cast(ulong)(machine.registers.sbp-1)]);
-    machine.stack = machine.stack.remove(cast(ulong)(machine.registers.sbp-1));
-    machine.registers.sbp--;
+    setRegister(machine,  params[0],machine.stack[cast(ulong)(machine.currThread.registers.sbp-1)]);
+    machine.stack = machine.stack.remove(cast(ulong)(machine.currThread.registers.sbp-1));
+    machine.currThread.registers.sbp--;
     machine.stack.length--;
     return 1;
 }
