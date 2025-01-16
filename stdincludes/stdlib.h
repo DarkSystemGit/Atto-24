@@ -112,3 +112,5 @@
 #define math.pow 101;
 #define math.log 102;
 #define math.finite 103;
+#define thread.create 106;
+#define thread.switch 107;

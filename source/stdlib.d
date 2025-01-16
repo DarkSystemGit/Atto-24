@@ -14,6 +14,7 @@ import time;
 import random;
 import gfx;
 import array;
+import thread;
 import math;
 //syscall 8; sleep(int time)
 int sleep(ref Machine machine,double[] p) {
@@ -52,7 +53,8 @@ int function(ref Machine machine, double[] params)[] syscalls=[
     &msin,&mcos,&mtan,&masin,
     &macos,&matan,&mceil,&mfloor,
     &mround,&mint,&mpow,&mlog,
-    &mfinite,&readFile,&writeFile
+    &mfinite,&readFile,&writeFile,&addThread,
+    &switchThread
 ];
 int syscall(ref Machine m, double sys,double[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

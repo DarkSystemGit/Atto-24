@@ -106,7 +106,7 @@ int getFileLength(ref Machine machine,double[] p) {
         }else{eol=true;}}
         path.length--;
         
-    setRegister(machine,p[1],getSize(getSandboxedPath(machine,path)));
+    setRegister(machine,p[1],getSize(getSandboxedPath(machine,path))/8);
     return 2;
 }
 //syscall 6;getFileLastModified(string* path,register ret)

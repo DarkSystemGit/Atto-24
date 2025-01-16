@@ -16,11 +16,11 @@ void handleOpcode(ref Machine machine, double opcode, double[] params)
     if (isNaN(opcode))
         opcode = 0;
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
-    //writeln(pcount," ",machine.ip," ",opcode);
-    machine.ip += pcount;
+    //writeln(pcount," ",machine.currThread.ip," ",opcode);
+    machine.currThread.ip += pcount;
     if (machine._debug)
-        writeln("[DEBUG] Addr: ",machine.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
-                params[0 .. pcount - 1]), "); | Bytecode: ",machine.currThread.mem[machine.ip-pcount..machine.ip]);
+        writeln("[DEBUG] Addr: ",machine.currThread.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
+                params[0 .. pcount - 1]), "); | Bytecode: ",machine.currThread.mem[machine.currThread.ip-pcount..machine.currThread.ip]);
 
 }
 extern(C) void sighandler(int num) nothrow @nogc @system{
@@ -76,14 +76,15 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     machine.currThread.mem.length = machine.heap.ptr;
     machine.running=true;
     running=machine.running;
-    while ((machine.ip < machine.currThread.mem.length)&&machine.running&&running)
-    {
+    while ((machine.currThread.ip < machine.currThread.mem.length)&&machine.running&&running)
+    {  
+            machine.currThread=machine.threads.curr;
             if(machine._debug){
                 dbgloop(machine);
             }
             try{
-                double[] params = machine.currThread.mem[machine.ip + 1 .. $];
-                handleOpcode(machine, machine.currThread.mem[machine.ip], params);
+                double[] params = machine.currThread.mem[machine.currThread.ip + 1 .. $];
+                handleOpcode(machine, machine.currThread.mem[machine.currThread.ip], params);
             }catch (Throwable t)
             {   
                 handleError(machine);
@@ -94,15 +95,15 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     return machine;
 }
 void handleError(ref Machine machine){
-                if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.ip);
+                if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.currThread.ip);
                machine.stack.length++;
     machine.currThread.registers.sbp++;
-    machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, machine.ip);
+    machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, machine.currThread.ip);
                 if(machine.errAddr!=0){
-                machine.ip = machine.errAddr;}else{
+                machine.currThread.ip = machine.errAddr;}else{
                     machine.stack.length--;
                     cwrite(("[ERROR] ").color(fg.red).color(mode.bold));
-                    cwriteln(("An Error occured at this address: "~machine.ip.to!string).color(mode.bold));
+                    cwriteln(("An Error occured at this address: "~machine.currThread.ip.to!string).color(mode.bold));
                     cwriteln("Stack:".color(mode.bold));
                     cwriteln(machine.stack.to!string().color(mode.bold));
                     cwriteln(("SBP: "~machine.currThread.registers.sbp.to!string()).color(mode.bold));
@@ -135,8 +136,11 @@ bool debugPrompt(ref Machine m,string line){
         case "dumptmem":
             writeln(m.currThread.mem);
             break;
+        case "dumpthreads":
+            m.threads.print();
+            break;
         case "memusage":
-            writeln(m.currThread.mem.length/1024);
+            writeln((m.currThread.mem.length/1024).to!string~"KB");
             break;
         case "kill":
             running=false;   
@@ -210,6 +214,11 @@ bool debugPrompt(ref Machine m,string line){
             writeln("flags: Print Flags");
             writeln("stack: Print Stack");
             writeln("write: Write to memory");
+            writeln("disprompt: Disable Debugger Prompt");
+            writeln("help: Print this help message");
+            writeln("memusage: Print Memory Usage");
+            writeln("dumptmem: Print Thread Memory");
+            writeln("dumpthreads: Print Threads");
             break;   
         default: 
             if(line.canFind("dump")){
@@ -229,7 +238,7 @@ bool debugPrompt(ref Machine m,string line){
 void dbgloop(ref Machine machine){
     if(!machine.dprompt)return;
     try{
-    cwrite((machine.ip.to!string~">").color(mode.bold));
+    cwrite((machine.currThread.ip.to!string~">").color(mode.bold));
                 string line;
                 while((line=readln())is null){}
                 line=line.strip();

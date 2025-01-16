@@ -6,7 +6,6 @@ import dgfx;
 struct Machine {
     Registers registers;
     Flags flags;
-    int ip=0;
     int[] raddr;
     int p;
     bool _debug;
@@ -42,7 +41,7 @@ struct Machine {
        foreach(heap; machine.heap.objs) {heap.print();writeln("");}
         writeln("   Memory:");
         writeln("       ", machine.currThread.mem);
-        writeln("   Instruction Pointer: ", machine.ip);
+        writeln("   Instruction Pointer: ", machine.currThread.ip);
         writeln("   Flags:");
         writeln("   Zero: ", machine.flags.zero);
         writeln("   Overflow: ", machine.flags.overflow);
@@ -56,17 +55,20 @@ class Thread{
     int errAddr;
     double[] mem;
     int id;
+    int ip;
     Thread next;
 }
 class ThreadList{
     Thread head;
     Thread tail;
-
+    Thread curr;
     this(){
         Thread t=new Thread;
         t.id=0;
+        t.next=t;
         this.head=t;
         this.tail=t;
+        this.curr=t;
     }
     void addThread(Thread t){
         t.id=tail.id+1;
@@ -83,6 +85,44 @@ class ThreadList{
             t=t.next;
         }
         prev.next=t.next;
+    }
+    void switchThread(int id){
+        Thread t=head;
+        while(t.id!=id){
+            t=t.next;
+        }
+        this.curr=t;
+    }
+    void switchThread(){
+        this.curr=this.curr.next;
+    }
+    void print(){
+        Thread t=head;
+        writeln("Thread List:");
+        bool f=true;
+        while(t.id!=0||f){
+            f=false;
+            writeln("Thread ",t.id);
+            writeln("   Registers:");
+            writeln("       A: ", t.registers.a);
+            writeln("       B: ", t.registers.b);
+            writeln("       C: ", t.registers.c);
+            writeln("       D: ", t.registers.d);
+            writeln("       E: ", t.registers.e);
+            writeln("       F: ", t.registers.f);
+            writeln("       G: ", t.registers.g);
+            writeln("       H: ", t.registers.h);
+            writeln("       I: ", t.registers.i);
+            writeln("       J: ", t.registers.j);
+            writeln("       Stack Base Pointer: ",t.registers.sbp);
+            writeln("       Stack Pointer: ",t.registers.sp);
+            writeln("   Flags:");
+            writeln("       Zero: ", t.flags.zero);
+            writeln("       Overflow: ", t.flags.overflow);
+            writeln("       Negative: ", t.flags.negative);
+            t=t.next;
+        }
+
     }
 }
 struct Registers {

@@ -1,4 +1,5 @@
 jmp 13;
 "./test.txt";
-sys 5,2,%A;
-sys 0,%A;
+sys 5,2,%F;
+mulf %F,8;
+sys 0,%F;

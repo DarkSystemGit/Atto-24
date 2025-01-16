@@ -93,27 +93,27 @@ int cp(ref Machine machine, double[] p) {
 
 int jmp(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    machine.ip = (cast(int)params[0]) - 2;
+    machine.currThread.ip = (cast(int)params[0]) - 2;
     return 1;
 }
 int jg(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     if (!machine.flags.negative) {
-        machine.ip = (cast(int)params[0]) - 2;
+        machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
 int jng(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     if (machine.flags.negative) {
-        machine.ip = (cast(int)params[0]) - 2;
+        machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
 int jz(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     if (machine.flags.zero) {
-        machine.ip = (cast(int)params[0]) - 2;
+        machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
@@ -121,7 +121,7 @@ int jz(ref Machine machine, double[] p) {
 int jnz(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     if (!machine.flags.zero) {
-        machine.ip = (cast(int)params[0])-2;
+        machine.currThread.ip = (cast(int)params[0])-2;
     }
     return 1;
 }
@@ -169,14 +169,14 @@ int mov(ref Machine machine, double[] params) {
 
 int call(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    machine.raddr~=machine.ip+1;
-    machine.ip = (cast(int)params[0]) - 2;
+    machine.raddr~=machine.currThread.ip+1;
+    machine.currThread.ip = (cast(int)params[0]) - 2;
     return 1;
 }
 
 int ret(ref Machine machine, double[] p) {
     //writeln(machine.raddr);
-    machine.ip = machine.raddr[machine.raddr.length-1];
+    machine.currThread.ip = machine.raddr[machine.raddr.length-1];
     machine.raddr.length--;
     return 0;
 }

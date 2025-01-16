@@ -5,6 +5,7 @@ import compiler;
 import colorize;
 import test;
 import utils;
+string usageStr="Usage: ./atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests] [--write-bytecode]";
 void main(string[] argv) { 
     try{
         
@@ -19,16 +20,21 @@ void main(string[] argv) {
     args["--compiler-debug"]="false";
     args["--bcoffset"]="0";
     args["--run-tests"]="";
+    args["--write-bytecode"]="false";
+    args["--run-bytecode"]="false";
     for(int i=0;i<argv.length;i++) {
-        if(["--debug","--run-tests","--compiler-debug"].canFind(argv[i])){args[argv[i]]="true";}
+        if(["--debug","--run-tests","--compiler-debug","--write-bytecode","--run-bytecode"].canFind(argv[i])){args[argv[i]]="true";}
         else if("--bcoffset"==argv[i]){args[argv[i]]=argv[i+1];}else if(i>0){args["--src"]=argv[i];}
     }
     if(args["--run-tests"]!=""){
         test.test();
         return;
     }
-    if(args["--src"]=="") {writefln("Usage: atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");return;}
-
+    if(args["--src"]=="") {writefln(usageStr);return;}
+    if(args["--run-bytecode"].to!bool==true){
+        execBytecode(cast(double[])read(args["--src"]), args["--debug"].to!bool,getBasePath(args["--src"]));
+        return;
+    }
     Compiler c=new Compiler();
     if(exists(args["--src"])){
         string src=readText(args["--src"]);
@@ -65,6 +71,10 @@ void main(string[] argv) {
         writeln(c.importedFiles);
         writeln("Data Section Map:");
         writeln(getDataMap(c));
+    }else if(args["--write-bytecode"].to!bool==true){
+        string[] p=args["--src"].split(".");
+        p.length--;
+        std.file.write(p.join(".")~".bytecode",c.bytecode);
     }else{
         if(!c.err)execBytecode(c.bytecode, args["--debug"].to!bool,getBasePath(args["--src"]));
     }
@@ -75,7 +85,7 @@ void main(string[] argv) {
     }
     }catch(Throwable t){
         writeln(t);
-        writefln("Usage: ./atto24 <source file> [--debug] [--compiler-debug] [--bcoffset <int offset>] [--run-tests]");
+        writefln(usageStr);
     } 
 
 }

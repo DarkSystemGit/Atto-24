@@ -1,8 +1,6 @@
 #include <stdlib>;
 #define fileName "test.bin";
 sys file.getLength &fileName,%A;
-div %A,8;
-mov %F,%A;
 sys mem.malloc %A,%B,%C;
 sys file.read &fileName,%B,%A;
 mov %A,%C;
