@@ -17,5 +17,15 @@ int switchThread(ref Machine machine,double[] params){
     machine.threads.switchThread();
     return 0;
 }
-
+//getThreadID(register a)
+int getThreadID(ref Machine m,double[] p){
+    setRegister(m,p[0],m.currThread.id);
+    return 1;
+}
+//removeThread(int id)
+int removeThread(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,1);
+    m.threads.removeThread(params[0]);
+    return 1;
+}
 
