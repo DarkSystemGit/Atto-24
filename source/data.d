@@ -269,6 +269,7 @@ enum TokenType
     RET,
     INC,
     DEC,
+    INT,
     INCF,
     DECF,
     MULF,

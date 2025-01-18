@@ -168,7 +168,7 @@ int mov(ref Machine machine, double[] params) {
     setRegister(machine, clear, 0);
     return 2;
 }
-int interupt(ref Machine machine, double[] p) {
+int interruptHandler(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     interrupt(machine,cast(int)params[0]);
     return 1;

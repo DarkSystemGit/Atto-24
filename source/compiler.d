@@ -69,6 +69,7 @@ class Tokenizer
         keywords["null"]=TokenType.NULL;
         keywords["jg"]=TokenType.JG;
         keywords["jlt"]=TokenType.JNG;
+        keywords["int"]=TokenType.INT;
 
     }
     void scanToken(string src)
@@ -383,7 +384,7 @@ class Tokenizer
         bool err;
         Statement[] stmts;
         string file;
-        TokenType[] cmdlist=[TokenType.ADD,TokenType.BREAKPOINT,TokenType.JG,TokenType.JNG,TokenType.MOD,TokenType.DIV,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.MULF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV];
+        TokenType[] cmdlist=[TokenType.ADD,TokenType.BREAKPOINT,TokenType.JG,TokenType.JNG,TokenType.MOD,TokenType.DIV,TokenType.ADDF,TokenType.SUB,TokenType.SUBF,TokenType.MULF,TokenType.NOP,TokenType.MUL,TokenType.AND,TokenType.NOT,TokenType.OR,TokenType.XOR,TokenType.CP,TokenType.JMP,TokenType.JNZ,TokenType.JZ,TokenType.CMP,TokenType.SYS,TokenType.PUSH,TokenType.POP,TokenType.READ,TokenType.WRITE,TokenType.CALL,TokenType.RET,TokenType.INC,TokenType.INCF,TokenType.DEC,TokenType.DECF,TokenType.EXIT,TokenType.SETERRADDR,TokenType.MOV,TokenType.INT];
 
         void parse(Token[] tokens,string file){
             this.file=file;
@@ -539,7 +540,7 @@ class Compiler{
         double[][] dataSec;
         string[] dataSecMap;
         int dataPtr;
-        int[TokenType] commands=[TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29,TokenType.BREAKPOINT:30,TokenType.JG:31,TokenType.JNG:32];
+        int[TokenType] commands=[TokenType.INT:34,TokenType.NOP:0,TokenType.NONE:0,TokenType.ADD:1,TokenType.SUB:2,TokenType.MUL:3,TokenType.ADDF:4,TokenType.SUBF:5,TokenType.MULF:6,TokenType.AND:7,TokenType.NOT:8,TokenType.OR:9,TokenType.XOR:10,TokenType.CP:11,TokenType.JMP:12,TokenType.JNZ:13,TokenType.JZ:14,TokenType.CMP:15,TokenType.SYS:16,TokenType.READ:17,TokenType.WRITE:18,TokenType.PUSH:19,TokenType.POP:20,TokenType.MOV:21,TokenType.CALL:22,TokenType.RET:23,TokenType.INC:24,TokenType.DEC:25,TokenType.INCF:24,TokenType.DECF:25,TokenType.SETERRADDR:26,TokenType.EXIT:27,TokenType.DIV:28,TokenType.MOD:29,TokenType.BREAKPOINT:30,TokenType.JG:31,TokenType.JNG:32];
         double[TokenType] regs=[TokenType.REG_SBP:NaN(11),TokenType.REG_SP:NaN(10),TokenType.REG_A:NaN(9),TokenType.REG_B:NaN(8),TokenType.REG_C:NaN(7),TokenType.REG_D:NaN(6),TokenType.REG_E:NaN(5),TokenType.REG_F:NaN(4),TokenType.REG_G:NaN(3),TokenType.REG_H:NaN(2),TokenType.REG_I:NaN(1),TokenType.REG_J:NaN(12)];
         string[] importedFiles;
         double[] resolveData(string name){

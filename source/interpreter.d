@@ -8,7 +8,7 @@ import mem;
 import colorize;
 import thepath;
 import core.sys.posix.signal;
-int function(ref Machine machine, double[] params)[33] commands;
+int function(ref Machine machine, double[] params)[34] commands;
 bool running;
 void handleOpcode(ref Machine machine, double opcode, double[] params)
 {   
@@ -64,6 +64,7 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     commands[30]=  &breakpoint;
     commands[31] = &jg;
     commands[32] = &jng;
+    commands[33]=&interruptHandler;
     Machine machine;
     machine._debug = d;
     machine.basepath=bp.toString;
