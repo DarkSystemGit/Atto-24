@@ -76,8 +76,12 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     machine.currThread.mem.length = machine.heap.ptr;
     machine.running=true;
     running=machine.running;
-    while ((machine.currThread.ip < machine.currThread.mem.length)&&machine.running&&running)
+    while ((machine.currThread.ip < machine.currThread.mem.length)&&running)
     {  
+            if(!machine.running){
+                if(machine.currThread.id==0){break;}
+                if(!(machine.currThread.next.id==machine.currThread.id)){machine.running=true;machine.threads.switchThread(0);}
+            }
             machine.currThread=machine.threads.curr;
             if(machine._debug){
                 dbgloop(machine);
@@ -104,6 +108,7 @@ void handleError(ref Machine machine){
                     machine.stack.length--;
                     cwrite(("[ERROR] ").color(fg.red).color(mode.bold));
                     cwriteln(("An Error occured at this address: "~machine.currThread.ip.to!string).color(mode.bold));
+                    cwriteln(("Thread ID:"~machine.currThread.id.to!string).color(mode.bold));
                     cwriteln("Stack:".color(mode.bold));
                     cwriteln(machine.stack.to!string().color(mode.bold));
                     cwriteln(("SBP: "~machine.currThread.registers.sbp.to!string()).color(mode.bold));

@@ -98,21 +98,21 @@ int jmp(ref Machine machine, double[] p) {
 }
 int jg(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    if (!machine.flags.negative) {
+    if (!machine.currThread.flags.negative) {
         machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
 int jng(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    if (machine.flags.negative) {
+    if (machine.currThread.flags.negative) {
         machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
 }
 int jz(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    if (machine.flags.zero) {
+    if (machine.currThread.flags.zero) {
         machine.currThread.ip = (cast(int)params[0]) - 2;
     }
     return 1;
@@ -120,7 +120,7 @@ int jz(ref Machine machine, double[] p) {
 
 int jnz(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    if (!machine.flags.zero) {
+    if (!machine.currThread.flags.zero) {
         machine.currThread.ip = (cast(int)params[0])-2;
     }
     return 1;
@@ -199,10 +199,10 @@ int dec(ref Machine machine, double[] params) {
 
 int cmp(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
-    machine.flags.zero = false;
-    machine.flags.negative = false;
+    machine.currThread.flags.zero = false;
+    machine.currThread.flags.negative = false;
     handleFlags(machine, params[0] - params[1]);
-    //writeln(params[0]," ",params[1]," ",machine.flags);
+    //writeln(params[0]," ",params[1]," ",machine.currThread.flags);
     return 2;
 }
 
@@ -222,8 +222,8 @@ int setErrAddr(ref Machine m, double[] p) {
 }
 int exit(ref Machine m, double[] p) {
     m.running=false;
-    if(m.objs.gfx !is null)m.objs.gfx.kill();
-    m.objs.gfx=null;
+    if(m.currThread.objs.gfx !is null)m.currThread.objs.gfx.kill();
+    m.currThread.objs.gfx=null;
     return 0;
 }
 int breakpoint(ref Machine m, double[] p) {

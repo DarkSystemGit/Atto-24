@@ -1,0 +1,20 @@
+#include <stdlib>;
+loadProg:
+push %A;
+push %B;
+push %C;
+push %D;
+sub %SBP,4;
+mov %A,%SBP;
+pop %D;
+add %SBP,4;
+mov %A,%SBP;
+sys file.getLength %D,%A;
+sys mem.malloc %A,%B,%C;
+sys file.read %D,%B,%A;
+sys thread.create %A,%B;
+pop %D;
+pop %C;
+pop %B;
+pop %A;
+ret;

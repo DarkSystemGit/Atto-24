@@ -8,33 +8,33 @@ int[] screenDims=[320,240];
 int initGFX(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
     //string title=readString(machine,cast(int)params[0]).to!string;
-    machine.objs.gfx=new GFX("Atto-24",screenDims);
-    machine.objs.vramAddr=cast(int)params[0];
+    machine.currThread.objs.gfx=new GFX("Atto-24",screenDims);
+    machine.currThread.objs.vramAddr=cast(int)params[0];
     return 1;
 }
 int getVRAMBuffer(ref Machine machine,double[] params){
     heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
     obj.free=false;
-    machine.objs.vramAddr=machine.heap.getDataPtr(obj);
+    machine.currThread.objs.vramAddr=machine.heap.getDataPtr(obj);
     setRegister(machine,params[0],machine.heap.getDataPtr(obj));
     setRegister(machine,params[1],obj.id);
     return 2;
 }
 int freeGFX(ref Machine machine,double[] params){
-    machine.objs.gfx.kill();
-    machine.objs.vramAddr=0;
+    machine.currThread.objs.gfx.kill();
+    machine.currThread.objs.vramAddr=0;
     return 0;
 }
 int renderGFX(ref Machine machine,double[] params){
     for(int i=0;i<(screenDims[0]*screenDims[1]);i++){
-        machine.objs.gfx.pixels[i]=cast(ubyte)(machine.currThread.mem[machine.objs.vramAddr+i]);
+        machine.currThread.objs.gfx.pixels[i]=cast(ubyte)(machine.currThread.mem[machine.currThread.objs.vramAddr+i]);
     }
-    machine.objs.gfx.render();
-    if((machine.objs.gfx.events.length>0)&&(machine.objs.gfx.events[machine.objs.gfx.events.length-1]=="QuitEvent")){
-            machine.objs.gfx.kill();
-            machine.objs.gfx=null;
+    machine.currThread.objs.gfx.render();
+    if((machine.currThread.objs.gfx.events.length>0)&&(machine.currThread.objs.gfx.events[machine.currThread.objs.gfx.events.length-1]=="QuitEvent")){
+            machine.currThread.objs.gfx.kill();
+            machine.currThread.objs.gfx=null;
     }
-        //writeln(machine.objs.gfx.pixels);
+        //writeln(machine.currThread.objs.gfx.pixels);
     return 0;
 }
 int getKeys(ref Machine machine,double[] params){
@@ -43,7 +43,7 @@ int getKeys(ref Machine machine,double[] params){
     //2 4 5 6
     // 3
     //1:up, 2:left, 3:down, 4:right, 5:z, 6:x
-    int[] sdlKeys=cast(int[])machine.objs.gfx.getPressedKeys();
+    int[] sdlKeys=cast(int[])machine.currThread.objs.gfx.getPressedKeys();
      int[] keys=[cast(int)sdlKeys.length];
     foreach(int i,int key;sdlKeys){
         if(i<8){switch(key){
@@ -75,18 +75,18 @@ int getKeys(ref Machine machine,double[] params){
             break;
         }}
     };
-    if(machine.objs.gfxInputAddr==0){
-        machine.objs.inputs=machine.heap.getObj(8);
-        machine.objs.gfxInputAddr=machine.heap.getDataPtr(machine.objs.inputs);
+    if(machine.currThread.objs.gfxInputAddr==0){
+        machine.currThread.objs.inputs=machine.heap.getObj(8);
+        machine.currThread.objs.gfxInputAddr=machine.heap.getDataPtr(machine.currThread.objs.inputs);
     }
-    utils.write(machine,machine.heap.getDataPtr(machine.objs.inputs),keys);
-     setRegister(machine,params[0],machine.heap.getDataPtr(machine.objs.inputs));
+    utils.write(machine,machine.heap.getDataPtr(machine.currThread.objs.inputs),keys);
+     setRegister(machine,params[0],machine.heap.getDataPtr(machine.currThread.objs.inputs));
     return 1;
 }
 int windowClosed(ref Machine m,double[] p){
     double register=p[0];
     setRegister(m,register,0);
-    if(m.objs.gfx is null)setRegister(m,register,1);
+    if(m.currThread.objs.gfx is null)setRegister(m,register,1);
     return 1;
 }
 int setPalette(ref Machine machine,double[] p){
@@ -95,7 +95,7 @@ int setPalette(ref Machine machine,double[] p){
     for(int i=1;i<(machine.currThread.mem[cast(ulong)params[0]]+1);i++){
         colors[i]=cast(uint)machine.currThread.mem[cast(int)params[0]+i];
     }
-    machine.objs.gfx.palette=colors;
+    machine.currThread.objs.gfx.palette=colors;
     return 1;
 }
 //Sprites
@@ -168,7 +168,7 @@ int drawSprite(ref Machine machine,double[] p){
         int x=cast(int)((i%sp.dims[0])+sp.x);
         if((pix!=0)&&(x<(screenDims[0]))&&(y<(screenDims[1]))&&(x>=0)&&(y>=0)){
             ulong index=cast(ulong)((y*(screenDims[0]))+x);
-            machine.currThread.mem[machine.objs.vramAddr+index]=pix;    
+            machine.currThread.mem[machine.currThread.objs.vramAddr+index]=pix;    
         }
 
     }
@@ -230,10 +230,10 @@ int initTilemap(ref Machine machine,double[] p){
     tm[1]=params[1];
     tm[2]=params[2];
     tm[3]=params[3];
-    tm[4]=machine.objs.tilemaps.length;
+    tm[4]=machine.currThread.objs.tilemaps.length;
     tm[5]=params[4];
     tm[6]=params[5];
-    machine.objs.tilemaps~=tminfo;
+    machine.currThread.objs.tilemaps~=tminfo;
     toTilemap(tm,machine);
     utils.write(machine,machine.heap.getDataPtr(obj),tm);
     setRegister(machine,p[0],machine.heap.getDataPtr(obj));
@@ -241,12 +241,12 @@ int initTilemap(ref Machine machine,double[] p){
 }
 int rerenderTilemap(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].rerender=true;
+    machine.currThread.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].rerender=true;
     return 1;
 }
 int renderTilemap(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    tmInfo tmi=machine.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]];
+    tmInfo tmi=machine.currThread.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]];
     if(tmi.rerender==true){
         UserTilemap utm=toTilemap(machine.currThread.mem[cast(int)params[0]..cast(int)params[0]+7],machine);
         tmi.rerender=false;
@@ -259,7 +259,7 @@ int renderTilemap(ref Machine machine,double[] p){
         tmi.tm.mod=false;
     }
     for(int i=0;i<tmi.tm.pixels.length;i++){
-            if(tmi.tm.pixels[i]!=0){machine.currThread.mem[machine.objs.vramAddr+i]=tmi.tm.pixels[i];}
+            if(tmi.tm.pixels[i]!=0){machine.currThread.mem[machine.currThread.objs.vramAddr+i]=tmi.tm.pixels[i];}
     }
     return 1;
 }
@@ -279,6 +279,6 @@ int setTileInTileset(ref Machine machine,double[] p){
 //freeTilemap(tilemap* tm)
 int freeTilemap(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.heap.free(machine.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].heapId);
+    machine.heap.free(machine.currThread.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].heapId);
     return 1;
 }

@@ -79,10 +79,10 @@ class Time
     }
 }
  Time getTime(int id,ref Machine m){
-    return m.objs.times[id];
+    return m.currThread.objs.times[id];
 }
 int newTime(ref Machine m,double[] p){
-    setRegister(m,p[0],m.objs.addTime());
+    setRegister(m,p[0],m.currThread.objs.addTime());
     return 1;
 }
 int setTime(ref Machine m,double[] p){
@@ -170,6 +170,6 @@ int setTimeToGMT(ref Machine m,double[] p){
 }    
 int freeTime(ref Machine m,double[] p){
     double[] params=handleRegisters(m,p,1);
-    m.objs.times[cast(int)params[0]]=null;
+    m.currThread.objs.times[cast(int)params[0]]=null;
     return 1;
 }

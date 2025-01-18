@@ -2,13 +2,13 @@ import std;
 import data;
 import log;
 void handleFlags(ref Machine machine, double res) {
-    machine.flags.zero = false;
-    machine.flags.negative = false;
+    machine.currThread.flags.zero = false;
+    machine.currThread.flags.negative = false;
     //writeln(res,res<0);
     if (res == 0)
-        machine.flags.zero = true;
+        machine.currThread.flags.zero = true;
     if (res < 0)
-        machine.flags.negative = true;
+        machine.currThread.flags.negative = true;
 
 }
 double[] handleRegisters(ref Machine machine, double[] paramRaw, int count) {

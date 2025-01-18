@@ -48,6 +48,8 @@ string[] files=[
     "time",
     "dirs/cd",
     "dirs/rmdir",
+    "thread/create",
+    "thread/remove",
 ];
 string[] fails=[];
 string startcwd=std.file.getcwd();

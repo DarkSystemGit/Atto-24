@@ -11,14 +11,13 @@ struct Machine {
     bool _debug;
     bool running;
     int errAddr;
-    Objects objs;
-    machineHeap heap;
     bool dprompt;
     double[] stack = new double[0];
     string basepath;
     bool unhandledErr;
     Thread currThread;
     ThreadList threads;
+    machineHeap heap;
     void print() {
         Machine machine = this;
         writeln("Machine:");
@@ -39,23 +38,23 @@ struct Machine {
         writeln("       ", machine.stack);
         writeln("   Heap:");
        foreach(heap; machine.heap.objs) {heap.print();writeln("");}
-        writeln("   Memory:");
+        writeln("   Current Thread Memory:");
         writeln("       ", machine.currThread.mem);
         writeln("   Instruction Pointer: ", machine.currThread.ip);
         writeln("   Flags:");
-        writeln("   Zero: ", machine.flags.zero);
-        writeln("   Overflow: ", machine.flags.overflow);
-        writeln("   Negative: ", machine.flags.negative);
-        writeln("   Carry: ", machine.flags.carry);
+        writeln("   Zero: ", machine.currThread.flags.zero);
+        writeln("   Negative: ", machine.currThread.flags.negative);
+        machine.threads.print();
     }
 }
 class Thread{
-    Registers registers;
-    Flags flags;
-    int errAddr;
-    double[] mem;
     int id;
     int ip;
+    Registers registers;
+    Flags flags;
+    Objects objs;
+    int errAddr;
+    double[] mem;
     Thread next;
 }
 class ThreadList{
@@ -96,6 +95,13 @@ class ThreadList{
     void switchThread(){
         this.curr=this.curr.next;
     }
+    Thread getThread(int id){
+        Thread t=head;
+        while(t.id!=id){
+            t=t.next;
+        }
+        return t;
+    }
     void print(){
         Thread t=head;
         writeln("Thread List:");
@@ -118,7 +124,6 @@ class ThreadList{
             writeln("       Stack Pointer: ",t.registers.sp);
             writeln("   Flags:");
             writeln("       Zero: ", t.flags.zero);
-            writeln("       Overflow: ", t.flags.overflow);
             writeln("       Negative: ", t.flags.negative);
             t=t.next;
         }
@@ -143,8 +148,6 @@ struct Registers {
 struct Flags {
     bool zero;
     bool negative;
-    bool overflow;
-    bool carry;
 }
 struct Objects{
     Time[] times=new Time[0];

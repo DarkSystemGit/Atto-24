@@ -57,20 +57,20 @@ class Distrubution{
     }
 }
 Random* getRandom(int id,ref Machine m){
-    return &m.objs.rands[id];
+    return &m.currThread.objs.rands[id];
 }
 Distrubution getDistrubution(int id,ref Machine m){
-    return m.objs.dists[id];
+    return m.currThread.objs.dists[id];
 }
 int newRandom(ref Machine m,double[] p){
     double[] params=handleRegisters(m,p,1);
-    int id=m.objs.addRandom();
-    m.objs.rands[id].initMain(cast(int)params[0]);
+    int id=m.currThread.objs.addRandom();
+    m.currThread.objs.rands[id].initMain(cast(int)params[0]);
     setRegister(m,p[1],id);
     return 2;
 }
 int newDistrubution(ref Machine m,double[] p){
-    setRegister(m,p[0],m.objs.addDist());
+    setRegister(m,p[0],m.currThread.objs.addDist());
     return 1;
 }
 int setRandSeed(ref Machine m,double[] p){
@@ -107,11 +107,11 @@ int setUniformDistrubution(ref Machine m,double[] p){
 }
 int freeRandom(ref Machine m,double[] p){
     double[] params=handleRegisters(m,p,1);
-    m.objs.rands[cast(int)params[0]]=Random();
+    m.currThread.objs.rands[cast(int)params[0]]=Random();
     return 1;
 }
 int freeDistrubution(ref Machine m,double[] p){
     double[] params=handleRegisters(m,p,1);
-    m.objs.dists[cast(int)params[0]]=null;
+    m.currThread.objs.dists[cast(int)params[0]]=null;
     return 1;
 }    
