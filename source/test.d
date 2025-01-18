@@ -50,6 +50,8 @@ string[] files=[
     "dirs/rmdir",
     "thread/create",
     "thread/remove",
+    "thread/tinfo",
+    "thread/threadsrc"
 ];
 string[] fails=[];
 string startcwd=std.file.getcwd();
