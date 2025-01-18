@@ -4,6 +4,7 @@ import data;
 import utils;
 import mem;
 import registers;
+import interpreter;
 int[] screenDims=[320,240];
 int initGFX(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
@@ -34,6 +35,7 @@ int renderGFX(ref Machine machine,double[] params){
             machine.currThread.objs.gfx.kill();
             machine.currThread.objs.gfx=null;
     }
+    interrupt(machine,1);
         //writeln(machine.currThread.objs.gfx.pixels);
     return 0;
 }

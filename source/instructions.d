@@ -2,6 +2,7 @@ import std;
 import registers;
 import data;
 import stdlib;
+import interpreter;
 int add(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 2);
     machine.currThread.registers.a = cast(int)(params[0] + params[1]);
@@ -94,6 +95,7 @@ int cp(ref Machine machine, double[] p) {
 int jmp(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     machine.currThread.ip = (cast(int)params[0]) - 2;
+    interrupt(machine,0);
     return 1;
 }
 int jg(ref Machine machine, double[] p) {
@@ -166,7 +168,11 @@ int mov(ref Machine machine, double[] params) {
     setRegister(machine, clear, 0);
     return 2;
 }
-
+int interupt(ref Machine machine, double[] p) {
+    double[] params=handleRegisters(machine, p, 1);
+    interrupt(machine,cast(int)params[0]);
+    return 1;
+}
 int call(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     machine.raddr~=machine.currThread.ip+1;
@@ -178,6 +184,7 @@ int ret(ref Machine machine, double[] p) {
     //writeln(machine.raddr);
     machine.currThread.ip = machine.raddr[machine.raddr.length-1];
     machine.raddr.length--;
+    interrupt(machine,0);
     return 0;
 }
 

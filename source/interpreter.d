@@ -249,6 +249,6 @@ void dbgloop(ref Machine machine){
                 line=line.strip();
                 if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){cwriteln("Invalid Command".color(mode.bold).color(fg.red));dbgloop(machine);}
 }
-void interrupt(ref Machine m){
+void interrupt(ref Machine m,int id){
     writeln("int");
 }
