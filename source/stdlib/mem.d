@@ -17,13 +17,13 @@ struct heapObj{
     }
 }
 class Heap{
-    int[][] sizes=new int[0][2];
+    int[][] sizes=new int[1][2];
     int ptr;
-    heapObj[] objs;
-    Machine *m;
-    this(int ptr,Machine *m){
-        this.ptr=ptr;
-        this.m=m;
+    heapObj[] hobjs=new heapObj[1];
+    Thread curr;
+    this(Thread t){
+        this.ptr=cast(int)t.mem.length;
+        this.curr=t;
         heapObj startobj;
         int[] objSize=[0,0];
         startobj.size=0;
@@ -31,8 +31,7 @@ class Heap{
         startobj.end=ptr+1;
         startobj.free=false;
         startobj.id=0;
-        writeln(startobj,this.objs,ptr);
-        this.objs[0]=startobj;
+        this.hobjs[0]=startobj;
         this.sizes.length=1;
         this.sizes[0]=objSize;
     }
@@ -44,10 +43,10 @@ class Heap{
     foreach(int[] i;sizes){
         
         if(i[0]>size-1){
-            //objs[i[1]].print();
-            if(objs[i[1]].free){
+            //hobjs[i[1]].print();
+            if(hobjs[i[1]].free){
                 f=true;
-                obj=objs[i[1]];break;
+                obj=hobjs[i[1]];break;
                 
                 }
         }
@@ -56,9 +55,9 @@ class Heap{
         addObj(size);
         return getObj(size);
     }else{
-        this.objs[obj.id].free=false;
+        this.hobjs[obj.id].free=false;
         //if(true){writeln("[DEBUG] heap getObj;");obj.print();}
-        return this.objs[obj.id];
+        return this.hobjs[obj.id];
     }
     }
     int getDataPtr(heapObj obj){return obj.start;}
@@ -68,20 +67,20 @@ class Heap{
         heapObj obj;
         obj.size=size;
         obj.free=true;
-        obj.start=objs[objs.length-1].end+1;
+        obj.start=hobjs[hobjs.length-1].end+1;
         obj.end=obj.start+size;
-        obj.id=cast(int)objs.length;
+        obj.id=cast(int)hobjs.length;
         for(int i=obj.start;i<obj.end;i++){
-            if((*m).currThread.mem.length<=i){(*m).currThread.mem.length=i+1;}
-            (*m).currThread.mem[i]=0;
+            if(curr.mem.length<=i){curr.mem.length=i+1;}
+            curr.mem[i]=0;
         }
-        objs~=obj;
-        sizes~=[cast(int)size,cast(int)objs.length-1];
-        (*m).currThread.mem.length=ptr+obj.end+1;
+        hobjs~=obj;
+        sizes~=[cast(int)size,cast(int)hobjs.length-1];
+        curr.mem.length=ptr+obj.end+1;
     }
     void free(int id){
-        objs[id].free=true;
-        for(int i=objs[id].start;i<objs[id].end;i++){(*m).currThread.mem[i]=0;}
+        hobjs[id].free=true;
+        for(int i=hobjs[id].start;i<hobjs[id].end;i++){curr.mem[i]=0;}
     }
 }
 //syscall 23;memdump()

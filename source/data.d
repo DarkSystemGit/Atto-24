@@ -37,7 +37,7 @@ struct Machine {
         writeln("   Stack:");
         writeln("       ", machine.stack);
         writeln("   Heap:");
-       foreach(heap; machine.currThread.heap.objs) {heap.print();writeln("");}
+       foreach(heap; machine.currThread.heap.hobjs) {heap.print();writeln("");}
         //writeln("   Current Thread Memory:");
         //writeln("       ", machine.currThread.mem);
         writeln("   Instruction Pointer: ", machine.currThread.ip);
@@ -53,8 +53,10 @@ struct interruptHandler{
     int tzeroret;
     bool interrupting;
     void doInturrupt(int id,ref Machine m){
+         writeln("INTERRUPTING",id,handlers.keys.canFind(id));
         if(!handlers.keys.canFind(id))return;
         if(m.currThread.id==0)return;
+       
         //writeln([id,handlers[id],m.currThread.id,m.currThread.ip]);
         interrupting=true;
         rthread=m.currThread.id;
@@ -121,7 +123,7 @@ class ThreadList{
         this.curr=t;
         (*parent).tswitch=(*parent).currThread.id;
         (*parent).currThread=t;
-        writeln(t.heap.ptr,t.heap.objs);
+        writeln(t.heap.ptr,t.heap.hobjs);
     }
     void switchThread(){
         this.curr=this.curr.next;
@@ -160,7 +162,7 @@ class ThreadList{
             writeln("       Zero: ", t.flags.zero);
             writeln("       Negative: ", t.flags.negative);
             writeln("   Heap:");
-            foreach(heap;t.heap.objs) {heap.print();writeln("");}
+            foreach(heap;t.heap.hobjs) {heap.print();writeln("");}
             t=t.next;
         }
 

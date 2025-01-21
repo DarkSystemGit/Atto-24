@@ -84,7 +84,7 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     machine.currThread=machine.threads.head;
     machine.currThread.mem.length = cast(ulong) prgm.length+64;
     machine.currThread.mem[0..prgm.length] = prgm[];
-    machine.currThread.heap= new Heap(cast(int)machine.currThread.mem.length, &machine);
+    machine.currThread.heap= new Heap(machine.currThread);
     machine.currThread.mem.length = machine.currThread.heap.ptr;
     machine.running=true;
     running=machine.running;
@@ -160,6 +160,9 @@ bool debugPrompt(ref Machine m,string line){
         case "dumpthreads":
             m.threads.print();
             break;
+        case "dumpInternal":
+            writeln(m);
+            break;  
         case "memusage":
             writeln((m.currThread.mem.length/1024).to!string~"KB");
             break;

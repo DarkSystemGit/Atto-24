@@ -12,7 +12,7 @@ int addThread(ref Machine machine,double[] p){
     Thread t=new Thread();
     t.mem=code.dup;
     t.mem.length+=64;
-    t.heap=new Heap(cast(int)t.mem.length, &machine);
+    t.heap=new Heap(t);
     machine.threads.addThread(t);
     return 2;
 }

@@ -2,7 +2,7 @@
 #include <io>;
 #include <str>;
 #include "loadProg.asm";
-#define progs [2,"rtosProgs/pong.bytecode","rtosProgs/gfx.bytecode","rtosProgs/platformer.bytecode"];
+#define progs [5,"rtosProgs/concat.bytecode","rtosProgs/splitstr.bytecode","rtosProgs/pong.bytecode","rtosProgs/gfx.bytecode","rtosProgs/platformer.bytecode"];
 
 //sys thread.setInterrupt 0,intH;
 mov 0,%C;
@@ -20,6 +20,8 @@ add %B,%D;
 mov %A,%D;
 inc %C;
 jmp Loop;
+
 main:
 bp;
-sys thread.switchId 1;
+sys thread.switch;
+jmp main;

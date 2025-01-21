@@ -127,7 +127,7 @@ void growArray(ref Machine machine,ref UserArray arr,double newlength){
         heapObj currObj;
         heapObj newObj=machine.currThread.heap.getObj(newCapacity);
         utils.write(machine,newObj.start,machine.currThread.mem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+1+*arr.capacity)]);
-        foreach(heapObj obj;machine.currThread.heap.objs){
+        foreach(heapObj obj;machine.currThread.heap.hobjs){
             if(obj.start==*arr.ptr){currObj=obj;break;}
         }
         machine.currThread.heap.free(currObj.id);
