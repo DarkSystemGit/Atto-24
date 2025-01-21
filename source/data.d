@@ -4,23 +4,23 @@ import time;
 import random;
 import dgfx;
 struct Machine {
-    Registers registers;
-    Flags flags;
     int[] raddr;
     int p;
     bool _debug;
     bool running;
-    int errAddr;
     bool dprompt;
     double[] stack = new double[0];
     string basepath;
     bool unhandledErr;
+    bool intScheduled;
+    int tswitch;
     Thread currThread;
     ThreadList threads;
-    machineHeap heap;
+    interruptHandler intHandler;
     void print() {
         Machine machine = this;
         writeln("Machine:");
+        writeln("   TID: ", machine.currThread.id);
         writeln("   Registers:");
         writeln("   A: ", machine.currThread.registers.a);
         writeln("   B: ", machine.currThread.registers.b);
@@ -37,14 +37,38 @@ struct Machine {
         writeln("   Stack:");
         writeln("       ", machine.stack);
         writeln("   Heap:");
-       foreach(heap; machine.heap.objs) {heap.print();writeln("");}
-        writeln("   Current Thread Memory:");
-        writeln("       ", machine.currThread.mem);
+       foreach(heap; machine.currThread.heap.objs) {heap.print();writeln("");}
+        //writeln("   Current Thread Memory:");
+        //writeln("       ", machine.currThread.mem);
         writeln("   Instruction Pointer: ", machine.currThread.ip);
         writeln("   Flags:");
         writeln("   Zero: ", machine.currThread.flags.zero);
         writeln("   Negative: ", machine.currThread.flags.negative);
         machine.threads.print();
+    }
+}
+struct interruptHandler{
+    int[int] handlers;
+    int rthread;
+    int tzeroret;
+    bool interrupting;
+    void doInturrupt(int id,ref Machine m){
+        if(!handlers.keys.canFind(id))return;
+        if(m.currThread.id==0)return;
+        //writeln([id,handlers[id],m.currThread.id,m.currThread.ip]);
+        interrupting=true;
+        rthread=m.currThread.id;
+        tzeroret=cast(int)m.threads.head.ip;
+        m.threads.switchThread(0);
+        m.currThread.ip=cast(double)handlers[id];
+    }
+
+    void finInterrupt(ref Machine m){
+        m.threads.switchThread(rthread);
+        m.threads.head.ip=tzeroret;
+        interrupting=false;
+        //writeln([tzeroret,rthread,m.currThread.id,m.currThread.ip]);
+        if(m._debug)writeln("Interrupt Finished, Jumping to Thread ",rthread, ", addr ",m.currThread.ip);
     }
 }
 class Thread{
@@ -56,18 +80,22 @@ class Thread{
     int errAddr;
     double[] mem;
     Thread next;
+    Heap heap;
+    
 }
 class ThreadList{
     Thread head;
     Thread tail;
     Thread curr;
-    this(){
+    Machine* parent;
+    this(Machine* parent){
         Thread t=new Thread;
         t.id=0;
         t.next=t;
         this.head=t;
         this.tail=t;
         this.curr=t;
+        this.parent=parent;
     }
     void addThread(Thread t){
         t.id=tail.id+1;
@@ -91,9 +119,14 @@ class ThreadList{
             t=t.next;
         }
         this.curr=t;
+        (*parent).tswitch=(*parent).currThread.id;
+        (*parent).currThread=t;
+        writeln(t.heap.ptr,t.heap.objs);
     }
     void switchThread(){
         this.curr=this.curr.next;
+        (*parent).tswitch=(*parent).currThread.id;
+        (*parent).currThread=this.curr;
     }
     Thread getThread(int id){
         Thread t=head;
@@ -109,6 +142,7 @@ class ThreadList{
         while(t.id!=0||f){
             f=false;
             writeln("Thread ",t.id);
+            writeln("   IP: ",t.ip);
             writeln("   Registers:");
             writeln("       A: ", t.registers.a);
             writeln("       B: ", t.registers.b);
@@ -125,6 +159,8 @@ class ThreadList{
             writeln("   Flags:");
             writeln("       Zero: ", t.flags.zero);
             writeln("       Negative: ", t.flags.negative);
+            writeln("   Heap:");
+            foreach(heap;t.heap.objs) {heap.print();writeln("");}
             t=t.next;
         }
 

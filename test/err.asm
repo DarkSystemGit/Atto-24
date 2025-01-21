@@ -6,7 +6,7 @@ sys 64747,39;
 nop;
 exit;
 Error:
-sys sys.printString, &errString;
+sys io.printStr, &errString;
 pop %A;
-sys sys.printNum %A;
+sys io.printNum %A;
 exit;

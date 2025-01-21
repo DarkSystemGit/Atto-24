@@ -47,9 +47,9 @@ jmp GameLoop;
 
 Error:
 bp;
-sys sys.printString &errStr;
+sys io.printStr &errStr;
 pop %A;
-sys sys.printNum %A;
+sys io.printNum %A;
 exit;
 End:
 sys gfx.sprite.free %E;
@@ -72,8 +72,8 @@ inc %A;
 read %A,%A;
 cmp %C,1;
 jz NoPrint;
-//sys sys.printAscii 10;
-//sys sys.printNum %A;
+//sys io.printASCII 10;
+//sys io.printNum %A;
 jmp Inc;
 
 NoPrint:

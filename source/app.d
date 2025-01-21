@@ -84,7 +84,7 @@ void main(string[] argv) {
         return;
     }
     }catch(Throwable t){
-        writeln(t);
+        //writeln(t);
         writefln(usageStr);
     } 
 

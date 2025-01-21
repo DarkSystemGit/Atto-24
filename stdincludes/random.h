@@ -1,0 +1,9 @@
+#define random.new 44;
+#define randomDistrubution.new 45;
+#define random.setSeed 46;
+#define random.get 47;
+#define random.setDistribution 48;
+#define randomDistrubution.setProbibilities 49;
+#define randomDistrubution.setUniform 50;
+#define random.free 51;
+#define randomDistrubution.free 52;

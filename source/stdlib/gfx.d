@@ -14,10 +14,10 @@ int initGFX(ref Machine machine,double[] p){
     return 1;
 }
 int getVRAMBuffer(ref Machine machine,double[] params){
-    heapObj obj=machine.heap.getObj(screenDims[0]*screenDims[1]);
+    heapObj obj=machine.currThread.heap.getObj(screenDims[0]*screenDims[1]);
     obj.free=false;
-    machine.currThread.objs.vramAddr=machine.heap.getDataPtr(obj);
-    setRegister(machine,params[0],machine.heap.getDataPtr(obj));
+    machine.currThread.objs.vramAddr=machine.currThread.heap.getDataPtr(obj);
+    setRegister(machine,params[0],machine.currThread.heap.getDataPtr(obj));
     setRegister(machine,params[1],obj.id);
     return 2;
 }
@@ -78,11 +78,11 @@ int getKeys(ref Machine machine,double[] params){
         }}
     };
     if(machine.currThread.objs.gfxInputAddr==0){
-        machine.currThread.objs.inputs=machine.heap.getObj(8);
-        machine.currThread.objs.gfxInputAddr=machine.heap.getDataPtr(machine.currThread.objs.inputs);
+        machine.currThread.objs.inputs=machine.currThread.heap.getObj(8);
+        machine.currThread.objs.gfxInputAddr=machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs);
     }
-    utils.write(machine,machine.heap.getDataPtr(machine.currThread.objs.inputs),keys);
-     setRegister(machine,params[0],machine.heap.getDataPtr(machine.currThread.objs.inputs));
+    utils.write(machine,machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs),keys);
+     setRegister(machine,params[0],machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs));
     return 1;
 }
 int windowClosed(ref Machine m,double[] p){
@@ -135,13 +135,13 @@ int initSprite(ref Machine machine,double[] p){
     sp[3]=params[3];
     sp[4]=16;
     sp[5]=16;
-    //writeln(machine.heap.objs);
-    heapObj obj=machine.heap.getObj(6);
-    sprites[machine.heap.getDataPtr(obj)]=obj.id;
+    //writeln(machine.currThread.heap.objs);
+    heapObj obj=machine.currThread.heap.getObj(6);
+    sprites[machine.currThread.heap.getDataPtr(obj)]=obj.id;
     //writeln(p[0]," ",p[0]);
-    utils.write(machine,machine.heap.getDataPtr(obj),sp);
-    //writeln(machine.currThread.mem[machine.heap.getDataPtr(obj)..machine.heap.getDataPtr(obj)+6],machine.heap.getDataPtr(obj));
-    setRegister(machine,p[0],machine.heap.getDataPtr(obj));
+    utils.write(machine,machine.currThread.heap.getDataPtr(obj),sp);
+    //writeln(machine.currThread.mem[machine.currThread.heap.getDataPtr(obj)..machine.currThread.heap.getDataPtr(obj)+6],machine.currThread.heap.getDataPtr(obj));
+    setRegister(machine,p[0],machine.currThread.heap.getDataPtr(obj));
     return 5;
 }
 int resizeSprite(ref Machine machine,double[] p){
@@ -178,7 +178,7 @@ int drawSprite(ref Machine machine,double[] p){
 }
 int freeSprite(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.heap.free(sprites[cast(int)params[0]]);
+    machine.currThread.heap.free(sprites[cast(int)params[0]]);
     return 1;
 }
 /* Tilemaps 
@@ -222,8 +222,8 @@ UserTilemap toTilemap(double[] data,Machine machine){
 int initTilemap(ref Machine machine,double[] p){
     tmInfo tminfo;
     double[] params=handleRegisters(machine, p[1..7], 6);
-    heapObj obj=machine.heap.getObj(6);
-    tminfo.addr=machine.heap.getDataPtr(obj);
+    heapObj obj=machine.currThread.heap.getObj(6);
+    tminfo.addr=machine.currThread.heap.getDataPtr(obj);
     tminfo.heapId=obj.id;
     tminfo.rerender=true;
     tminfo.tm=new TileMap([],[cast(uint)params[4],cast(uint)params[5]],0,0);
@@ -237,8 +237,8 @@ int initTilemap(ref Machine machine,double[] p){
     tm[6]=params[5];
     machine.currThread.objs.tilemaps~=tminfo;
     toTilemap(tm,machine);
-    utils.write(machine,machine.heap.getDataPtr(obj),tm);
-    setRegister(machine,p[0],machine.heap.getDataPtr(obj));
+    utils.write(machine,machine.currThread.heap.getDataPtr(obj),tm);
+    setRegister(machine,p[0],machine.currThread.heap.getDataPtr(obj));
     return 7;
 }
 int rerenderTilemap(ref Machine machine,double[] p){
@@ -281,6 +281,6 @@ int setTileInTileset(ref Machine machine,double[] p){
 //freeTilemap(tilemap* tm)
 int freeTilemap(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.heap.free(machine.currThread.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].heapId);
+    machine.currThread.heap.free(machine.currThread.objs.tilemaps[cast(int)machine.currThread.mem[cast(ulong)params[0]+4]].heapId);
     return 1;
 }

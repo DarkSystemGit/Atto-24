@@ -43,8 +43,8 @@ exit;
 
 printNum:
 pop %A;
-sys sys.printNum %A;
-sys sys.printAscii 10;
+sys io.printNum %A;
+sys io.printASCII 10;
 ret;
 
 pushLoop:

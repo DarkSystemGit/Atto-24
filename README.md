@@ -14,7 +14,7 @@ Example:
 #define NAME "John Doe";
 sys mem.malloc 22,%B,%C;
 sys str.join &helloString, &NAME, %B;
-sys sys.printString %B;
+sys io.printStr %B;
 sys mem.free %C;
 exit;
 ```

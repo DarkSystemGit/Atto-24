@@ -1,8 +1,8 @@
 #define cddir "./testdir";
 #define original "./../";
 #include <stdlib>;
-sys sys.cd &cddir;
+sys io.cd &cddir;
 sys 11,30;
 sys 2,30;
-sys sys.cd &original;
+sys io.cd &original;
 exit;

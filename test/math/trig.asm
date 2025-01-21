@@ -32,7 +32,7 @@ push &str5;
 sys math.tan ar,%F;
 push %F;
 call print;
-sys sys.printString &tri;
+sys io.printStr &tri;
 push &str6;
 sys math.hypot 5,7,%F;
 push %F;

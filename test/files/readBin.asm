@@ -10,8 +10,8 @@ cmp %D,%C;
 jz Exit;
 add %D,%B;
 read %A,%A;
-sys sys.printNum %A;
-sys sys.printAscii 10;
+sys io.printNum %A;
+sys io.printASCII 10;
 inc %D;
 jmp pLoop;
 Exit:

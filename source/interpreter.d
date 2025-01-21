@@ -17,11 +17,22 @@ void handleOpcode(ref Machine machine, double opcode, double[] params)
         opcode = 0;
     int pcount = commands[cast(ulong) opcode](machine, params) + 1;
     //writeln(pcount," ",machine.currThread.ip," ",opcode);
-    machine.currThread.ip += pcount;
-    if (machine._debug)
+    if(machine.tswitch!=-1){
+        Thread ot=machine.threads.getThread(machine.tswitch);
+        ot.ip+=pcount;
+        machine.tswitch=-1;
+        if (machine._debug)
+        writeln("[DEBUG] Addr: ",ot.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
+                params[0 .. pcount - 1]), "); | Bytecode: ",ot.mem[ot.ip-pcount..ot.ip]);
+
+    }else{
+        machine.currThread.ip += pcount;
+        if (machine._debug)
         writeln("[DEBUG] Addr: ",machine.currThread.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
                 params[0 .. pcount - 1]), "); | Bytecode: ",machine.currThread.mem[machine.currThread.ip-pcount..machine.currThread.ip]);
 
+    }
+    
 }
 extern(C) void sighandler(int num) nothrow @nogc @system{
     //writeln("SIGINT");
@@ -64,26 +75,29 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     commands[30]=  &breakpoint;
     commands[31] = &jg;
     commands[32] = &jng;
-    commands[33]=&interruptHandler;
+    commands[33]=  &instructions.interruptHandler;
     Machine machine;
     machine._debug = d;
     machine.basepath=bp.toString;
     machine.dprompt=true;
-    machine.threads=new ThreadList();
+    machine.threads=new ThreadList(&machine);
     machine.currThread=machine.threads.head;
     machine.currThread.mem.length = cast(ulong) prgm.length+64;
     machine.currThread.mem[0..prgm.length] = prgm[];
-    machine.heap = new machineHeap(cast(int)machine.currThread.mem.length, &machine);
-    machine.currThread.mem.length = machine.heap.ptr;
+    machine.currThread.heap= new Heap(cast(int)machine.currThread.mem.length, &machine);
+    machine.currThread.mem.length = machine.currThread.heap.ptr;
     machine.running=true;
     running=machine.running;
     while ((machine.currThread.ip < machine.currThread.mem.length)&&running)
     {  
+            if(machine.intScheduled){
+                machine.intHandler.doInturrupt(0,machine);
+                machine.intScheduled=false;
+            }
             if(!machine.running){
                 if(machine.currThread.id==0){break;}
                 if(!(machine.currThread.next.id==machine.currThread.id)){machine.running=true;machine.threads.switchThread(0);}
             }
-            machine.currThread=machine.threads.curr;
             if(machine._debug){
                 dbgloop(machine);
             }
@@ -92,20 +106,21 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
                 handleOpcode(machine, machine.currThread.mem[machine.currThread.ip], params);
             }catch (Throwable t)
             {   
-                handleError(machine);
+                handleError(machine,t);
             }
        
     }
     exit(machine,[]);
     return machine;
 }
-void handleError(ref Machine machine){
-                if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.currThread.ip);
-               machine.stack.length++;
-    machine.currThread.registers.sbp++;
-    machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, machine.currThread.ip);
-                if(machine.errAddr!=0){
-                machine.currThread.ip = machine.errAddr;}else{
+void handleError(ref Machine machine,Throwable t){
+
+                if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.currThread.ip,"\n",t);
+                machine.stack.length++;
+                machine.currThread.registers.sbp++;
+                machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, machine.currThread.ip);
+                if(machine.currThread.errAddr!=0){
+                machine.currThread.ip = machine.currThread.errAddr;}else{
                     machine.stack.length--;
                     cwrite(("[ERROR] ").color(fg.red).color(mode.bold));
                     cwriteln(("An Error occured at this address: "~machine.currThread.ip.to!string).color(mode.bold));
@@ -191,7 +206,7 @@ bool debugPrompt(ref Machine m,string line){
             writeln(m.currThread.registers.sbp);
             break;     
         case "flags":
-            writeln(m.flags);
+            writeln(m.currThread.flags);
             break; 
         case "stack":
             writeln(m.stack);
@@ -251,5 +266,5 @@ void dbgloop(ref Machine machine){
                 if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){cwriteln("Invalid Command".color(mode.bold).color(fg.red));dbgloop(machine);}
 }
 void interrupt(ref Machine m,int id){
-    writeln("int");
+    m.intScheduled=true;
 }

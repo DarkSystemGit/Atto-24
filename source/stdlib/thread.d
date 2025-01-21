@@ -12,6 +12,7 @@ int addThread(ref Machine machine,double[] p){
     Thread t=new Thread();
     t.mem=code.dup;
     t.mem.length+=64;
+    t.heap=new Heap(cast(int)t.mem.length, &machine);
     machine.threads.addThread(t);
     return 2;
 }
@@ -46,9 +47,9 @@ int getThreadInfo(ref Machine m,double[] p){
     double[] flags=[t.flags.zero,t.flags.negative];
     double[] reg=[t.registers.a,t.registers.b,t.registers.c,t.registers.d,t.registers.e,t.registers.f,t.registers.g,t.registers.h,t.registers.i,t.registers.j];
     double[] tstruct=[t.id,t.ip,t.registers.sbp]~reg~flags~[cast(double)t.errAddr];
-    heapObj obj=m.heap.getObj(cast(int)tstruct.length);
-    utils.write(m,m.heap.getDataPtr(obj),tstruct);
-    setRegister(m,p[1],m.heap.getDataPtr(obj));
+    heapObj obj=m.currThread.heap.getObj(cast(int)tstruct.length);
+    utils.write(m,m.currThread.heap.getDataPtr(obj),tstruct);
+    setRegister(m,p[1],m.currThread.heap.getDataPtr(obj));
     return 2;
 }
 int updateThread(ref Machine m,double[] p){
@@ -78,4 +79,9 @@ int switchThreadId(ref Machine m,double[] p){
     double[] params=handleRegisters(m,p,1);
     m.threads.switchThread(cast(int)params[0]);
     return 1;
+}
+int setInterrupt(ref Machine m,double[] p){
+    double[] params=handleRegisters(m,p,2);
+    m.intHandler.handlers[cast(int)params[0]]=cast(int)params[1];
+    return 2;
 }

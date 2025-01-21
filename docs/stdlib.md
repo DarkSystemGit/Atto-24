@@ -3,17 +3,17 @@
 ## Print Module
 The print module provides functions to print numbers, ASCII characters, and strings.
 
-- **sys.printNum**
+- **io.printNum**
   - Description: Prints a number.
   - Parameters: 
     - `int a` - The number to print.
 
-- **sys.printAscii**
+- **io.printASCII**
   - Description: Prints an ASCII character.
   - Parameters: 
     - `char a` - The ASCII value of the character to print.
 
-- **sys.printString**
+- **io.printStr**
   - Description: Prints a string.
   - Parameters: 
     - `string* str` - The string to print.

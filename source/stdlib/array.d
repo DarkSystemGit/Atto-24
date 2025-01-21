@@ -26,8 +26,8 @@ int newStaticArray(ref Machine machine,double[] p){
     double[] arrstruct;
     arrstruct=[false,params[0],0];
     arrstruct.length+=cast(long)params[0];
-    heapObj obj=machine.heap.getObj(cast(int)arrstruct.length);
-    double objaddr=machine.heap.getDataPtr(obj);
+    heapObj obj=machine.currThread.heap.getObj(cast(int)arrstruct.length);
+    double objaddr=machine.currThread.heap.getDataPtr(obj);
     machine.currThread.objs.arrayObjs~=arrayObj(obj.id,objaddr);
     setRegister(machine,p[1],objaddr);
     utils.write(machine,objaddr,arrstruct);
@@ -43,12 +43,12 @@ int newDynamicArray(ref Machine machine,double[] p){
     capacity=exp2(ceil(log2(capacity+1)));
     arr.length=cast(long)capacity;
     arr[0]=0;
-    heapObj arrobj=machine.heap.getObj(cast(int)arr.length);
-    machine.currThread.objs.arrayObjs~=arrayObj(arrobj.id,machine.heap.getDataPtr(arrobj));
-    double bodyptr=machine.heap.getDataPtr(arrobj);
+    heapObj arrobj=machine.currThread.heap.getObj(cast(int)arr.length);
+    machine.currThread.objs.arrayObjs~=arrayObj(arrobj.id,machine.currThread.heap.getDataPtr(arrobj));
+    double bodyptr=machine.currThread.heap.getDataPtr(arrobj);
     arrstruct=[true,capacity,bodyptr];
-    heapObj structObj=machine.heap.getObj(cast(int)arrstruct.length);
-    double arrptr=machine.heap.getDataPtr(structObj);
+    heapObj structObj=machine.currThread.heap.getObj(cast(int)arrstruct.length);
+    double arrptr=machine.currThread.heap.getDataPtr(structObj);
     machine.currThread.objs.arrayObjs~=arrayObj(structObj.id,arrptr);
     utils.write(machine,bodyptr,arr);
     utils.write(machine,arrptr,arrstruct);
@@ -125,12 +125,12 @@ void growArray(ref Machine machine,ref UserArray arr,double newlength){
         double oldlength=*arr.length;
         int newCapacity=cast(int)exp2(ceil(log2(newlength+*arr.capacity)));
         heapObj currObj;
-        heapObj newObj=machine.heap.getObj(newCapacity);
+        heapObj newObj=machine.currThread.heap.getObj(newCapacity);
         utils.write(machine,newObj.start,machine.currThread.mem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+1+*arr.capacity)]);
-        foreach(heapObj obj;machine.heap.objs){
+        foreach(heapObj obj;machine.currThread.heap.objs){
             if(obj.start==*arr.ptr){currObj=obj;break;}
         }
-        machine.heap.free(currObj.id);
+        machine.currThread.heap.free(currObj.id);
         *arr.capacity=cast(double)newCapacity;
         *arr.ptr=cast(double)newObj.start;
         arr.body=machine.currThread.mem[cast(ulong)(*arr.ptr)..cast(ulong)(*arr.ptr+*arr.capacity)];
@@ -166,8 +166,8 @@ int arraySlice(ref Machine machine,double[] p){
     double end=params[2];
     UserArray arr=getArray(machine,params[0]);
     double[] newarrstruct=[false,end-start,end-start]~arr.body[cast(ulong)start..cast(ulong)end];
-    heapObj obj=machine.heap.getObj(cast(int)newarrstruct.length);
-    double objaddr=machine.heap.getDataPtr(obj);
+    heapObj obj=machine.currThread.heap.getObj(cast(int)newarrstruct.length);
+    double objaddr=machine.currThread.heap.getDataPtr(obj);
     utils.write(machine,objaddr,newarrstruct);
     setRegister(machine,p[3],objaddr);
     return 4;
@@ -179,8 +179,8 @@ int arraySplice(ref Machine machine,double[] p){
     double end=params[2];
     UserArray arr=getArray(machine,params[0]);
     double[] newarrstruct=[false,end-start,end-start]~arr.body[cast(ulong)start..cast(ulong)end];
-    heapObj obj=machine.heap.getObj(cast(int)newarrstruct.length);
-    double objaddr=machine.heap.getDataPtr(obj);
+    heapObj obj=machine.currThread.heap.getObj(cast(int)newarrstruct.length);
+    double objaddr=machine.currThread.heap.getDataPtr(obj);
     utils.write(machine,objaddr,newarrstruct);
     setRegister(machine,p[3],objaddr);
     double[] newbody=arr.body.replaceSlice(arr.body[cast(ulong)start..$],arr.body[cast(ulong)end..$]);
@@ -243,7 +243,7 @@ int arrayFreeDynamic(ref Machine machine,double[] p){
     arrayObj[] newObjList;
     foreach(int i,arrayObj obj;machine.currThread.objs.arrayObjs){
         if([params[0],bodyaddr].canFind(obj.addr)){
-            machine.heap.free(obj.id);
+            machine.currThread.heap.free(obj.id);
         }else{
             newObjList~=obj;
         }
@@ -257,7 +257,7 @@ int arrayFreeStatic(ref Machine machine,double[] p){
     arrayObj[] newObjList;
     foreach(int i,arrayObj obj;machine.currThread.objs.arrayObjs){
         if(params[0]==obj.addr){
-            machine.heap.free(obj.id);
+            machine.currThread.heap.free(obj.id);
         }else{
             newObjList~=obj;
         }

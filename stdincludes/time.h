@@ -1,0 +1,15 @@
+#define time.new 29; 
+#define time.set 30;
+#define time.setUnix 31;
+#define time.setStd 32;
+#define time.getStd 33;
+#define time.getUnix 34;
+#define time.getDateTime 35;
+#define time.setDate 36;
+#define time.setUTCOffset 37;
+#define time.getUTCOffset 38;
+#define time.add 39;
+#define time.sub 40;
+#define time.setToCurrent 41; 
+#define time.setGMT 42;
+#define time.free 43;

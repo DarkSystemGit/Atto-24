@@ -8,8 +8,8 @@ sys time.getDateTime %B,%C;
 push TimeZone;
 cp %B,%E;
 PrintLoop:
-sys sys.printAscii, 10;
-sys sys.printString &printStr1;
+sys io.printASCII, 10;
+sys io.printStr &printStr1;
 mov 0,%B;
 LoopCondition:
 cmp %B,6;
@@ -19,17 +19,17 @@ jmp %B;
 Loop:
 add %B,%C;
 read %A,%A;
-sys sys.printAscii 32;
-sys sys.printNum, %A;
+sys io.printASCII 32;
+sys io.printNum, %A;
 inc %B;
 jmp LoopCondition;
 TimeZone:
-//sys sys.printString &printStr2;
+//sys io.printStr &printStr2;
 sys time.setUTCOffset %E,6;
-sys sys.printAscii 10;
+sys io.printASCII 10;
 sys time.getUTCOffset %E,%A;
 sys time.getDateTime %E,%C;
-sys sys.printNum, %A;
+sys io.printNum, %A;
 push Date;
 jmp PrintLoop;
 Date:
@@ -45,11 +45,11 @@ push UnixTime;
 jmp PrintLoop;
 UnixTime:
 sys time.getUnix %E,%A;
-sys sys.printAscii 10;
-sys sys.printNum, %A;
-sys sys.printAscii 10;
+sys io.printASCII 10;
+sys io.printNum, %A;
+sys io.printASCII 10;
 sys time.getStd %E,%H;
-sys sys.printNum %H;
+sys io.printNum %H;
 sys time.setUnix %E,0;
 sys time.getDateTime %E,%C;
 push Final;

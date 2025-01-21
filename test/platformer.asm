@@ -89,9 +89,9 @@ jmp GameLoop;
 
 Error:
 bp;
-sys sys.printString &errStr;
+sys io.printStr &errStr;
 pop %A;
-sys sys.printNum %A;
+sys io.printNum %A;
 exit;
 
 CleanUp:

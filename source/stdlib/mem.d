@@ -16,10 +16,10 @@ struct heapObj{
         writefln("  id: %d",id);
     }
 }
-class machineHeap{
+class Heap{
     int[][] sizes=new int[0][2];
     int ptr;
-    heapObj[] objs=new heapObj[1];
+    heapObj[] objs;
     Machine *m;
     this(int ptr,Machine *m){
         this.ptr=ptr;
@@ -31,9 +31,10 @@ class machineHeap{
         startobj.end=ptr+1;
         startobj.free=false;
         startobj.id=0;
-        objs[0]=startobj;
-        sizes.length=1;
-        sizes[0]=objSize;
+        writeln(startobj,this.objs,ptr);
+        this.objs[0]=startobj;
+        this.sizes.length=1;
+        this.sizes[0]=objSize;
     }
     heapObj getObj(int size){
         //writeln(size);
@@ -91,15 +92,15 @@ int memdump(ref Machine machine,double[] p) {
 //syscall 24; malloc(int size,register addr,register id)
 int malloc(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    heapObj obj=machine.heap.getObj(cast(int)params[0]);
-    setRegister(machine,p[1],machine.heap.getDataPtr(obj));
+    heapObj obj=machine.currThread.heap.getObj(cast(int)params[0]);
+    setRegister(machine,p[1],machine.currThread.heap.getDataPtr(obj));
     setRegister(machine,p[2],obj.id);
     return 3;
 }
 //syscall 25; free(int id)
 int free(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.heap.free(cast(int)params[0]);
+    machine.currThread.heap.free(cast(int)params[0]);
     return 1;
 }    
 //syscall 26; memcpy(int src,int dest,int size)

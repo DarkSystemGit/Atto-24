@@ -6,6 +6,6 @@ push &fileName;
 call loadProg;
 sys thread.dump;
 sys thread.remove 1;
-sys sys.printString &split;
-sys sys.printAscii 10;
+sys io.printStr &split;
+sys io.printASCII 10;
 sys thread.dump;

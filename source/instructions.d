@@ -177,6 +177,7 @@ int call(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
     machine.raddr~=machine.currThread.ip+1;
     machine.currThread.ip = (cast(int)params[0]) - 2;
+    interrupt(machine,0);
     return 1;
 }
 
@@ -184,7 +185,6 @@ int ret(ref Machine machine, double[] p) {
     //writeln(machine.raddr);
     machine.currThread.ip = machine.raddr[machine.raddr.length-1];
     machine.raddr.length--;
-    interrupt(machine,0);
     return 0;
 }
 
@@ -224,10 +224,14 @@ int sys(ref Machine m, double[] p) {
 }
 int setErrAddr(ref Machine m, double[] p) {
     double[] params=handleRegisters(m, p, 1);
-    m.errAddr=cast(int)params[0];
+    m.currThread.errAddr=cast(int)params[0];
     return 1;
 }
 int exit(ref Machine m, double[] p) {
+    if(m.intHandler.interrupting){
+        m.intHandler.finInterrupt(m);
+        return 0;
+    }
     m.running=false;
     if(m.currThread.objs.gfx !is null)m.currThread.objs.gfx.kill();
     m.currThread.objs.gfx=null;

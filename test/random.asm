@@ -4,9 +4,9 @@
 jmp Init;
 PrintNum:
 sys random.get %A,%C;
-sys sys.printString &str1;
-sys sys.printNum %C;
-sys sys.printAscii 10;
+sys io.printStr &str1;
+sys io.printNum %C;
+sys io.printASCII 10;
 ret;
 Init:
 sys random.new 44,%A;
