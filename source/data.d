@@ -120,14 +120,15 @@ class ThreadList{
         while(t.id!=id){
             t=t.next;
         }
-        this.curr=t;
         (*parent).tswitch=(*parent).currThread.id;
         (*parent).currThread=t;
-        writeln(t.heap.ptr,t.heap.hobjs);
+        this.curr=t;
+        //writeln(t.heap.ptr,t.heap.hobjs);
     }
     void switchThread(){
-        this.curr=this.curr.next;
         (*parent).tswitch=(*parent).currThread.id;
+        writeln("Switching to Thread ",curr.next.id," ",curr.id);
+        this.curr=this.curr.next;
         (*parent).currThread=this.curr;
     }
     Thread getThread(int id){

@@ -54,7 +54,7 @@ int function(ref Machine machine, double[] params)[] syscalls=[
     &macos,&matan,&mceil,&mfloor,
     &mround,&mint,&mpow,&mlog,
     &mfinite,&readFile,&writeFile,&addThread,
-    &switchThread,&getThreadID,&removeThread,&dumpThreads,
+    &nutin,&getThreadID,&removeThread,&dumpThreads,
     &getThreadInfo,&updateThread,&switchThreadId,&setInterrupt
 ];
 int syscall(ref Machine m, double sys,double[] params) {

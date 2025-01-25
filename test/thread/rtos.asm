@@ -5,6 +5,7 @@
 #define progs [5,"rtosProgs/concat.bytecode","rtosProgs/splitstr.bytecode","rtosProgs/pong.bytecode","rtosProgs/gfx.bytecode","rtosProgs/platformer.bytecode"];
 
 //sys thread.setInterrupt 0,intH;
+mov 0,%E;
 mov 0,%C;
 mov 1,%D;
 Loop:
@@ -22,6 +23,10 @@ inc %C;
 jmp Loop;
 
 main:
-bp;
-sys thread.switch;
+inc %E;
+cmp %E,6;
+jg ex;
+sys thread.switch %E;
 jmp main;
+ex:
+exit;

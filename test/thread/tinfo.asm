@@ -6,7 +6,7 @@
 #define split "---------------------------------------------------------------------------";
 push &fileName;
 call loadProg;
-sys thread.switch;
+sys thread.switch 1;
 sys io.printASCII 10;
 sys io.printStr &split;
 sys io.printASCII 10;
@@ -35,7 +35,7 @@ sys io.printASCII 10;
 sys io.printStr &split;
 sys io.printASCII 10;
 sys thread.update 1,%B;
-sys thread.switch;
+sys thread.switch 1;
 mov 1,%E;
 sys io.printASCII 10;
 sys io.printStr &split;

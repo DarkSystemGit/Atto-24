@@ -19,11 +19,12 @@ void handleOpcode(ref Machine machine, double opcode, double[] params)
     //writeln(pcount," ",machine.currThread.ip," ",opcode);
     if(machine.tswitch!=-1){
         Thread ot=machine.threads.getThread(machine.tswitch);
-        ot.ip+=pcount;
-        machine.tswitch=-1;
-        if (machine._debug)
+        if (machine._debug){
         writeln("[DEBUG] Addr: ",ot.ip-1,", Executed opcode ", printOpcode(opcode), "(", printParams(
                 params[0 .. pcount - 1]), "); | Bytecode: ",ot.mem[ot.ip-pcount..ot.ip]);
+        writeln("Switched to Thread ",machine.currThread.id," at ",machine.currThread.ip," ");}
+        ot.ip+=pcount;
+        machine.tswitch=-1;
 
     }else{
         machine.currThread.ip += pcount;
@@ -96,7 +97,7 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
             }
             if(!machine.running){
                 if(machine.currThread.id==0){break;}
-                if(!(machine.currThread.next.id==machine.currThread.id)){machine.running=true;machine.threads.switchThread(0);}
+                if(!(machine.currThread.next.id==machine.currThread.id)){machine.running=true;machine.threads.switchThread(0);machine.tswitch=-1;}
             }
             if(machine._debug){
                 dbgloop(machine);
@@ -269,5 +270,5 @@ void dbgloop(ref Machine machine){
                 if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){cwriteln("Invalid Command".color(mode.bold).color(fg.red));dbgloop(machine);}
 }
 void interrupt(ref Machine m,int id){
-    m.intScheduled=true;
+    //m.intScheduled=true;
 }

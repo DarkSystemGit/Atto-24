@@ -1,6 +1,5 @@
 #define thread.create 106;
-#define thread.switch 107;
-#define thread.switchId 113;
+#define thread.switch 113;
 #define thread.getId 108;
 #define thread.remove 109;
 #define thread.dump 110;

@@ -5,4 +5,4 @@
 push &fileName;
 call loadProg;
 sys thread.dump;
-sys thread.switchId 1;
+sys thread.switch 1;
