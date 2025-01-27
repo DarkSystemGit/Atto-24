@@ -40,7 +40,7 @@ int function(ref Machine machine, double[] params)[] syscalls=[
     &subTime,&setTimeToCurrTime,&setTimeToGMT,&freeTime,
     &newRandom,&newDistrubution,&setRandSeed,&sampleRand,
     &setDistrubution,&setDistrubutionProbabilities,&setUniformDistrubution,&freeRandom,
-    &freeDistrubution,&initGFX,&getVRAMBuffer,&freeGFX,
+    &freeDistrubution,&initGFX,&readVRAM,&freeGFX,
     &renderGFX,&setPalette,&getKeys,&windowClosed,
     &initSprite,&resizeSprite,&scaleSprite,&drawSprite,
     &freeSprite,&initTilemap,&rerenderTilemap,&renderTilemap,
@@ -55,7 +55,8 @@ int function(ref Machine machine, double[] params)[] syscalls=[
     &mround,&mint,&mpow,&mlog,
     &mfinite,&readFile,&writeFile,&addThread,
     &nutin,&getThreadID,&removeThread,&dumpThreads,
-    &getThreadInfo,&updateThread,&switchThreadId,&setInterrupt
+    &getThreadInfo,&updateThread,&switchThreadId,&setInterrupt,
+    &writeVRAM,&copyVRAM,&fillVRAM
 ];
 int syscall(ref Machine m, double sys,double[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

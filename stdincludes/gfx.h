@@ -1,5 +1,8 @@
 #define gfx.new 53;
-#define gfx.getVRAMBuffer 54;
+#define gfx.readVRAM 54;
+#define gfx.writeVRAM 115;
+#define gfx.copyRectVRAM 116;
+#define gfx.fillVRAM 117;
 #define gfx.free 55;
 #define gfx.render 56;
 #define gfx.setPalette 57;

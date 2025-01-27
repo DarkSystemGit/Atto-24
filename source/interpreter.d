@@ -41,6 +41,7 @@ extern(C) void sighandler(int num) nothrow @nogc @system{
 }
 Machine execBytecode(double[] prgm, bool d,Path bp)
 {   
+    bool ent;
     chdir(bp.toString);
     signal(SIGINT, &sighandler);
     commands[0] = &nop;
@@ -91,9 +92,21 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     running=machine.running;
     while ((machine.currThread.ip < machine.currThread.mem.length)&&running)
     {  
-            if(machine.intScheduled){
-                machine.intHandler.doInturrupt(0,machine);
-                machine.intScheduled=false;
+            if(machine.gfx !is null&&machine.gfx.getPressedKeys().canFind(40)){
+                if(!ent){
+                    ent=true;
+                }
+            }else{
+                if(ent){
+                    ent=false;
+
+                    interrupt(machine,2);
+                }
+            }
+            
+            if(machine.intScheduled!=-1){
+                machine.intHandler.doInturrupt(machine.intScheduled,machine);
+                machine.intScheduled=-1;
             }
             if(!machine.running){
                 if(machine.currThread.id==0){break;}
@@ -270,5 +283,5 @@ void dbgloop(ref Machine machine){
                 if(!debugPrompt(machine,line))dbgloop(machine);}catch(Throwable){cwriteln("Invalid Command".color(mode.bold).color(fg.red));dbgloop(machine);}
 }
 void interrupt(ref Machine m,int id){
-    //m.intScheduled=true;
+    m.intScheduled=id;
 }

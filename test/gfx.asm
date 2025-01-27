@@ -1,8 +1,7 @@
 #include <stdlib>;
 #define errStr "Error";
 setErrAddr Error;
-sys gfx.getVRAMBuffer %C,%B;
-sys gfx.new %C;
+sys gfx.new;
 push %C;
 push %B;
 sys mem.malloc 256,%E,%B;
@@ -18,8 +17,7 @@ mov 0,%D;
 GameLoop:
 cmp %A,76800;
 jz glb;
-add %A,%C;
-write %D,%A;
+sys gfx.writeVRAM %D,%A;
 sub %A,%C;
 inc %A;
 jmp GameLoop;

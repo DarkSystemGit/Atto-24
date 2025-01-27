@@ -12,11 +12,14 @@ struct Machine {
     double[] stack = new double[0];
     string basepath;
     bool unhandledErr;
-    bool intScheduled;
+    int intScheduled=-1;
     int tswitch;
     Thread currThread;
     ThreadList threads;
     interruptHandler intHandler;
+    double[320*240] vram;
+    GFX gfx;
+    int gfxInputAddr;
     void print() {
         Machine machine = this;
         writeln("Machine:");
@@ -53,11 +56,12 @@ struct interruptHandler{
     int tzeroret;
     bool interrupting;
     void doInturrupt(int id,ref Machine m){
-         writeln("INTERRUPTING",id,handlers.keys.canFind(id));
+         //writeln("INTERRUPTING",id,handlers.keys.canFind(id));
+        
         if(!handlers.keys.canFind(id))return;
         if(m.currThread.id==0)return;
        
-        //writeln([id,handlers[id],m.currThread.id,m.currThread.ip]);
+       
         interrupting=true;
         rthread=m.currThread.id;
         tzeroret=cast(int)m.threads.head.ip;
@@ -193,9 +197,6 @@ struct Objects{
     Distrubution[] dists;
     random.Random[] rands;
     tmInfo[] tilemaps;
-    GFX gfx;
-    int vramAddr;
-    int gfxInputAddr;
     heapObj inputs;
     Sprite[] sprites;
     TileMap[] maps;

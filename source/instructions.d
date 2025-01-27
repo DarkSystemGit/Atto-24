@@ -233,8 +233,8 @@ int exit(ref Machine m, double[] p) {
         return 0;
     }
     m.running=false;
-    if(m.currThread.objs.gfx !is null)m.currThread.objs.gfx.kill();
-    m.currThread.objs.gfx=null;
+    if(m.gfx !is null)m.gfx.kill();
+    m.gfx=null;
     return 0;
 }
 int breakpoint(ref Machine m, double[] p) {

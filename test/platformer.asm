@@ -2,8 +2,7 @@
 #define errStr "Error";
 #define palatte [4,0x000000FF,0xFF0000FF,0xFF00FFFF,0x0000FFFF];
 setErrAddr Error;
-sys gfx.getVRAMBuffer %C,%B;
-sys gfx.new %C;
+sys gfx.new;
 sys gfx.setPalette &palatte;
 
 push %C;
@@ -40,7 +39,7 @@ GameLoop:
 sys gfx.windowClosed %A;
 cmp 1,%A;
 jz CleanUp;
-sys mem.fill %C,76800,1;
+sys gfx.fillVRAM 1,320,240,0,0;
 //bp;
 push %F;
 addf %G,0.08;
