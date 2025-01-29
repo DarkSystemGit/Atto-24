@@ -6,16 +6,10 @@ The graphics module provides functions for graphical operations and handling. Th
 
 - **gfx.new**
 
-  - Description: Initializes the graphics system by creating a new window with the specified title and setting up the VRAM address.
-  - Parameters:
-    - `int vramAddr` - The VRAM address where the graphics data will be stored.
+  - Description: Initializes the graphics system.
+  - Parameters: None.
 
-- **gfx.getVRAMBuffer**
 
-  - Description: Allocates and returns the VRAM buffer for the graphics system. This buffer is used to store pixel data for rendering.
-  - Parameters:
-    - `register addr` - The register to store the VRAM buffer address.
-    - `register id` - The register to store the buffer ID.
 
 - **gfx.free**
 
@@ -142,23 +136,35 @@ The graphics module provides functions for graphical operations and handling. Th
 - **gfx.tilemap.free**
   - Description: Frees the memory allocated for the specified tilemap.
   - Parameters:
-    - `int addr` - The address of the tilemap data.
+    - `int* addr` - The address of the tilemap data.
+- **gfx.readVRAM**
+  - Description: Reads a byte from VRAM.
+  - Parameters:
+    - `int addr` - The address of the data.
+- **gfx.writeVRAM**
+  - Description: Writes a byte to VRAM.
+  - Parameters:
+    - `int data` - The byte to write.
+    - `int* addr` - The address to write to.
+- **gfx.copyRectVRAM** 
+  - Description: Copies an area of memory to VRAM.
+  - Parameters:
+    - `int[]* src` - Data to copy.
+    - `int width` - Width of area.
+    - `int height` - Height of area.
+    - `int x` - X coord to copy to.
+    - `int y` - Y coord to copy to.
+- **gfx.fillVRAM**
+  - Description: Fills a area of VRAM
+  - Parameters:
+    - `int color` - Color to fill with.
+    - `int width` - Width of area.
+    - `int height` - Height of area.
+    - `int x` - X coord to copy to.
+    - `int y` - Y coord to copy to.
 
 ## Data Structures
 
-### GFX
-
-Represents the graphics system.
-
-```d
-class GFX {
-    string title; // Title of the graphics window
-    int[] screenDims; // Screen dimensions [width, height]
-    uint[] palette; // Color palette used for rendering
-    ubyte[] pixels; // Array of pixels representing the screen
-    string[] events; // List of events (e.g., key presses, window close)
-}
-```
 
 ### Sprite
 
