@@ -139,6 +139,15 @@ int setPalette(ref Machine machine,double[] p){
     machine.gfx.palette=colors;
     return 1;
 }
+int loadPalette(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
+    machine.gfx.palette=machine.palettes[cast(int)params[0]];
+}    
+int savePalette(ref Machine machine,double[] p){
+    double[] params=handleRegisters(machine, p, 1);
+    machine.palettes[cast(int)params[0]]=machine.gfx.palette;
+    return 1;
+}
 //Sprites
 UserSprite toSprite(double[] data,ref Machine m){
     UserSprite sp;

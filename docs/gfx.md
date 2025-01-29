@@ -23,7 +23,7 @@ The graphics module provides functions for graphical operations and handling. Th
 
 - **gfx.setPalette**
 
-  - Description: Sets the color palette used by the graphics system. The palette is an array of colors that will be used to render the graphics.
+  - Description: Sets the color palette used by the graphics system. The palette is an array of colors that will be used to render the graphics. The maximum amount of colors that can be use in a palette is 256.
   - Parameters:
     - `int addr` - The address of the palette data in memory.
 
@@ -103,7 +103,7 @@ The graphics module provides functions for graphical operations and handling. Th
 
 - **gfx.tilemap.new**
 
-  - Description: Creates a new tilemap with the specified properties. Tilemaps are used for rendering large, grid-based graphical elements.
+  - Description: Creates a new tilemap with the specified properties. Tilemaps are used for rendering large, grid-based graphical elements. A tileset is a 512 long array of 8 by 8 tiles.
   - Parameters:
     - `int addr` - The address of the tilemap data.
     - `int x` - The x-coordinate of the tilemap.
@@ -127,7 +127,7 @@ The graphics module provides functions for graphical operations and handling. Th
 
 - **gfx.tileset.setTile**
 
-  - Description: Sets a tile in the specified tileset.
+  - Description: Sets a 8x8 tile in the specified tileset.
   - Parameters:
     - `int addr` - The address of the tileset data.
     - `int id` - The ID of the tile to set.
@@ -162,7 +162,16 @@ The graphics module provides functions for graphical operations and handling. Th
     - `int height` - Height of area.
     - `int x` - X coord to copy to.
     - `int y` - Y coord to copy to.
+- **gfx.savePalette**
 
+  - Description: Saves the current color palette to a specified slot.
+  - Parameters:
+    - `int slot` - The slot to save the palette to.
+
+- **gfx.loadPalette**
+  - Description: Loads a color palette from a specified slot.
+  - Parameters:
+    - `int slot` - The slot to load the palette from.
 ## Data Structures
 
 
@@ -180,7 +189,7 @@ struct Sprite {
 }
 ```
 
-### TileMap
+### Tilemap
 
 Represents a tilemap in the graphics system.
 

@@ -19,6 +19,7 @@ struct Machine {
     interruptHandler intHandler;
     double[320*240] vram;
     GFX gfx;
+    uint[256][] palettes=new uint[256][0];
     int gfxInputAddr;
     void print() {
         Machine machine = this;

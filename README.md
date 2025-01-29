@@ -21,10 +21,10 @@ exit;
 
 This program demonstrates some of the capabilities of the compiler and interpreter, and serves as a basic hello world program. It should print `Hello there, John Doe`. Feel free to mess around with it to familiarize yourself with the syntax.
 For a full-on demo program, check out [Atto-Pong](https://www.github.com/darksystemgit/attopong). 
-More docs can be found within the `/docs/` folder.
+The docs can be found [here](/docs/index.md).
 
 ## Building
 
-Atto-24 is written in D, and as such, if you don't have one, install a D compiler from [www.dlang.org](https://www.dlang.org/install). Then, if it's not bundled with your D compiler, install DUB, and run one of the install scripts, based on your platform. SDL2 is also a required dependency, install it from [libsdl.org](https://www.libsdl.org).
+Atto-24 is written in D, and as such, if you don't have one, install `ldc` from [www.dlang.org](https://www.dlang.org/install). Then,run one of the install scripts, based on your platform. `SDL2` is also a required dependency, install it from [libsdl.org](https://www.libsdl.org) or if on Linux, your package manager. On OSX, install directly from the SDL site, as for some reason the `brew` version isn't picked up. Windows isn't supported, but you can try to build it with WSL.
 
 
