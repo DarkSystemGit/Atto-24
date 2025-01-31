@@ -42,5 +42,23 @@ The thread module provides functions for managing thread operations and multithr
     - Parameters:
         - `int id` - Interrupt ID.
         - `code* handler` - Pointer to interrupt handler code.
-
+- **thread.finishInterrupt**
+    - Description: Finishes an interrupt handler.
+    - Parameters: None.
+- **thread.sleep**
+    - Description: Puts the current thread to sleep for a specified number of millisecond.
+    - Parameters:
+        - `double milliseconds` - Number of milliseconds to sleep for.
+- **thread.read**
+    - Description: Reads a value from a thread's memory.
+    - Parameters:
+        - `int id` - ID of the thread to read from.
+        - `int addr` - Address in the thread's memory.
+        - `register ret` - Register to store the read value.
+- **thread.write**
+    - Description: Writes a value to a thread's memory.
+    - Parameters:
+        - `int id` - ID of the thread to write to.
+        - `int addr` - Address in the thread's memory.
+        - `double value` - The Value to write.
 Note: Thread operations can only be performed from thread 0 (main thread).

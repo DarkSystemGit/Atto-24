@@ -124,6 +124,23 @@ int fillVRAM(ref Machine machine,double[] p){
     }
     return 5;
 }
+int copyVRAMtoBuf(ref Machine m,double[] p){
+    double[] params=handleRegisters(m, p, 4);
+    ulong x=cast(ulong)params[0];
+    ulong y=cast(ulong)params[1];
+    ulong width=cast(ulong)params[2];
+    ulong height=cast(ulong)params[3];
+    double[] data=new double[width*height];
+    for(int i=0;i<(width*height);i++){
+        ulong yoff=cast(ulong)floor(cast(float)i/width)+y;
+        ulong xoff=i%width+x;
+        data[i]=m.vram[yoff*screenDims[0]+xoff];
+    }
+    heapObj obj=m.currThread.heap.getObj(cast(int)(width*height));
+    utils.write(m,m.currThread.heap.getDataPtr(obj),data);
+    setRegister(m,p[4],m.currThread.heap.getDataPtr(obj));
+    return 4;
+}
 int windowClosed(ref Machine m,double[] p){
     double register=p[0];
     setRegister(m,register,0);

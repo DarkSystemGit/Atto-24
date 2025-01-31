@@ -18,6 +18,8 @@ The docs for the standard library are spread between 4 files:
 
 and [math](math.md) for mathematical operations.
 
+You can also find info about interrupts in [interrupts](interrupts.md).
+The header files for the standard library can be found in `/bin/include` directory of the install directory, which is typically `/etc/atto24`.
 ### Graphics
 
 Documentation for Atto's graphics system can be found in [gfx.md](gfx.md). 

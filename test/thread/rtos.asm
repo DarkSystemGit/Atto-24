@@ -35,7 +35,6 @@ jz ex;
 sys thread.switch %E;
 jmp main;
 ex:
-bp;
 exit;
 
 ent:

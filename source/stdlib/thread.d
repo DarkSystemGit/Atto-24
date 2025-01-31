@@ -19,6 +19,7 @@ int addThread(ref Machine machine, double[] p)
     machine.threads.addThread(t);
     return 2;
 }
+
 //switchThread()
 int switchThread(ref Machine machine, double[] params)
 {
@@ -71,7 +72,21 @@ int getThreadInfo(ref Machine m, double[] p)
     setRegister(m, p[1], m.currThread.heap.getDataPtr(obj));
     return 2;
 }
-
+int writeThread(ref Machine m, double[] p){
+    double[] params = handleRegisters(m, p, 3);
+    int id = cast(int) params[0];
+    int addr = cast(int) params[1];
+    int value=cast(int)params[2];
+    m.threads.getThread(id).mem[cast(ulong)addr]=cast(double)value;
+    return 3;
+}
+int readThread(ref Machine m, double[] p){
+    double[] params = handleRegisters(m, p, 2);
+    int id = cast(int) params[0];
+    int addr = cast(int) params[1];
+    setRegister(m, p[2], m.threads.getThread(id).mem[cast(ulong)addr]);
+    return 3;
+}
 int updateThread(ref Machine m, double[] p)
 {
     double[] params = handleRegisters(m, p, 2);
@@ -109,4 +124,10 @@ int setInterrupt(ref Machine m, double[] p)
     double[] params = handleRegisters(m, p, 2);
     m.intHandler.handlers[cast(int) params[0]] = cast(int) params[1];
     return 2;
+}
+int returnInterrupt(ref Machine m, double[] p){
+    if(m.intHandler.interrupting){
+        m.intHandler.finInterrupt(m);
+    }
+    return 0;
 }

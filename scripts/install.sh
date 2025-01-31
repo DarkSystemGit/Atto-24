@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
+cd "${0%/*}/../"
 if dub build --build=release; then
+    mkdir ./bin
     cp -r ./test ./bin
     cp -r ./stdincludes ./bin/includes
     cp -r ./logo ./bin
-    sudo mv ./bin/atto24 /usr/bin/atto24
-    sudo rm -r /etc/atto24
+    if [[ $(uname -s) == "Darwin" ]]; then
+        echo "/etc/atto24" | sudo tee -a /etc/paths
+    else
+        sudo mv ./bin/atto24 /usr/bin/atto24  
+    fi
     sudo mv ./bin /etc/atto24
     sudo chmod -R 755 /etc/atto24
     echo "Installation complete"

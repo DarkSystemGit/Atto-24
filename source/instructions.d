@@ -228,10 +228,7 @@ int setErrAddr(ref Machine m, double[] p) {
     return 1;
 }
 int exit(ref Machine m, double[] p) {
-    if(m.intHandler.interrupting){
-        m.intHandler.finInterrupt(m);
-        return 0;
-    }
+    
     m.running=false;
     if(m.gfx !is null)m.gfx.kill();
     m.gfx=null;

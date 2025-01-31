@@ -154,6 +154,14 @@ The graphics module provides functions for graphical operations and handling. Th
     - `int height` - Height of area.
     - `int x` - X coord to copy to.
     - `int y` - Y coord to copy to.
+- **gfx.copyVRAMtoRAM**
+  - Description: Copies an area of VRAM to RAM.
+  - Parameters:
+    - `int width` - Width of area.
+    - `int height` - Height of area.
+    - `int x` - X coord to copy from.
+    - `int y` - Y coord to copy from.
+    - `register addr` - Register to set with copied address.
 - **gfx.fillVRAM**
   - Description: Fills a area of VRAM
   - Parameters:

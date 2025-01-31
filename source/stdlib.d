@@ -57,7 +57,8 @@ int function(ref Machine machine, double[] params)[] syscalls=[
     &nutin,&getThreadID,&removeThread,&dumpThreads,
     &getThreadInfo,&updateThread,&switchThreadId,&setInterrupt,
     &writeVRAM,&copyVRAM,&fillVRAM,&savePalette,
-    &loadPalette
+    &loadPalette,&returnInterrupt,&readThread,&writeThread,
+    &copyVRAMtoBuf
 ];
 int syscall(ref Machine m, double sys,double[] params) {
     return syscalls[cast(ulong)sys](m,params)+1;

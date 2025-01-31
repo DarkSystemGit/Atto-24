@@ -7,3 +7,6 @@
 #define thread.update 112;
 #define thread.sleep 8;
 #define thread.setInterrupt 114;
+#define thread.finishInterrupt 120;
+#define thread.read 121;
+#define thread.write 122;
