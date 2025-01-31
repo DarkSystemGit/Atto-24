@@ -2,12 +2,14 @@
 #include <io>;
 #include <str>;
 #include "loadProg.asm";
-#define progs [4,"rtosProgs/concat.bytecode","rtosProgs/platformer.bytecode","rtosProgs/gfx.bytecode","rtosProgs/pong.bytecode"];
+#define progs [3,"rtosProgs/gfx.bytecode""rtosProgs/platformer.bytecode","rtosProgs/pong.bytecode"];
 //#define repProg [12,0];
 sys thread.setInterrupt 2,ent;
-mov 1,%E;
+mov 0,%E;
 mov 0,%C;
 mov 1,%D;
+sys gfx.new;
+sys gfx.savePalette 0;
 //sys thread.create 2,&repProg;
 Loop:
 read &progs,%A;
@@ -29,15 +31,36 @@ inc %E;
 read &progs,%A;
 inc %A;
 cmp %E,%A;
-jg ex;
+jz ex;
 sys thread.switch %E;
 jmp main;
 ex:
+bp;
 exit;
 
 ent:
-cmp %B,1;
-jz main;
+sys gfx.savePalette 1;
+sys gfx.loadPalette 0;
 mov 1,%B;
 sys gfx.fillVRAM 2,320,240,0,0;
+push %E;
+kloopo:
 sys gfx.render;
+sys gfx.getPressedKeys %E;
+read %E,%D;
+mov 0,%C;
+inc %E;
+kloop:
+cmp %C,%D;
+jz kloopo;
+add %C,%E;
+read %A,%A;
+cmp %A,gfx.keys.x;
+jz entmain;
+inc %C;
+jmp kloop;
+entmain:
+pop %E;
+sys gfx.loadPalette 1;
+//bp;
+jmp main;

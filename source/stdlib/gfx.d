@@ -7,7 +7,6 @@ import registers;
 import interpreter;
 int[] screenDims=[320,240];
 int initGFX(ref Machine machine,double[] p){
-    double[] params=handleRegisters(machine, p, 1);
     //string title=readString(machine,cast(int)params[0]).to!string;
     if(machine.gfx is null)machine.gfx=new GFX("Atto-24",screenDims);
     return 0;
@@ -68,9 +67,10 @@ int getKeys(ref Machine machine,double[] params){
             break;
         }}
     };
-    if(machine.gfxInputAddr==0){
+    if(machine.currThread.gfxInputAddr==0){
+        //writeln(machine.currThread.gfxInputAddr);
         machine.currThread.objs.inputs=machine.currThread.heap.getObj(8);
-        machine.gfxInputAddr=machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs);
+        machine.currThread.gfxInputAddr=machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs);
     }
     utils.write(machine,machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs),keys);
      setRegister(machine,params[0],machine.currThread.heap.getDataPtr(machine.currThread.objs.inputs));
@@ -141,11 +141,13 @@ int setPalette(ref Machine machine,double[] p){
 }
 int loadPalette(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.gfx.palette=machine.palettes[cast(int)params[0]];
+    machine.gfx.palette=machine.currThread.palettes[cast(int)params[0]];
+    return 1;
 }    
 int savePalette(ref Machine machine,double[] p){
     double[] params=handleRegisters(machine, p, 1);
-    machine.palettes[cast(int)params[0]]=machine.gfx.palette;
+    if(machine.currThread.palettes.length<cast(int)params[0]+1)machine.currThread.palettes.length=cast(ulong)params[0]+1;
+    machine.currThread.palettes[cast(int)params[0]]=machine.gfx.palette;
     return 1;
 }
 //Sprites

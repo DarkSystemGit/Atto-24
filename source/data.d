@@ -19,8 +19,7 @@ struct Machine {
     interruptHandler intHandler;
     double[320*240] vram;
     GFX gfx;
-    uint[256][] palettes=new uint[256][0];
-    int gfxInputAddr;
+    
     void print() {
         Machine machine = this;
         writeln("Machine:");
@@ -88,7 +87,8 @@ class Thread{
     double[] mem;
     Thread next;
     Heap heap;
-    
+    uint[256][] palettes=new uint[256][0];
+    int gfxInputAddr;
 }
 class ThreadList{
     Thread head;

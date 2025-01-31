@@ -35,7 +35,7 @@ int getcwd(ref Machine machine, double[] p)
 {
      char[] path = cast(char[]) std.file.getcwd();
      path = cast(char[])(Path(cast(string) path).relativeTo(Path(machine.basepath)).toString);
-     int addr=machine.heap.getObj(path.length).getDataPtr();
+     int addr=machine.currThread.heap.getDataPtr(machine.currThread.heap.getObj(cast(int)path.length));
      writeString(machine, addr, path);
      setRegister(machine, p[0], addr);
      return 1;

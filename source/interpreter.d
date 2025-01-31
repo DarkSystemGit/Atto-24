@@ -99,7 +99,7 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
             }else{
                 if(ent){
                     ent=false;
-
+                    //writeln(ent);
                     interrupt(machine,2);
                 }
             }
@@ -124,11 +124,11 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
             }
        
     }
-    exit(machine,[]);
+    if(machine.gfx !is null)machine.gfx.kill();
     return machine;
 }
 void handleError(ref Machine machine,Throwable t){
-
+                writeln(t);
                 if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.currThread.ip,"\n",t);
                 machine.stack.length++;
                 machine.currThread.registers.sbp++;

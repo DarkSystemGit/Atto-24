@@ -1,4 +1,3 @@
-sys 11,11;
-sys 2,11;
-add %A,12;
-jmp %A;
+#include <io>;
+sys io.getcwd %A;
+sys io.printStr %A;
