@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 cd "${0%/*}/../"
 if dub build --build=release; then
-    mkdir ./bin
     cp -r ./test ./bin
     cp -r ./stdincludes ./bin/includes
     cp -r ./logo ./bin

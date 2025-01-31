@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
-sudo rm -r /etc/atto24&&sudo rm /usr/bin/atto24
+if [[ $(uname -s) == "Linux" ]]; then
+    sudo rm /usr/bin/atto24
+fi
+sudo rm -r /etc/atto24
 bash "${0%/*}/install.sh"&&atto24 --run-tests;

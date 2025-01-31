@@ -146,7 +146,7 @@ int write(ref Machine machine, double[] p) {
 
 int push(ref Machine machine, double[] p) {
     double[] params=handleRegisters(machine, p, 1);
-    machine.stack.length++;
+    //machine.stack.length++;
     machine.currThread.registers.sbp++;
     machine.stack.insertInPlace(cast(ulong)machine.currThread.registers.sbp-1, params[0]);
     return 1;
@@ -156,7 +156,7 @@ int pop(ref Machine machine, double[] params) {
     setRegister(machine,  params[0],machine.stack[cast(ulong)(machine.currThread.registers.sbp-1)]);
     machine.stack = machine.stack.remove(cast(ulong)(machine.currThread.registers.sbp-1));
     machine.currThread.registers.sbp--;
-    machine.stack.length--;
+    //machine.stack.length--;
     return 1;
 }
 

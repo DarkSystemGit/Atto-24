@@ -13,7 +13,7 @@ struct Machine {
     string basepath;
     bool unhandledErr;
     int intScheduled=-1;
-    int tswitch;
+    int tswitch=-1;
     Thread currThread;
     ThreadList threads;
     interruptHandler intHandler;

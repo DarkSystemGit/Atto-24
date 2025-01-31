@@ -128,7 +128,7 @@ Machine execBytecode(double[] prgm, bool d,Path bp)
     return machine;
 }
 void handleError(ref Machine machine,Throwable t){
-                writeln(t);
+                //writeln(t);
                 if(machine._debug)writeln("[DEBUG] An Error Occured at ",machine.currThread.ip,"\n",t);
                 machine.stack.length++;
                 machine.currThread.registers.sbp++;
@@ -136,6 +136,7 @@ void handleError(ref Machine machine,Throwable t){
                 if(machine.currThread.errAddr!=0){
                 machine.currThread.ip = machine.currThread.errAddr;}else{
                     machine.stack.length--;
+                    machine.currThread.registers.sbp--;
                     cwrite(("[ERROR] ").color(fg.red).color(mode.bold));
                     cwriteln(("An Error occured at this address: "~machine.currThread.ip.to!string).color(mode.bold));
                     cwriteln(("Thread ID:"~machine.currThread.id.to!string).color(mode.bold));

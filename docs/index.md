@@ -25,9 +25,10 @@ The header files for the standard library can be found in `/bin/include` directo
 Documentation for Atto's graphics system can be found in [gfx.md](gfx.md). 
 
 ### Architecture
-Atto-24 is based around single threads being the main unit of execution. Threads are created and managed by the main thread, thread 0.    
-Each thread has a 96KB total working memory, and all threads share VRAM and the stack. VRAM is a 320 by 240 buffer of palette indices, which is swapped out to the screen by calling `gfx.render` . Palettes are lists of RGBA colors which can be set by the user.    
-File operations work in the directory the program is run from, and may not leave that directory, effectively sandboxing the program to its \`cartridge\`.
+
+Atto-24 is based around single threads being the main unit of execution. Threads are created and managed by the main thread, thread 0. Each thread has a 96KB total working memory, and all threads share VRAM and the stack. VRAM is a 320 by 240 buffer of palette indices, which is swapped out to the screen by calling `gfx.render` . Palettes are lists of RGBA colors which can be set by the user.    
+File operations work in the directory the program is run from, and may not leave that directory, effectively sandboxing the program to its \`cartridge\`. Atto-24 comes with a built-in debugger, information on which can be found in [debugger.md](debugger.md).
+
 
 ### Examples
 A pretty good example of a fully fleged game is Atto-Pong, which is a pong clone written for the Atto-24. It can be found [here](https://www.github.com/darksystemgit/attopong).
